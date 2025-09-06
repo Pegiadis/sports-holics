@@ -1,144 +1,169 @@
-import React from 'react';
-import { Facebook, Twitter, Youtube, Instagram, Rss } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Music } from 'lucide-react';
+import { SOCIAL_LINKS, NAVIGATION_ITEMS } from '../../utils/constants';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  className?: string;
+}
+
+const getSocialIcon = (iconName: string) => {
+  const icons: Record<string, any> = {
+    Facebook,
+    Twitter,
+    Instagram,
+    Youtube,
+    Music, // TikTok
+  };
+  return icons[iconName] || Facebook;
+};
+
+export default function Footer({ className = '' }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
-  const footerSections = [
-    {
-      title: 'Sports',
-      links: [
-        'Basketball',
-        'Football',
-        'Volleyball',
-        'Tennis',
-        'Auto-Moto',
-        'Water Polo',
-      ],
-    },
-    {
-      title: 'Leagues',
-      links: [
-        'Euroleague',
-        'Greek Basket League',
-        'NBA',
-        'Champions League',
-        'Premier League',
-        'Super League',
-      ],
-    },
-    {
-      title: 'Features',
-      links: [
-        'Live Scores',
-        'Statistics',
-        'Photo Galleries',
-        'Blogs',
-        'News',
-        'Analysis',
-      ],
-    },
-    {
-      title: 'Company',
-      links: [
-        'About Us',
-        'Contact',
-        'Privacy Policy',
-        'Terms of Service',
-        'Careers',
-        'Advertise',
-      ],
-    },
-  ];
-
-  const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Rss, href: '#', label: 'RSS Feed' },
-  ];
-
   return (
-    <footer className="bg-secondary-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {footerSections.map((section, index) => (
-            <div key={index}>
-              <h3 className="text-lg font-semibold mb-4">{section.title}</h3>
-              <ul className="space-y-2">
-                {section.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
+    <footer className={`bg-neutral-900 text-white ${className}`}>
+      {/* Main footer content */}
+      <div className="container">
+        <div className="py-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Brand section */}
+            <div className="lg:col-span-1">
+              <div className="flex items-center space-x-3 mb-4">
+                <img 
+                  src="/main-logo.jpg" 
+                  alt="Sports Holics Logo" 
+                  className="h-10 w-auto object-contain"
+                />
+                <div>
+                  <h3 className="text-lg font-bold text-white m-0">Sports Holics</h3>
+                  <p className="text-sm text-neutral-400 m-0">Euroleague Central</p>
+                </div>
+              </div>
+              <p className="text-neutral-400 text-sm leading-relaxed mb-6">
+                Your ultimate destination for Euroleague basketball news, analysis, stats, and insights. 
+                Stay connected with the latest updates from the world's premier basketball competition.
+              </p>
+              <div className="flex space-x-4">
+                {SOCIAL_LINKS.map((link) => {
+                  const Icon = getSocialIcon(link.icon);
+                  return (
                     <a
-                      href="#"
-                      className="text-gray-300 hover:text-white transition-colors duration-200"
+                      key={link.platform}
+                      href={link.url}
+                      className="w-10 h-10 bg-neutral-800 rounded-lg flex items-center justify-center text-neutral-400 hover:text-white hover:bg-primary-600 transition-all duration-200"
+                      aria-label={link.platform}
                     >
-                      {link}
+                      <Icon size={18} />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                {NAVIGATION_ITEMS.slice(0, 5).map((item) => (
+                  <li key={item.href}>
+                    <a
+                      href={item.href}
+                      className="text-neutral-400 hover:text-white transition-colors text-sm"
+                    >
+                      {item.label}
                     </a>
                   </li>
                 ))}
               </ul>
             </div>
-          ))}
-        </div>
 
-        {/* Newsletter Signup */}
-        <div className="mt-12 pt-8 border-t border-secondary-700">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Euroleague */}
             <div>
-              <h3 className="text-xl font-semibold mb-2">Stay Updated</h3>
-              <p className="text-gray-300 mb-4">
-                Get the latest sports news, scores, and analysis delivered to your inbox.
+              <h4 className="text-lg font-semibold text-white mb-4">Euroleague</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a href="/euroleague/standings" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                    Standings
+                  </a>
+                </li>
+                <li>
+                  <a href="/euroleague/schedule" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                    Schedule
+                  </a>
+                </li>
+                <li>
+                  <a href="/euroleague/stats" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                    Statistics
+                  </a>
+                </li>
+                <li>
+                  <a href="/euroleague/teams" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                    Teams
+                  </a>
+                </li>
+                <li>
+                  <a href="/euroleague/players" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                    Players
+                  </a>
+                </li>
+                <li>
+                  <a href="/euroleague/mvp" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                    MVP Race
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Newsletter */}
+            <div>
+              <h4 className="text-lg font-semibold text-white mb-4">Stay Updated</h4>
+              <p className="text-neutral-400 text-sm mb-4">
+                Get the latest Euroleague news and analysis delivered to your inbox.
               </p>
-              <div className="flex max-w-md">
+              <form className="space-y-3">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 bg-secondary-800 border border-secondary-600 rounded-l-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-white placeholder-gray-400"
+                  className="w-full px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                 />
-                <button className="px-6 py-2 bg-primary-600 hover:bg-primary-700 rounded-r-lg font-medium transition-colors">
+                <button
+                  type="submit"
+                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                >
                   Subscribe
                 </button>
-              </div>
-            </div>
-
-            {/* Social Media Links */}
-            <div className="lg:text-right">
-              <h3 className="text-xl font-semibold mb-4">Follow Us</h3>
-              <div className="flex space-x-4 lg:justify-end">
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.href}
-                    className="p-2 bg-secondary-800 hover:bg-primary-600 rounded-lg transition-colors duration-200"
-                    aria-label={social.label}
-                  >
-                    <social.icon size={20} />
-                  </a>
-                ))}
-              </div>
+              </form>
+              <p className="text-xs text-neutral-500 mt-2">
+                No spam, unsubscribe at any time.
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Footer */}
-        <div className="mt-8 pt-8 border-t border-secondary-700">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center mb-4 md:mb-0">
-              <h2 className="text-xl font-bold text-primary-400 mr-4">SPORTS HOLICS</h2>
-              <span className="text-gray-400">
-                © {currentYear} All rights reserved
-              </span>
+        {/* Bottom bar */}
+        <div className="border-t border-neutral-800 py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
+              <p className="text-neutral-400 text-sm">
+                © {currentYear} Sports Holics. All rights reserved.
+              </p>
+              <div className="flex space-x-4">
+                <a href="/privacy" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                  Privacy Policy
+                </a>
+                <a href="/terms" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                  Terms of Service
+                </a>
+                <a href="/contact" className="text-neutral-400 hover:text-white transition-colors text-sm">
+                  Contact
+                </a>
+              </div>
             </div>
-            <div className="text-gray-400 text-sm">
-              Powered by passion for sports
+            <div className="text-neutral-400 text-sm">
+              Made with ❤️ for basketball fans
             </div>
           </div>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}
