@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-100 hover:bg-secondary-200 text-secondary-800 px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow;
+  }
+  
+  .article-card {
+    @apply card cursor-pointer group;
+  }
+  
+  .article-card img {
+    @apply w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300;
+  }
+  
+  .nav-link {
+    @apply text-secondary-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors;
+  }
+  
+  .nav-link.active {
+    @apply text-primary-600 bg-primary-50;
+  }
+}
