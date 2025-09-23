@@ -16,8 +16,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white relative min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+      <section className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white relative min-h-screen flex items-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url(/images.png)'}}>
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="container py-8 relative z-10 w-full">
           <div className="max-w-5xl mx-auto text-center">
             <div className="mb-6">
@@ -47,7 +47,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats Cards */}
-      <section className="container -mt-6 relative z-10 mb-12">
+      <section className="container -mt-20 relative z-10 mb-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-white text-center shadow-lg hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-center w-12 h-12 bg-secondary-100 rounded-lg mx-auto mb-3">
