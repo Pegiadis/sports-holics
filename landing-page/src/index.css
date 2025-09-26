@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Brand logo styling */
+.brand-logo {
+  height: 48px;
+  width: auto;
+  transition: all 150ms ease;
+  filter: drop-shadow(0 2px 4px rgba(15, 41, 66, 0.1));
+}
+.brand-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 8px rgba(15, 41, 66, 0.2));
+}
+
 /* Brand script-like styling mimicking the reference */
 .brand-script {
   font-family: ui-rounded, "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
@@ -8,37 +20,64 @@
   letter-spacing: 0.2px;
 }
 
-/* Navbar link appearance like the image */
+/* Navbar link appearance with new palette */
 .nav-link {
-  color: #e5e7eb;
+  color: var(--brand-white);
   font-size: 14px;
   font-weight: 600;
-  transition: color 150ms ease;
+  transition: all 150ms ease;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  position: relative;
 }
 .nav-link:hover {
-  color: #ff6a1a;
+  color: var(--brand-red);
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 2px;
+  left: 50%;
+  background-color: var(--brand-red);
+  transition: all 150ms ease;
+  transform: translateX(-50%);
+}
+.nav-link:hover::after {
+  width: 80%;
 }
 
 .subscribe-btn {
-  background-color: var(--brand-accent, #ff6a1a);
-  color: #fff;
+  background-color: var(--brand-red);
+  color: var(--brand-white);
   font-weight: 700;
   font-size: 14px;
   padding: 10px 16px;
   border-radius: 10px;
-  transition: background-color 150ms ease;
+  border: 1px solid var(--brand-light-grey);
+  transition: all 150ms ease;
+  box-shadow: 0 2px 4px rgba(15, 41, 66, 0.1);
 }
 .subscribe-btn:hover {
-  background-color: var(--brand-accent-hover, #ff7f3b);
+  background-color: var(--brand-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(15, 41, 66, 0.2);
 }
 
-/* Theme variables with fallbacks */
+/* Theme variables with new Sports Holics palette */
 :root {
-  --brand-bg: #0f172a;
-  --brand-border: #1f2937;
-  --brand-accent: #ff6a1a;
-  --brand-accent-hover: #ff7f3b;
-  --brand-text-on-bg: #e5e7eb;
+  --brand-red: #d81921;
+  --brand-white: #ffffff;
+  --brand-dark-blue: #0f2942;
+  --brand-light-grey: #e8e9e4;
+  --brand-off-white: #f6f1eb;
+  --brand-accent: #d81921;
+  --brand-accent-hover: #b01419;
+  --brand-text-on-bg: #ffffff;
 }
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
