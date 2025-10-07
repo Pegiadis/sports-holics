@@ -1,211 +1,219 @@
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 
+const sports = [
+  {
+    id: 1,
+    icon: '⚽',
+    title: 'Football',
+    description: 'Follow the world\'s most popular sport with coverage of Premier League, La Liga, Serie A, Bundesliga, and international tournaments. Analysis, match reviews, and player insights.'
+  },
+  {
+    id: 2,
+    icon: '🏀',
+    title: 'Basketball & Euroleague',
+    description: 'Comprehensive coverage of NBA action and European basketball excellence. Game highlights, Euroleague standings, playoff battles, and star player performances from both sides of the Atlantic.'
+  },
+  {
+    id: 3,
+    icon: '🏎️',
+    title: 'Formula 1',
+    description: 'Experience the speed and precision of motorsport\'s pinnacle. Race weekend previews, qualifying analysis, championship standings, technical insights, and driver interviews from all the circuits around the globe.'
+  }
+]
+
 function App() {
+  const [isPaused, setIsPaused] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current
+    if (!scrollContainer) return
+
+    let animationId: number
+    let scrollPosition = 0
+    const scrollSpeed = 0.3 // pixels per frame
+
+    const animate = () => {
+      if (!isPaused && scrollContainer) {
+        scrollPosition += scrollSpeed
+        
+        // Reset position for infinite loop
+        const maxScroll = scrollContainer.scrollWidth / 2
+        if (scrollPosition >= maxScroll) {
+          scrollPosition = 0
+        }
+        
+        scrollContainer.style.transform = `translateX(-${scrollPosition}px)`
+      }
+      animationId = requestAnimationFrame(animate)
+    }
+
+    animationId = requestAnimationFrame(animate)
+
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId)
+      }
+    }
+  }, [isPaused])
 
   return (
-    <div className="min-h-screen bg-[#0f2942]">
-      {/* Navigation Bar */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-[#0f2942]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0f2942]/90 border-b border-[#e8e9e4]/20">
-        <div className="mx-auto max-w-[1600px] h-[72px] px-6 lg:px-8 xl:px-12 flex items-center justify-between">
-          {/* Left: Brand Logo */}
-          <div className="flex items-center">
-            <img 
-              src="/538544969_4162373800694713_171132891172216337_n.jpg" 
-              alt="Sportsholics Logo" 
-              className="brand-logo"
-            />
+    <div className="min-h-screen w-full relative overflow-hidden bg-[#0f2942]">
+      {/* Animated Background Gradients */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0f2942] via-[#1a365d] to-[#0f2942]"></div>
+      
+      {/* Animated Gradient Orbs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-[#d81921] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#ff4444] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-[#1a365d] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      
+      {/* Geometric Shapes */}
+      <div className="absolute top-20 left-10 w-20 h-20 border-2 border-[#d81921]/30 rounded-lg rotate-12 animate-float"></div>
+      <div className="absolute top-40 right-20 w-16 h-16 border-2 border-[#ff4444]/30 rounded-full animate-float animation-delay-1000"></div>
+      <div className="absolute bottom-40 left-1/4 w-12 h-12 border-2 border-[#e8e9e4]/20 rotate-45 animate-float animation-delay-2000"></div>
+      <div className="absolute bottom-20 right-1/4 w-24 h-24 border-2 border-[#d81921]/20 rounded-lg rotate-45 animate-float animation-delay-3000"></div>
+      
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
+      
+      {/* Main Content */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-6xl w-full text-center">
+          {/* Logo with Glow Effect */}
+          <div className="mb-12 flex justify-center">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#d81921] blur-2xl opacity-30 rounded-full"></div>
+              <img 
+                src="/538544969_4162373800694713_171132891172216337_n.jpg" 
+                alt="Sportsholics Logo" 
+                className="relative h-32 md:h-40 w-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-300"
+              />
+            </div>
           </div>
 
-          {/* Center: Nav links */}
-          <div className="hidden md:flex items-center gap-7">
-            <a className="nav-link" href="#">Football</a>
-            <a className="nav-link" href="#">Basketball</a>
-            <a className="nav-link" href="#">Baseball</a>
-            <a className="nav-link" href="#">Soccer</a>
-            <a className="nav-link" href="#">Live Scores</a>
-          </div>
-
-          {/* Right: Search + CTA */}
-          <div className="flex items-center gap-4">
-            <button aria-label="Search" className="text-[#ffffff] hover:text-[#d81921] transition-colors p-2 rounded-lg hover:bg-[#ffffff]/10">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <circle cx="11" cy="11" r="7" strokeWidth="2"></circle>
-                <path d="M20 20l-3.5-3.5" strokeWidth="2" strokeLinecap="round"></path>
-              </svg>
-            </button>
-            <button className="subscribe-btn">Subscribe</button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-16 overflow-hidden">
-        {/* Background with overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f2942] via-[#1a365d] to-[#0f2942]"></div>
-        <div className="absolute inset-0 bg-black/20"></div>
-        
-        {/* Content */}
-        <div className="relative z-10 mx-auto max-w-[1600px] px-6 lg:px-8 xl:px-12 text-center">
-          <div className="mb-8">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              <span className="text-[#ffffff]">The Ultimate Source for</span>
+          {/* Main Content */}
+          <div className="space-y-8">
+            <h1 className="text-6xl md:text-8xl font-bold leading-tight">
+              <span className="text-[#ffffff] drop-shadow-lg">We're Building</span>
               <br />
-              <span className="bg-gradient-to-r from-[#d81921] to-[#ff4444] bg-clip-text text-transparent">
-                Sports Fanatics
+              <span className="bg-gradient-to-r from-[#d81921] via-[#ff4444] to-[#d81921] bg-clip-text text-transparent animate-gradient-x">
+                Something Great
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-[#e8e9e4] max-w-3xl mx-auto leading-relaxed">
-              Breaking news, live scores, and in-depth analysis for every sport you love
+
+            <p className="text-2xl md:text-3xl text-[#e8e9e4] max-w-3xl mx-auto leading-relaxed font-light">
+              Our sports blog is under construction. We're working hard to bring you the latest news, 
+              scores, and insights from the world of sports.
             </p>
-          </div>
 
-          {/* Search Bar */}
-          <div className="mb-16 max-w-3xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search sports news..."
-                className="w-full px-6 py-4 pr-14 text-lg bg-[#ffffff]/10 backdrop-blur border border-[#e8e9e4]/20 rounded-2xl text-[#ffffff] placeholder-[#e8e9e4]/70 focus:outline-none focus:ring-2 focus:ring-[#d81921] focus:border-transparent transition-all duration-200"
-              />
-              <button 
-                aria-label="Search sports news"
-                title="Search sports news"
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[#d81921] text-[#ffffff] rounded-xl hover:bg-[#b01419] transition-colors duration-200"
-              >
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <circle cx="11" cy="11" r="7" strokeWidth="2"></circle>
-                  <path d="M20 20l-3.5-3.5" strokeWidth="2" strokeLinecap="round"></path>
-                </svg>
-              </button>
+            {/* Sports Icons Grid */}
+            <div className="py-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {/* Football */}
+              <div className="bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-2xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 hover:scale-105 hover:border-[#d81921]/50">
+                <div className="text-4xl mb-2">⚽</div>
+                <p className="text-[#e8e9e4] font-semibold">Football</p>
+              </div>
+              
+              {/* Basketball */}
+              <div className="bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-2xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 hover:scale-105 hover:border-[#d81921]/50">
+                <div className="text-4xl mb-2">🏀</div>
+                <p className="text-[#e8e9e4] font-semibold">Basketball</p>
+              </div>
+              
+              {/* Formula 1 */}
+              <div className="bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-2xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 hover:scale-105 hover:border-[#d81921]/50">
+                <div className="text-4xl mb-2">🏎️</div>
+                <p className="text-[#e8e9e4] font-semibold">Formula 1</p>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* News Carousel */}
-      <section className="relative bg-[#0f2942]/50 backdrop-blur border-t border-[#e8e9e4]/10">
-        <div className="mx-auto max-w-[1600px] px-6 lg:px-8 xl:px-12 py-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-1 h-8 bg-[#d81921] rounded-full"></div>
-            <h2 className="text-2xl font-bold text-[#ffffff]">Latest News</h2>
-          </div>
-          
-          <div className="carousel-container overflow-hidden relative">
-            <div className="carousel-track flex gap-6 animate-scroll">
-              {/* News Item 1 */}
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#d81921] rounded-full animate-pulse"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">BREAKING</span>
+            {/* Sports Details Carousel */}
+            <div className="mt-12 max-w-6xl mx-auto">
+              <div className="bg-[#ffffff]/5 backdrop-blur-lg border border-[#e8e9e4]/10 rounded-3xl p-8 md:p-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-[#ffffff] mb-8 text-center">
+                  <span className="bg-gradient-to-r from-[#d81921] to-[#ff4444] bg-clip-text text-transparent">
+                    What We'll Cover
+                  </span>
+                </h2>
+                
+                {/* Continuous Scrolling Carousel */}
+                <div 
+                  className="relative overflow-hidden"
+                  onMouseEnter={() => setIsPaused(true)}
+                  onMouseLeave={() => setIsPaused(false)}
+                >
+                  {/* Gradient Overlays for fade effect */}
+                  <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0f2942]/80 to-transparent z-10 pointer-events-none"></div>
+                  <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0f2942]/80 to-transparent z-10 pointer-events-none"></div>
+                  
+                  {/* Scrolling Container */}
+                  <div className="overflow-hidden py-4">
+                    <div 
+                      ref={scrollRef}
+                      className="flex gap-8 will-change-transform"
+                    >
+                      {/* Duplicate the array twice for infinite loop effect */}
+                      {[...sports, ...sports].map((sport, index) => (
+                        <div 
+                          key={`${sport.id}-${index}`}
+                          className="flex-shrink-0 w-[400px]"
+                        >
+                          <div className="bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-2xl p-8 h-full hover:bg-[#ffffff]/10 transition-all duration-300 hover:scale-105 hover:border-[#d81921]/50">
+                            <div className="flex flex-col items-center text-center space-y-4">
+                              <span className="text-6xl">{sport.icon}</span>
+                              <h3 className="text-2xl font-bold text-[#e8e9e4]">
+                                {sport.title}
+                              </h3>
+                              <p className="text-[#e8e9e4]/80 leading-relaxed">
+                                {sport.description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Pause/Play Indicator */}
+                  <div className="flex justify-center mt-6">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-[#ffffff]/10 rounded-full border border-[#e8e9e4]/20">
+                      <div className={`w-2 h-2 rounded-full ${isPaused ? 'bg-yellow-400' : 'bg-green-400'} animate-pulse`}></div>
+                      <span className="text-[#e8e9e4]/70 text-sm">
+                        {isPaused ? 'Paused - Hover to pause' : 'Auto-scrolling - Hover to pause'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  Manchester United signs new striker for record fee
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  The Red Devils complete their biggest transfer of the summer...
-                </p>
               </div>
+            </div>
 
-              {/* News Item 2 */}
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#ff8c00] rounded-full"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">NFL</span>
-                </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  NFL Draft: Top prospects announced for upcoming season
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  College stars prepare for their professional debut...
-                </p>
-              </div>
+            {/* Coming Soon Badge with Animation */}
+            <div className="inline-flex items-center gap-3 px-8 py-4 bg-[#ffffff]/10 backdrop-blur-lg border border-[#e8e9e4]/20 rounded-full shadow-2xl hover:scale-105 transition-transform duration-300">
+              <div className="w-3 h-3 bg-[#d81921] rounded-full animate-pulse shadow-lg shadow-[#d81921]/50"></div>
+              <span className="text-[#e8e9e4] font-bold text-lg">Coming Soon</span>
+            </div>
 
-              {/* News Item 3 */}
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#ff6600] rounded-full"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">NBA</span>
+            {/* Footer */}
+            <div className="pt-12">
+              <p className="text-[#e8e9e4]/70 text-base">
+                Stay tuned for updates • Follow us on social media
+              </p>
+              <div className="mt-6 flex justify-center gap-4">
+                <div className="w-10 h-10 bg-[#ffffff]/10 rounded-full flex items-center justify-center hover:bg-[#d81921]/30 transition-all cursor-pointer border border-[#e8e9e4]/20">
+                  <span className="text-[#e8e9e4]">📱</span>
                 </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  NBA Finals Game 7 set for Sunday night showdown
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  Championship hopes hang in the balance as teams prepare...
-                </p>
-              </div>
-
-              {/* News Item 4 */}
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#00ff88] rounded-full"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">TENNIS</span>
+                <div className="w-10 h-10 bg-[#ffffff]/10 rounded-full flex items-center justify-center hover:bg-[#d81921]/30 transition-all cursor-pointer border border-[#e8e9e4]/20">
+                  <span className="text-[#e8e9e4]">🐦</span>
                 </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  Wimbledon championship reaches thrilling conclusion
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  Historic match captivates audiences worldwide...
-                </p>
-              </div>
-
-              {/* Duplicate items for seamless loop */}
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#d81921] rounded-full animate-pulse"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">BREAKING</span>
+                <div className="w-10 h-10 bg-[#ffffff]/10 rounded-full flex items-center justify-center hover:bg-[#d81921]/30 transition-all cursor-pointer border border-[#e8e9e4]/20">
+                  <span className="text-[#e8e9e4]">📘</span>
                 </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  Manchester United signs new striker for record fee
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  The Red Devils complete their biggest transfer of the summer...
-                </p>
-              </div>
-
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#ff8c00] rounded-full"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">NFL</span>
-                </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  NFL Draft: Top prospects announced for upcoming season
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  College stars prepare for their professional debut...
-                </p>
-              </div>
-
-              {/* News Item 7 */}
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#ff6600] rounded-full"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">NBA</span>
-                </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  NBA Finals Game 7 set for Sunday night showdown
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  Championship hopes hang in the balance as teams prepare...
-                </p>
-              </div>
-
-              {/* News Item 8 */}
-              <div className="carousel-item flex-shrink-0 w-80 bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#00ff88] rounded-full"></div>
-                  <span className="text-[#e8e9e4] text-sm font-medium">TENNIS</span>
-                </div>
-                <h3 className="text-[#ffffff] font-semibold mb-2 group-hover:text-[#d81921] transition-colors">
-                  Wimbledon championship reaches thrilling conclusion
-                </h3>
-                <p className="text-[#e8e9e4]/80 text-sm">
-                  Historic match captivates audiences worldwide...
-                </p>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   )
 }
