@@ -5,20 +5,20 @@ const sports = [
   {
     id: 1,
     icon: '⚽',
-    title: 'Football',
-    description: 'Follow the world\'s most popular sport with coverage of Premier League, La Liga, Serie A, Bundesliga, and international tournaments. Analysis, match reviews, and player insights.'
+    title: 'Ποδόσφαιρο',
+    description: 'Ακολουθήστε το πιο δημοφιλές άθλημα στον κόσμο με κάλυψη της Premier League, La Liga, Serie A, Bundesliga και διεθνών τουρνουά. Αναλύσεις, κριτικές αγώνων και πληροφορίες για παίκτες.'
   },
   {
     id: 2,
     icon: '🏀',
-    title: 'Basketball & Euroleague',
-    description: 'Comprehensive coverage of NBA action and European basketball excellence. Game highlights, Euroleague standings, playoff battles, and star player performances from both sides of the Atlantic.'
+    title: 'Μπάσκετ & Ευρωλίγκα',
+    description: 'Πλήρης κάλυψη του NBA και της Ευρωπαϊκής αριστείας στο μπάσκετ. Στιγμιότυπα αγώνων, βαθμολογίες Ευρωλίγκας, μάχες playoffs και εμφανίσεις αστέρων από τις δύο πλευρές του Ατλαντικού.'
   },
   {
     id: 3,
     icon: '🏎️',
     title: 'Formula 1',
-    description: 'Experience the speed and precision of motorsport\'s pinnacle. Race weekend previews, qualifying analysis, championship standings, technical insights, and driver interviews from all the circuits around the globe.'
+    description: 'Ζήστε την ταχύτητα και την ακρίβεια της κορυφής του μηχανοκίνητου αθλητισμού. Προεπισκοπήσεις αγωνιστικών Σαββατοκύριακων, αναλύσεις κατατακτηρίων, βαθμολογίες πρωταθλήματος, τεχνικές πληροφορίες και συνεντεύξεις οδηγών από όλες τις πίστες του κόσμου.'
   }
 ]
 
@@ -68,11 +68,14 @@ function App() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#ff4444] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-[#1a365d] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
       
-      {/* Geometric Shapes */}
-      <div className="absolute top-20 left-10 w-20 h-20 border-2 border-[#d81921]/30 rounded-lg rotate-12 animate-float"></div>
-      <div className="absolute top-40 right-20 w-16 h-16 border-2 border-[#ff4444]/30 rounded-full animate-float animation-delay-1000"></div>
-      <div className="absolute bottom-40 left-1/4 w-12 h-12 border-2 border-[#e8e9e4]/20 rotate-45 animate-float animation-delay-2000"></div>
-      <div className="absolute bottom-20 right-1/4 w-24 h-24 border-2 border-[#d81921]/20 rounded-lg rotate-45 animate-float animation-delay-3000"></div>
+      {/* Athletics Icons */}
+      <div className="absolute top-20 left-10 text-4xl opacity-20 animate-float">🏃</div>
+      <div className="absolute top-40 right-20 text-5xl opacity-25 animate-float animation-delay-1000">🏆</div>
+      <div className="absolute bottom-40 left-1/4 text-3xl opacity-20 animate-float animation-delay-2000">🥇</div>
+      <div className="absolute bottom-20 right-1/4 text-6xl opacity-15 animate-float animation-delay-3000">👟</div>
+      <div className="absolute top-1/2 left-1/3 text-4xl opacity-20 animate-float animation-delay-1500">⚡</div>
+      <div className="absolute top-1/3 right-1/3 text-3xl opacity-25 animate-float animation-delay-2500">🎯</div>
+      <div className="absolute bottom-1/3 left-1/2 text-5xl opacity-15 animate-float animation-delay-3500">⏱️</div>
       
       {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
@@ -81,7 +84,7 @@ function App() {
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4">
         <div className="max-w-6xl w-full text-center">
           {/* Logo with Glow Effect */}
-          <div className="mb-12 flex justify-center">
+          <div className="mt-20 mb-12 flex justify-center">
             <div className="relative">
               <div className="absolute inset-0 bg-[#d81921] blur-2xl opacity-30 rounded-full"></div>
               <img 
@@ -95,16 +98,16 @@ function App() {
           {/* Main Content */}
           <div className="space-y-8">
             <h1 className="text-6xl md:text-8xl font-bold leading-tight">
-              <span className="text-[#ffffff] drop-shadow-lg">We're Building</span>
+              <span className="text-[#ffffff] drop-shadow-lg">Χτίζουμε</span>
               <br />
               <span className="bg-gradient-to-r from-[#d81921] via-[#ff4444] to-[#d81921] bg-clip-text text-transparent animate-gradient-x">
-                Something Great
+                Κάτι Υπέροχο
               </span>
             </h1>
 
             <p className="text-2xl md:text-3xl text-[#e8e9e4] max-w-3xl mx-auto leading-relaxed font-light">
-              Our sports blog is under construction. We're working hard to bring you the latest news, 
-              scores, and insights from the world of sports.
+              Το αθλητικό μας blog είναι υπό κατασκευή. Εργαζόμαστε σκληρά για να σας φέρουμε τα τελευταία νέα, 
+              σκορ και αναλύσεις από τον κόσμο του αθλητισμού.
             </p>
 
             {/* Sports Icons Grid */}
@@ -112,13 +115,13 @@ function App() {
               {/* Football */}
               <div className="bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-2xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 hover:scale-105 hover:border-[#d81921]/50">
                 <div className="text-4xl mb-2">⚽</div>
-                <p className="text-[#e8e9e4] font-semibold">Football</p>
+                <p className="text-[#e8e9e4] font-semibold">Ποδόσφαιρο</p>
               </div>
               
               {/* Basketball */}
               <div className="bg-[#ffffff]/5 backdrop-blur border border-[#e8e9e4]/10 rounded-2xl p-6 hover:bg-[#ffffff]/10 transition-all duration-300 hover:scale-105 hover:border-[#d81921]/50">
                 <div className="text-4xl mb-2">🏀</div>
-                <p className="text-[#e8e9e4] font-semibold">Basketball</p>
+                <p className="text-[#e8e9e4] font-semibold">Μπάσκετ</p>
               </div>
               
               {/* Formula 1 */}
@@ -133,7 +136,7 @@ function App() {
               <div className="bg-[#ffffff]/5 backdrop-blur-lg border border-[#e8e9e4]/10 rounded-3xl p-8 md:p-12">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#ffffff] mb-8 text-center">
                   <span className="bg-gradient-to-r from-[#d81921] to-[#ff4444] bg-clip-text text-transparent">
-                    What We'll Cover
+                    Τι Θα Καλύψουμε
                   </span>
                 </h2>
                 
@@ -174,16 +177,6 @@ function App() {
                       ))}
                     </div>
                   </div>
-
-                  {/* Pause/Play Indicator */}
-                  <div className="flex justify-center mt-6">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-[#ffffff]/10 rounded-full border border-[#e8e9e4]/20">
-                      <div className={`w-2 h-2 rounded-full ${isPaused ? 'bg-yellow-400' : 'bg-green-400'} animate-pulse`}></div>
-                      <span className="text-[#e8e9e4]/70 text-sm">
-                        {isPaused ? 'Paused - Hover to pause' : 'Auto-scrolling - Hover to pause'}
-                      </span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -191,13 +184,13 @@ function App() {
             {/* Coming Soon Badge with Animation */}
             <div className="inline-flex items-center gap-3 px-8 py-4 bg-[#ffffff]/10 backdrop-blur-lg border border-[#e8e9e4]/20 rounded-full shadow-2xl hover:scale-105 transition-transform duration-300">
               <div className="w-3 h-3 bg-[#d81921] rounded-full animate-pulse shadow-lg shadow-[#d81921]/50"></div>
-              <span className="text-[#e8e9e4] font-bold text-lg">Coming Soon</span>
+              <span className="text-[#e8e9e4] font-bold text-lg">Έρχεται Σύντομα</span>
             </div>
 
             {/* Footer */}
             <div className="pt-12">
               <p className="text-[#e8e9e4]/70 text-base">
-                Stay tuned for updates • Follow us on social media
+                Μείνετε συντονισμένοι για ενημερώσεις • Ακολουθήστε μας στα social media
               </p>
               <div className="mt-6 flex justify-center gap-4">
                 <div className="w-10 h-10 bg-[#ffffff]/10 rounded-full flex items-center justify-center hover:bg-[#d81921]/30 transition-all cursor-pointer border border-[#e8e9e4]/20">
