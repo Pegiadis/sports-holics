@@ -63,6 +63,15 @@ function App() {
       {/* Animated Background Gradients */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0f2942] via-[#1a365d] to-[#0f2942]"></div>
       
+      {/* Background Image with Transparency */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
+        style={{ 
+          backgroundImage: 'url(/538544969_4162373800694713_171132891172216337_n.jpg)',
+          backgroundBlendMode: 'overlay'
+        }}
+      ></div>
+      
       {/* Animated Gradient Orbs */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-[#d81921] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#ff4444] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
@@ -88,7 +97,7 @@ function App() {
             <div className="relative">
               <div className="absolute inset-0 bg-[#d81921] blur-2xl opacity-30 rounded-full"></div>
               <img 
-                src="/538544969_4162373800694713_171132891172216337_n.jpg" 
+                src="/no_back.png" 
                 alt="Sportsholics Logo" 
                 className="relative h-32 md:h-40 w-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-300"
               />
