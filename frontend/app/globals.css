@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary: #ef4444;
+  --color-secondary: #1e40af;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-button: 8px;
+}
+
+body {
+  background: #f9fafb;
+  color: #171717;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Breaking news ticker animation */
+@keyframes scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.breaking-news {
+  animation: scroll 30s linear infinite;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo text styling */
+.logo-text {
+  font-family: 'Arial Black', sans-serif;
+  font-weight: 900;
+  text-shadow: 2px 2px 0px #1e40af, 4px 4px 8px rgba(0,0,0,0.3);
+  letter-spacing: -0.02em;
+}
