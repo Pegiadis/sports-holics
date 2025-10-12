@@ -26,5 +26,5 @@ export interface SocialIcon {
   icon: string;
 }
 
-export type NewsCardSize = "small" | "medium" | "large";
+export type NewsCardSize = "xs" | "small" | "medium" | "large";
 

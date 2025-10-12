@@ -25,6 +25,7 @@ export default function Footer() {
                 width={120}
                 height={32}
                 className="h-full w-auto object-contain"
+                style={{ height: "auto" }}
               />
             </div>
             <p className="text-gray-400 text-sm">

@@ -12,16 +12,6 @@ export const mainNews: NewsArticle[] = [
     imageUrl: "/216-scaled-1.jpg",
   },
   {
-    category: "FORMULA 1",
-    categoryColor: "bg-blue-100 text-blue-800",
-    title: "Verstappen Dominates Monaco Qualifying",
-    description:
-      "Red Bull driver secures pole position with a stunning lap time, setting up for another potential victory...",
-    timeAgo: "4 hours ago",
-    author: "Sarah Wilson",
-    imageUrl: "/216-scaled-1.jpg",
-  },
-  {
     category: "FOOTBALL",
     categoryColor: "bg-green-100 text-green-800",
     title: "Premier League Title Race Intensifies",
@@ -29,6 +19,16 @@ export const mainNews: NewsArticle[] = [
       "Arsenal and Manchester City battle for the top spot with only three matches remaining in the season...",
     timeAgo: "6 hours ago",
     author: "David Martinez",
+    imageUrl: "/216-scaled-1.jpg",
+  },
+  {
+    category: "FORMULA 1",
+    categoryColor: "bg-blue-100 text-blue-800",
+    title: "Verstappen Dominates Monaco Qualifying",
+    description:
+      "Red Bull driver secures pole position with a stunning lap time, setting up for another potential victory...",
+    timeAgo: "4 hours ago",
+    author: "Sarah Wilson",
     imageUrl: "/216-scaled-1.jpg",
   },
   {

@@ -33,9 +33,14 @@ export default function Home() {
                 <NewsCard key={index} {...news} />
               ))}
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              {mainNews.slice(0, 3).map((news, index) => (
+                <NewsCard key={index} {...news} size="xs" />
+              ))}
+            </div>
 
             {/* Latest Football News */}
-            <section className="mb-8">
+            <section className="mb-2">
               <h2 className="text-2xl font-bold mb-4 text-gray-800">
                 Latest Football News
               </h2>

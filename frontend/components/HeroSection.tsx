@@ -1,13 +1,20 @@
+import Image from "next/image";
+
 export default function HeroSection() {
   return (
-    <section
-      className="relative h-96 bg-cover bg-center"
-      style={{
-        backgroundImage: `url('/216-scaled-1.jpg')`,
-      }}
-    >
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-      <div className="relative max-w-7xl mx-auto px-4 h-full flex items-center">
+    <section className="relative h-96 overflow-hidden">
+      {/* Background Image */}
+      <Image
+        src="/216-scaled-1.jpg"
+        alt="Sports Stadium Background"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
+      />
+      
+      {/* Content on top of image */}
+      <div className="relative max-w-7xl mx-auto px-4 h-full flex items-center z-10">
         <div className="text-white max-w-2xl">
           <span className="bg-primary px-3 py-1 rounded text-sm font-medium">
             FOOTBALL
