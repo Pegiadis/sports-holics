@@ -17,4 +17,14 @@ export default ({ env }) => ({
     nps: env.bool('FLAG_NPS', true),
     promoteEE: env.bool('FLAG_PROMOTE_EE', true),
   },
+  // Custom admin panel configuration
+  url: env('ADMIN_URL', '/admin'),
+  serveAdminPanel: env.bool('SERVE_ADMIN', true),
+  forgotPassword: {
+    from: env('EMAIL_FROM', 'noreply@sportsholics.com'),
+    replyTo: env('EMAIL_REPLY_TO', 'support@sportsholics.com'),
+  },
+  // Custom branding
+  title: 'Sports Holics CMS',
+  // Favicon will be served from public/uploads/favicon.png if you add one
 });
