@@ -1,3 +1,6 @@
+import { TrendingNewsItem, LiveScoreItem } from "@/types";
+
+
 // Category color mappings
 export const CATEGORY_COLORS: Record<string, string> = {
   HOT: "bg-red-100 text-red-800",
@@ -36,6 +39,37 @@ export const BREAKING_NEWS = [
 // Carousel settings
 export const CAROUSEL_CONFIG = {
   autoRotateInterval: 5000, // 5 seconds
-  totalSlides: 3,
+  totalSlides: 2,
 } as const;
 
+
+
+// Sidebar
+export const trendingNews: TrendingNewsItem[] = [
+  { rank: 1, title: "Champions League Final Tickets Sold Out", timeAgo: "1 hour ago" },
+  { rank: 2, title: "NBA Draft Lottery Results", timeAgo: "3 hours ago" },
+  { rank: 3, title: "F1 Driver Contract Extension", timeAgo: "5 hours ago" },
+  { rank: 4, title: "F1 Driver Contract Extension", timeAgo: "5 hours ago" }
+];
+
+// Sidebar
+export const liveScores: LiveScoreItem[] = [
+  {
+    match: "Manchester United vs Liverpool",
+    league: "Premier League",
+    score: "3-1",
+    isLive: false,
+  },
+  {
+    match: "Lakers vs Warriors",
+    league: "NBA",
+    score: "108-95",
+    isLive: false,
+  },
+  {
+    match: "Red Bull vs Ferrari",
+    league: "F1 Practice",
+    score: "LIVE",
+    isLive: true,
+  },
+];

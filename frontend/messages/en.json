@@ -1,0 +1,177 @@
+{
+  "metadata": {
+    "title": "Sports Holics - Latest Sports News",
+    "description": "Your ultimate destination for sports news, scores, and analysis"
+  },
+  "header": {
+    "home": "Home",
+    "news": "News",
+    "football": "Football",
+    "basketball": "Basketball",
+    "formula1": "Formula 1",
+    "more": "More"
+  },
+  "breaking": {
+    "title": "BREAKING NEWS"
+  },
+  "hero": {
+    "welcome": "Welcome to Sports Holics",
+    "subtitle": "Your ultimate destination for sports news"
+  },
+  "sections": {
+    "hotNews": "Hot News",
+    "latestFootball": "Latest Football News",
+    "football": "Football",
+    "basketball": "Basketball",
+    "formula1": "Formula 1",
+    "popular": "Popular Articles",
+    "categories": "Categories",
+    "tags": "Tags"
+  },
+  "footer": {
+    "about": "About Us",
+    "aboutText": "Sports Holics is your ultimate destination for sports news, scores, and analysis. We cover all major sports and athletes around the world.",
+    "quickLinks": "Quick Links",
+    "follow": "Follow Us",
+    "rights": "All rights reserved.",
+    "links": {
+      "home": "Home",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Terms of Service"
+    }
+  },
+  "common": {
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "search": "Search",
+    "by": "by",
+    "comments": "comments"
+  },
+  "heroContent": {
+    "title": "Champions League Final Set for Epic Showdown",
+    "description": "Two football giants prepare for the ultimate battle as Manchester City faces Real Madrid in what promises to be the most thrilling Champions League final in recent history."
+  },
+  "news": {
+    "mainNews": {
+      "0": {
+        "category": "BASKETBALL",
+        "title": "LeBron James Breaks All-Time Scoring Record",
+        "description": "The Lakers superstar makes history with a spectacular performance against the Oklahoma City Thunder...",
+        "author": "Mike Johnson"
+      },
+      "1": {
+        "category": "FOOTBALL",
+        "title": "Premier League Title Race Intensifies",
+        "description": "Arsenal and Manchester City battle for the top spot with only three matches remaining in the season...",
+        "author": "David Martinez"
+      },
+      "2": {
+        "category": "FORMULA 1",
+        "title": "Verstappen Dominates Monaco Qualifying",
+        "description": "Red Bull driver secures pole position with a stunning lap time, setting up for another potential victory...",
+        "author": "Sarah Wilson"
+      },
+      "3": {
+        "category": "BASKETBALL",
+        "title": "NBA Playoffs Bracket Finalized",
+        "description": "Eastern and Western Conference matchups set as teams prepare for the most competitive playoffs in years...",
+        "author": "Alex Thompson"
+      }
+    },
+    "footballNews": {
+      "0": {
+        "category": "PREMIER LEAGUE",
+        "title": "City vs Arsenal Title Decider",
+        "description": "The season finale promises to be the most dramatic Premier League finish in decades...",
+        "author": "Tom Anderson"
+      },
+      "1": {
+        "category": "CHAMPIONS LEAGUE",
+        "title": "Semi-Final Draw Results",
+        "description": "European giants learn their fate as the path to the final becomes clear...",
+        "author": "Maria Santos"
+      },
+      "2": {
+        "category": "WORLD CUP",
+        "title": "Qualification Drama Continues",
+        "description": "Several nations battle for the final spots in next year's tournament...",
+        "author": "Roberto Silva"
+      }
+    },
+    "basketballNews": {
+      "0": {
+        "category": "NBA FINALS",
+        "title": "Game 7 Set for Historic Finish",
+        "description": "Both teams push to the limit as championship glory hangs in the balance...",
+        "author": "Kevin Williams"
+      },
+      "1": {
+        "category": "NBA DRAFT",
+        "title": "Top Prospects Revealed",
+        "description": "College stars prepare for the next chapter of their basketball careers...",
+        "author": "Ashley Davis"
+      },
+      "2": {
+        "category": "WNBA",
+        "title": "Playoff Race Heats Up",
+        "description": "Several teams fight for the final postseason spots in thrilling finish...",
+        "author": "Jennifer Lee"
+      }
+    },
+    "formulaOneNews": {
+      "0": {
+        "category": "MONACO GP",
+        "title": "Qualifying Lap Record Broken",
+        "description": "Stunning performance on the streets of Monte Carlo sets up exciting race day...",
+        "author": "Pierre Dubois"
+      },
+      "1": {
+        "category": "CHAMPIONSHIP",
+        "title": "Title Fight Goes to Final Race",
+        "description": "Three drivers mathematically still in contention for world championship...",
+        "author": "Marco Rossi"
+      },
+      "2": {
+        "category": "TECH",
+        "title": "New Regulations Announced",
+        "description": "FIA reveals major technical changes for next season's championship...",
+        "author": "Hans Mueller"
+      }
+    },
+    "carouselNews": {
+      "0": {
+        "category": "HOT",
+        "title": "Summer Transfer Window Opens",
+        "description": "Major clubs prepare for biggest signings as the summer transfer window opens...",
+        "author": "Emma Rodriguez"
+      },
+      "1": {
+        "category": "HOT",
+        "title": "NBA MVP Award Ceremony",
+        "description": "Historic moment as youngest player in league history receives the Most Valuable Player award...",
+        "author": "Marcus Johnson"
+      },
+      "2": {
+        "category": "HOT",
+        "title": "F1 Championship Standings Shift",
+        "description": "Unexpected results in Italian Grand Prix completely change the title race dynamics...",
+        "author": "Lucas Peterson"
+      },
+      "3": {
+        "category": "HOT",
+        "title": "Olympic Records Broken",
+        "description": "Three world records fall in spectacular fashion during track and field competitions...",
+        "author": "Sofia Chen"
+      },
+      "4": {
+        "category": "HOT",
+        "title": "Wimbledon Upset Victory",
+        "description": "Unseeded player defeats former world number one in straight sets shock result...",
+        "author": "James Wilson"
+      }
+    }
+  }
+}
+

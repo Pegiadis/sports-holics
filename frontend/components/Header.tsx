@@ -2,8 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from 'next-intl';
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Header() {
+  const t = useTranslations('header');
+
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
@@ -23,35 +27,36 @@ export default function Header() {
                 href="#"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
-                Football
+                {t('football')}
               </Link>
               <Link
                 href="#"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
-                Basketball
+                {t('basketball')}
               </Link>
               <Link
                 href="#"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
-                Formula 1
+                {t('formula1')}
               </Link>
               <Link
                 href="#"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
-                News
+                {t('news')}
               </Link>
               <Link
                 href="#"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
-                More
+                {t('more')}
               </Link>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
             <button className="w-6 h-6 flex items-center justify-center" aria-label="Search">
               <i className="ri-search-line text-gray-600 hover:text-primary cursor-pointer"></i>
             </button>

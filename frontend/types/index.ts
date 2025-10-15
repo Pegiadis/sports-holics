@@ -27,4 +27,3 @@ export interface SocialIcon {
 }
 
 export type NewsCardSize = "xs" | "small" | "medium" | "large";
-
