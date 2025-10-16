@@ -3,12 +3,18 @@
 import { useState, useEffect } from "react";
 import NewsCard from "./NewsCard";
 import { CAROUSEL_CONFIG } from "@/lib/constants";
-import { carouselNews } from "@/lib/data";
+import { NewsArticle } from "@/types";
 
+interface NewsCarouselProps {
+  articles: NewsArticle[];
+}
 
-export default function NewsCarousel() {
+export default function NewsCarousel({ articles }: NewsCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { totalSlides, autoRotateInterval } = CAROUSEL_CONFIG;
+  const { autoRotateInterval } = CAROUSEL_CONFIG;
+  
+  // Calculate total slides based on articles length
+  const totalSlides = Math.ceil(articles.length / 3);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,6 +24,17 @@ export default function NewsCarousel() {
     return () => clearInterval(interval);
   }, [totalSlides, autoRotateInterval]);
 
+  // If no articles, show a message
+  if (!articles || articles.length === 0) {
+    return (
+      <section className="mb-12">
+        <div className="text-center py-12 bg-gray-100 rounded-lg">
+          <p className="text-gray-600">No carousel articles available at the moment.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="mb-12">
       <div className="relative overflow-hidden">
@@ -25,7 +42,7 @@ export default function NewsCarousel() {
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {carouselNews.map((news, index) => (
+          {articles.map((news, index) => (
             <div key={index} className="min-w-full md:min-w-[33.333%] px-2">
               <NewsCard {...news} />
             </div>

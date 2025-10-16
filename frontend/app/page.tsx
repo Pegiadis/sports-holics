@@ -1,5 +1,3 @@
-"use client";
-
 import Header from "@/components/Header";
 import BreakingNews from "@/components/BreakingNews";
 import HeroSection from "@/components/HeroSection";
@@ -9,11 +7,19 @@ import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 import SectionTitle from "@/components/SectionTitle";
-import { mainNews, latestNews, footballNews, basketballNews, formulaOneNews } from "@/lib/data";
+import { mainNews, latestNews, footballNews, basketballNews, formulaOneNews, carouselNews } from "@/lib/data";
+import { fetchArticles } from "@/lib/api";
+import { transformStrapiArticles } from "@/lib/transformers";
 
-// Hardcoded Greek news data
-
-export default function Home() {
+export default async function Home() {
+  // Fetch carousel articles from Strapi (falls back to mock data if unavailable)
+  let carouselArticles = carouselNews; // Default to mock data
+  
+  const response = await fetchArticles({ isCarousel: true, limit: 6 });
+  
+  if (response.data && response.data.length > 0) {
+    carouselArticles = transformStrapiArticles(response.data);
+  }
   return (
     <div className="bg-gray-50">
       <Header />
@@ -23,9 +29,10 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hot News Carousel */}
         <SectionTitle title="Σημαντικά Νέα" icon="/flames-icon.png" />
-        <NewsCarousel />
+        <NewsCarousel articles={carouselArticles} />
 
         {/* Main Content Grid */}
+        <SectionTitle title="Περισσότερα Νέα" icon="/flames-icon.png" />
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
           {/* Main News Section */}
           <div className="lg:col-span-3">
