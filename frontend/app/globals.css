@@ -24,6 +24,22 @@ body {
   animation: scroll 30s linear infinite;
 }
 
+/* Hero section fade-in animation */
+@keyframes fadeIn {
+  0% { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease-out;
+}
+
 /* Card hover effects */
 .card-hover {
   transition: all 0.3s ease;
