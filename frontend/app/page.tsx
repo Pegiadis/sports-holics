@@ -8,7 +8,8 @@ import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
-import { mainNews, footballNews, basketballNews, formulaOneNews } from "@/lib/data";
+import SectionTitle from "@/components/SectionTitle";
+import { mainNews, latestNews, footballNews, basketballNews, formulaOneNews } from "@/lib/data";
 
 // Hardcoded Greek news data
 
@@ -21,10 +22,8 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hot News Carousel */}
+        <SectionTitle title="Σημαντικά Νέα" icon="/flames-icon.png" />
         <NewsCarousel />
-
-        {/* Section Divider */}
-        <SectionDivider variant="gradient" />
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
@@ -42,15 +41,13 @@ export default function Home() {
             </div>
 
             {/* Section Divider */}
-            <SectionDivider variant="sporty" />
+            <SectionDivider variant="gradient" />
 
             {/* Latest Football News */}
             <section className="mb-2">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                Τελευταία Νέα
-              </h2>
+              <SectionTitle title="Τελευταία Νέα" icon="/speaker-color-icon.svg" />
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                {footballNews.map((news, index) => (
+                {latestNews.map((news, index) => (
                   <NewsCard key={index} {...news} size="xs" />
                 ))}
               </div>
@@ -66,7 +63,7 @@ export default function Home() {
 
         {/* Football Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Ποδόσφαιρο</h2>
+          <SectionTitle title="Ποδόσφαιρο" icon="/soccer_ball2.svg" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {footballNews.map((news, index) => (
               <NewsCard key={index} {...news} />
@@ -84,7 +81,7 @@ export default function Home() {
 
         {/* Basketball Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Μπάσκετ</h2>
+          <SectionTitle title="Μπάσκετ" icon="🏀" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {basketballNews.map((news, index) => (
               <NewsCard key={index} {...news} />
@@ -102,7 +99,7 @@ export default function Home() {
 
         {/* Formula 1 Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Formula 1</h2>
+          <SectionTitle title="Formula 1" icon="/formula-1.png" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {formulaOneNews.map((news, index) => (
               <NewsCard key={index} {...news} />

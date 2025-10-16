@@ -20,10 +20,6 @@ export default function NewsCarousel() {
 
   return (
     <section className="mb-12">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Σημαντικά Νέα</h2>
-      </div>
-
       <div className="relative overflow-hidden">
         <div
           className="flex transition-transform duration-500 ease-in-out"
