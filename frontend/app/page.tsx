@@ -7,13 +7,11 @@ import NewsCarousel from "@/components/NewsCarousel";
 import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
-import { useTranslations } from 'next-intl';
-import { useTranslatedNews } from "@/lib/useTranslatedNews";
+import { mainNews, footballNews, basketballNews, formulaOneNews } from "@/lib/data";
+
+// Hardcoded Greek news data
 
 export default function Home() {
-  const t = useTranslations('sections');
-  const { mainNews, footballNews, footballLatestNews, basketballNews, formulaOneNews } = useTranslatedNews();
-
   return (
     <div className="bg-gray-50">
       <Header />
@@ -42,10 +40,10 @@ export default function Home() {
             {/* Latest Football News */}
             <section className="mb-2">
               <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                {t('latestFootball')}
+                Τελευταία Νέα Ποδοσφαίρου
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {footballLatestNews.map((news, index) => (
+                {footballNews.map((news, index) => (
                   <NewsCard key={index} {...news} size="small" />
                 ))}
               </div>
@@ -58,7 +56,7 @@ export default function Home() {
 
         {/* Football Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">{t('football')}</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">Ποδόσφαιρο</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {footballNews.map((news, index) => (
               <NewsCard key={index} {...news} />
@@ -68,7 +66,7 @@ export default function Home() {
 
         {/* Basketball Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">{t('basketball')}</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">Μπάσκετ</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {basketballNews.map((news, index) => (
               <NewsCard key={index} {...news} />
@@ -78,7 +76,7 @@ export default function Home() {
 
         {/* Formula 1 Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">{t('formula1')}</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">Formula 1</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {formulaOneNews.map((news, index) => (
               <NewsCard key={index} {...news} />
@@ -91,3 +89,4 @@ export default function Home() {
     </div>
   );
 }
+

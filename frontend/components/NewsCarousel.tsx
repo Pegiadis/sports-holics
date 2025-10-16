@@ -3,14 +3,59 @@
 import { useState, useEffect } from "react";
 import NewsCard from "./NewsCard";
 import { CAROUSEL_CONFIG } from "@/lib/constants";
-import { useTranslatedNews } from "@/lib/useTranslatedNews";
-import { useTranslations } from 'next-intl';
+import { NewsArticle } from "@/types";
+
+const carouselNews: NewsArticle[] = [
+  {
+    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
+    categoryColor: "bg-red-100 text-red-800",
+    title: "Το Παράθυρο Μεταγραφών του Καλοκαιριού Ανοίγει",
+    description: "Οι μεγάλες ομάδες ετοιμάζονται για τις μεγαλύτερες υπογραφές καθώς το καλοκαιρινό παράθυρο μεταγραφών ανοίγει...",
+    timeAgo: "30 minutes ago",
+    author: "Έμμα Ροντρίγκεζ",
+    imageUrl: "/basket1.png",
+  },
+  {
+    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
+    categoryColor: "bg-red-100 text-red-800",
+    title: "Τελετή Απονομής MVP του NBA",
+    description: "Ιστορική στιγμή καθώς ο νεότερος παίκτης στην ιστορία του πρωταθλήματος λαμβάνει το βραβείο Πολυτιμότερου Παίκτη...",
+    timeAgo: "45 minutes ago",
+    author: "Μάρκους Τζόνσον",
+    imageUrl: "/football1.png",
+  },
+  {
+    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
+    categoryColor: "bg-red-100 text-red-800",
+    title: "Αλλαγή στη Βαθμολογία του Πρωταθλήματος F1",
+    description: "Απροσδόκητα αποτελέσματα στο Grand Prix της Ιταλίας αλλάζουν εντελώς τη δυναμική της διεκδίκησης του τίτλου...",
+    timeAgo: "1 hour ago",
+    author: "Λούκας Πέτερσον",
+    imageUrl: "/f1.png",
+  },
+  {
+    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
+    categoryColor: "bg-red-100 text-red-800",
+    title: "Ολυμπιακά Ρεκόρ Σπάνε",
+    description: "Τρία παγκόσμια ρεκόρ πέφτουν με εντυπωσιακό τρόπο κατά τη διάρκεια των αγώνων στίβου...",
+    timeAgo: "2 hours ago",
+    author: "Σοφία Τσεν",
+    imageUrl: "/greek_basket.png",
+  },
+  {
+    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
+    categoryColor: "bg-red-100 text-red-800",
+    title: "Έκπληξη Νίκη στο Wimbledon",
+    description: "Ο αμάτερ παίκτης νικά τον πρώην νούμερο ένα του κόσμου σε ίσια σετ σε σοκαριστικό αποτέλεσμα...",
+    timeAgo: "3 hours ago",
+    author: "Τζέιμς Γουίλσον",
+    imageUrl: "/f2.png",
+  },
+];
 
 export default function NewsCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { totalSlides, autoRotateInterval } = CAROUSEL_CONFIG;
-  const { carouselNews } = useTranslatedNews();
-  const t = useTranslations('sections');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,7 +68,7 @@ export default function NewsCarousel() {
   return (
     <section className="mb-12">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">{t('hotNews')}</h2>
+        <h2 className="text-3xl font-bold text-gray-800">Σημαντικά Νέα</h2>
       </div>
 
       <div className="relative overflow-hidden">
@@ -54,4 +99,3 @@ export default function NewsCarousel() {
     </section>
   );
 }
-

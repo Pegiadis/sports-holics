@@ -1,33 +1,30 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { trendingNews, liveScores } from "@/lib/constants";
 
 export default function Sidebar() {
-  const t = useTranslations("sections");
-
   return (
     <aside className="lg:col-span-1">
       {/* Newsletter */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h3 className="text-lg font-bold mb-4 text-gray-800">Newsletter</h3>
         <p className="text-gray-600 text-sm mb-4">
-          Get the latest sports news delivered to your inbox
+          Λάβετε τα τελευταία αθλητικά νέα στο email σας
         </p>
         <div className="space-y-3">
           <input
             type="email"
-            placeholder="Enter your email"
+            placeholder="Εισάγετε το email σας"
             className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary"
           />
           <button className="w-full bg-primary hover:bg-red-600 text-white py-2 rounded-[var(--radius-button)] text-sm font-medium whitespace-nowrap transition-colors">
-            Subscribe
+            Εγγραφή
           </button>
         </div>
       </div>
       {/* Trending Now */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 className="text-lg font-bold mb-4 text-gray-800">{t("popular")}</h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-800">Δημοφιλή Άρθρα</h3>
         <div className="space-y-4">
           {trendingNews.map((news) => (
             <div key={news.rank} className="flex items-start space-x-3">
