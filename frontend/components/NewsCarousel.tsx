@@ -3,55 +3,8 @@
 import { useState, useEffect } from "react";
 import NewsCard from "./NewsCard";
 import { CAROUSEL_CONFIG } from "@/lib/constants";
-import { NewsArticle } from "@/types";
+import { carouselNews } from "@/lib/data";
 
-const carouselNews: NewsArticle[] = [
-  {
-    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
-    categoryColor: "bg-red-100 text-red-800",
-    title: "Το Παράθυρο Μεταγραφών του Καλοκαιριού Ανοίγει",
-    description: "Οι μεγάλες ομάδες ετοιμάζονται για τις μεγαλύτερες υπογραφές καθώς το καλοκαιρινό παράθυρο μεταγραφών ανοίγει...",
-    timeAgo: "30 minutes ago",
-    author: "Έμμα Ροντρίγκεζ",
-    imageUrl: "/basket1.png",
-  },
-  {
-    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
-    categoryColor: "bg-red-100 text-red-800",
-    title: "Τελετή Απονομής MVP του NBA",
-    description: "Ιστορική στιγμή καθώς ο νεότερος παίκτης στην ιστορία του πρωταθλήματος λαμβάνει το βραβείο Πολυτιμότερου Παίκτη...",
-    timeAgo: "45 minutes ago",
-    author: "Μάρκους Τζόνσον",
-    imageUrl: "/football1.png",
-  },
-  {
-    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
-    categoryColor: "bg-red-100 text-red-800",
-    title: "Αλλαγή στη Βαθμολογία του Πρωταθλήματος F1",
-    description: "Απροσδόκητα αποτελέσματα στο Grand Prix της Ιταλίας αλλάζουν εντελώς τη δυναμική της διεκδίκησης του τίτλου...",
-    timeAgo: "1 hour ago",
-    author: "Λούκας Πέτερσον",
-    imageUrl: "/f1.png",
-  },
-  {
-    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
-    categoryColor: "bg-red-100 text-red-800",
-    title: "Ολυμπιακά Ρεκόρ Σπάνε",
-    description: "Τρία παγκόσμια ρεκόρ πέφτουν με εντυπωσιακό τρόπο κατά τη διάρκεια των αγώνων στίβου...",
-    timeAgo: "2 hours ago",
-    author: "Σοφία Τσεν",
-    imageUrl: "/greek_basket.png",
-  },
-  {
-    category: "ΣΗΜΑΝΤΙΚΑ ΝΕΑ",
-    categoryColor: "bg-red-100 text-red-800",
-    title: "Έκπληξη Νίκη στο Wimbledon",
-    description: "Ο αμάτερ παίκτης νικά τον πρώην νούμερο ένα του κόσμου σε ίσια σετ σε σοκαριστικό αποτέλεσμα...",
-    timeAgo: "3 hours ago",
-    author: "Τζέιμς Γουίλσον",
-    imageUrl: "/f2.png",
-  },
-];
 
 export default function NewsCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);

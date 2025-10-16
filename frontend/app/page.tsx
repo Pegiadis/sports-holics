@@ -7,6 +7,7 @@ import NewsCarousel from "@/components/NewsCarousel";
 import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
+import SectionDivider from "@/components/SectionDivider";
 import { mainNews, footballNews, basketballNews, formulaOneNews } from "@/lib/data";
 
 // Hardcoded Greek news data
@@ -21,6 +22,9 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hot News Carousel */}
         <NewsCarousel />
+
+        {/* Section Divider */}
+        <SectionDivider variant="gradient" />
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
@@ -37,14 +41,17 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Section Divider */}
+            <SectionDivider variant="sporty" />
+
             {/* Latest Football News */}
             <section className="mb-2">
               <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                Τελευταία Νέα Ποδοσφαίρου
+                Τελευταία Νέα
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {footballNews.map((news, index) => (
-                  <NewsCard key={index} {...news} size="small" />
+                  <NewsCard key={index} {...news} size="xs" />
                 ))}
               </div>
             </section>
@@ -54,6 +61,9 @@ export default function Home() {
           <Sidebar />
         </div>
 
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
+
         {/* Football Section */}
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Ποδόσφαιρο</h2>
@@ -62,7 +72,15 @@ export default function Home() {
               <NewsCard key={index} {...news} />
             ))}
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+            {footballNews.map((news, index) => (
+              <NewsCard key={index} {...news} size="small" />
+            ))}
+          </div>
         </section>
+
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
 
         {/* Basketball Section */}
         <section className="mb-12">
@@ -72,7 +90,15 @@ export default function Home() {
               <NewsCard key={index} {...news} />
             ))}
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+            {basketballNews.map((news, index) => (
+              <NewsCard key={index} {...news} size="small" />
+            ))}
+          </div>
         </section>
+
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
 
         {/* Formula 1 Section */}
         <section className="mb-12">
@@ -80,6 +106,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {formulaOneNews.map((news, index) => (
               <NewsCard key={index} {...news} />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+            {formulaOneNews.map((news, index) => (
+              <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
         </section>
