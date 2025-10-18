@@ -467,6 +467,46 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBasketballArticleBasketballArticle
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'basketball_articles';
+  info: {
+    description: 'Basketball news articles';
+    displayName: 'Basketball Article';
+    pluralName: 'basketball-articles';
+    singularName: 'basketball-article';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    author: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Sports Holics'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images'>;
+    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isHomeSportSection: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::basketball-article.basketball-article'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'title'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFootballArticleFootballArticle
   extends Struct.CollectionTypeSchema {
   collectionName: 'football_articles';
@@ -488,10 +528,54 @@ export interface ApiFootballArticleFootballArticle
       Schema.Attribute.Private;
     description: Schema.Attribute.Text & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
+    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isHomeSportSection: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::football-article.football-article'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'title'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFormula1ArticleFormula1Article
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'formula1_articles';
+  info: {
+    description: 'Formula 1 news articles';
+    displayName: 'Formula1 Article';
+    pluralName: 'formula1-articles';
+    singularName: 'formula1-article';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    author: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Sports Holics'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images'>;
+    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isHomeSportSection: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::formula1-article.formula1-article'
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
@@ -1014,7 +1098,9 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::basketball-article.basketball-article': ApiBasketballArticleBasketballArticle;
       'api::football-article.football-article': ApiFootballArticleFootballArticle;
+      'api::formula1-article.formula1-article': ApiFormula1ArticleFormula1Article;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

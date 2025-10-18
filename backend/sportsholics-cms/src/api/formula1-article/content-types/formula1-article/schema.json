@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "football_articles",
+  "collectionName": "formula1_articles",
   "info": {
-    "singularName": "football-article",
-    "pluralName": "football-articles",
-    "displayName": "Football Article",
-    "description": "Football news articles"
+    "singularName": "formula1-article",
+    "pluralName": "formula1-articles",
+    "displayName": "Formula1 Article",
+    "description": "Formula 1 news articles"
   },
   "options": {
     "draftAndPublish": true

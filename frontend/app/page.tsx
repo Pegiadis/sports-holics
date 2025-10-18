@@ -8,10 +8,32 @@ import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 import SectionTitle from "@/components/SectionTitle";
 import { mainNews, latestNews, footballNews, basketballNews, formulaOneNews, carouselNews } from "@/lib/data";
+import {
+  fetchCarouselNews,
+  fetchLatestNews,
+  fetchMainNews,
+  fetchHomepageFootball,
+  fetchHomepageBasketball,
+  fetchHomepageFormula1
+} from "./homepage-api";
 
-export default function Home() {
-  // Using mock data for now - will integrate with Strapi later
-  const carouselArticles = carouselNews;
+export default async function Home() {
+  // Fetch data from Strapi, fallback to mock data
+  const [
+    carouselArticles,
+    mainNewsArticles,
+    latestNewsArticles,
+    footballArticles,
+    basketballArticles,
+    formula1Articles
+  ] = await Promise.all([
+    fetchCarouselNews().then(data => data.length > 0 ? data : carouselNews),
+    fetchMainNews().then(data => data.length > 0 ? data : mainNews),
+    fetchLatestNews().then(data => data.length > 0 ? data : latestNews),
+    fetchHomepageFootball().then(data => data.length > 0 ? data : footballNews),
+    fetchHomepageBasketball().then(data => data.length > 0 ? data : basketballNews),
+    fetchHomepageFormula1().then(data => data.length > 0 ? data : formulaOneNews),
+  ]);
   
   return (
     <div className="bg-gray-50">
@@ -30,12 +52,12 @@ export default function Home() {
           {/* Main News Section */}
           <div className="lg:col-span-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {mainNews.map((news, index) => (
+              {mainNewsArticles.slice(0, 2).map((news, index) => (
                 <NewsCard key={index} {...news} />
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-              {mainNews.slice(0, 3).map((news, index) => (
+              {mainNewsArticles.slice(2, 5).map((news, index) => (
                 <NewsCard key={index} {...news} size="xs" />
               ))}
             </div>
@@ -43,14 +65,10 @@ export default function Home() {
             {/* Section Divider */}
             <SectionDivider variant="gradient" />
 
-            {/* Latest Football News */}
+            {/* Latest News - Carousel with 10 items */}
             <section className="mb-2">
               <SectionTitle title="Τελευταία Νέα" icon="/speaker-color-icon.svg" />
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                {latestNews.map((news, index) => (
-                  <NewsCard key={index} {...news} size="xs" />
-                ))}
-              </div>
+              <NewsCarousel articles={latestNewsArticles} />
             </section>
           </div>
 
@@ -65,12 +83,12 @@ export default function Home() {
         <section className="mb-12">
           <SectionTitle title="Ποδόσφαιρο" icon="/soccer_ball2.svg" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {footballNews.map((news, index) => (
+            {footballArticles.slice(0, 3).map((news, index) => (
               <NewsCard key={index} {...news} />
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {footballNews.map((news, index) => (
+            {footballArticles.slice(3, 6).map((news, index) => (
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
@@ -83,12 +101,12 @@ export default function Home() {
         <section className="mb-12">
           <SectionTitle title="Μπάσκετ" icon="🏀" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {basketballNews.map((news, index) => (
+            {basketballArticles.slice(0, 3).map((news, index) => (
               <NewsCard key={index} {...news} />
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {basketballNews.map((news, index) => (
+            {basketballArticles.slice(3, 6).map((news, index) => (
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
@@ -101,12 +119,12 @@ export default function Home() {
         <section className="mb-12">
           <SectionTitle title="Formula 1" icon="/formula-1.png" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {formulaOneNews.map((news, index) => (
+            {formula1Articles.slice(0, 3).map((news, index) => (
               <NewsCard key={index} {...news} />
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {formulaOneNews.map((news, index) => (
+            {formula1Articles.slice(3, 6).map((news, index) => (
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>

@@ -1,8 +1,8 @@
 /**
- * Football API - Colocated with football page
+ * Basketball API - Colocated with basketball page
  */
 
-import { FootballArticle } from "./types";
+import { BasketballArticle } from "./types";
 import { STRAPI_URL } from "./_lib";
 import { transformArticle } from "./_lib";
 
@@ -14,9 +14,9 @@ interface FetchOptions {
 }
 
 /**
- * Fetch football articles from Strapi
+ * Fetch basketball articles from Strapi
  */
-export async function fetchFootballArticles(options: FetchOptions = {}): Promise<FootballArticle[]> {
+export async function fetchBasketballArticles(options: FetchOptions = {}): Promise<BasketballArticle[]> {
   try {
     const params = new URLSearchParams();
     
@@ -41,7 +41,7 @@ export async function fetchFootballArticles(options: FetchOptions = {}): Promise
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
-      `${STRAPI_URL}/api/football-articles?${params.toString()}`,
+      `${STRAPI_URL}/api/basketball-articles?${params.toString()}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -68,3 +68,4 @@ export async function fetchFootballArticles(options: FetchOptions = {}): Promise
     return [];
   }
 }
+

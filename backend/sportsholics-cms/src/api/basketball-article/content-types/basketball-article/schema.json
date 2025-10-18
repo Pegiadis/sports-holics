@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "football_articles",
+  "collectionName": "basketball_articles",
   "info": {
-    "singularName": "football-article",
-    "pluralName": "football-articles",
-    "displayName": "Football Article",
-    "description": "Football news articles"
+    "singularName": "basketball-article",
+    "pluralName": "basketball-articles",
+    "displayName": "Basketball Article",
+    "description": "Basketball news articles"
   },
   "options": {
     "draftAndPublish": true

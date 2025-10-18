@@ -28,13 +28,13 @@ export default function Header() {
                 Ποδόσφαιρο
               </Link>
               <Link
-                href="#"
+                href="/basketball"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
                 Μπάσκετ
               </Link>
               <Link
-                href="#"
+                href="/formula1"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
                 Formula 1
