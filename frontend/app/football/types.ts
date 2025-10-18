@@ -1,39 +1,18 @@
 /**
  * Football page types - Colocated with football page
+ * Uses shared base types from sports-api
  */
+
+import { BaseStrapiArticle, BaseArticle } from "@/lib/sports-api";
 
 /**
  * Strapi response type for football articles
+ * Uses base type (can be extended with football-specific fields if needed)
  */
-export interface StrapiFootballArticle {
-  id: number;
-  documentId: string;
-  title: string;
-  description: string;
-  author: string;
-  slug: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  image?: {
-    url: string;
-    name: string;
-    alternativeText: string | null;
-  } | null;
-}
+export type StrapiFootballArticle = BaseStrapiArticle;
 
 /**
  * Frontend type for football articles
+ * Uses the base article type
  */
-export interface FootballArticle {
-  id: number;
-  title: string;
-  description: string;
-  author: string;
-  imageUrl: string;
-  category: string;
-  categoryColor: string;
-  timeAgo: string;
-  slug: string;
-}
-
+export type FootballArticle = BaseArticle;

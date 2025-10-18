@@ -1,71 +1,21 @@
 /**
  * Formula1 API - Colocated with formula1 page
+ * Uses shared sports-api utilities
  */
 
-import { Formula1Article } from "./types";
-import { STRAPI_URL } from "./_lib";
-import { transformArticle } from "./_lib";
+import { fetchSportArticles, FetchOptions, SportConfig, BaseArticle } from "@/lib/sports-api";
 
-interface FetchOptions {
-  isCarousel?: boolean;
-  isMainNews?: boolean;
-  isHomeSportSection?: boolean;
-  limit?: number;
-}
+// Formula1-specific configuration
+const FORMULA1_CONFIG: SportConfig = {
+  endpoint: 'formula1-articles',
+  category: 'FORMULA 1',
+  categoryColor: 'bg-red-100 text-red-800',
+  fallbackImage: '/f1.png',
+};
 
 /**
  * Fetch formula1 articles from Strapi
  */
-export async function fetchFormula1Articles(options: FetchOptions = {}): Promise<Formula1Article[]> {
-  try {
-    const params = new URLSearchParams();
-    
-    // Add filters
-    if (options.isCarousel !== undefined) {
-      params.append('filters[isCarousel][$eq]', String(options.isCarousel));
-    }
-    if (options.isMainNews !== undefined) {
-      params.append('filters[isMainNews][$eq]', String(options.isMainNews));
-    }
-    if (options.isHomeSportSection !== undefined) {
-      params.append('filters[isHomeSportSection][$eq]', String(options.isHomeSportSection));
-    }
-    
-    // Add pagination
-    if (options.limit) {
-      params.append('pagination[limit]', String(options.limit));
-    }
-    
-    // Always populate image and sort by date (newest first)
-    params.append('populate', 'image');
-    params.append('sort', 'createdAt:desc');
-    
-    const response = await fetch(
-      `${STRAPI_URL}/api/formula1-articles?${params.toString()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
-        signal: AbortSignal.timeout(5000), // 5 second timeout
-      }
-    );
-
-    if (!response.ok) {
-      console.warn(`Strapi API returned ${response.status}`);
-      return [];
-    }
-
-    const data = await response.json();
-    
-    if (data.data && Array.isArray(data.data)) {
-      return data.data.map(transformArticle);
-    }
-
-    return [];
-  } catch (error) {
-    console.warn('Strapi CMS is not available:', error);
-    return [];
-  }
+export async function fetchFormula1Articles(options: FetchOptions = {}): Promise<BaseArticle[]> {
+  return fetchSportArticles(FORMULA1_CONFIG, options);
 }
-
