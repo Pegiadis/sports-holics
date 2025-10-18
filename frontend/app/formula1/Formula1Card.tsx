@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Formula1Article } from "./types";
 
 interface Formula1CardProps {
@@ -7,7 +8,8 @@ interface Formula1CardProps {
 
 export default function Formula1Card({ article }: Formula1CardProps) {
   return (
-    <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <Link href={`/article/${article.slug}`}>
+      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer">
       <div className="flex flex-col md:flex-row">
         {/* Image Section - Left */}
         <div className="relative w-full md:w-80 h-48 md:h-auto flex-shrink-0">
@@ -47,6 +49,7 @@ export default function Formula1Card({ article }: Formula1CardProps) {
         </div>
       </div>
     </article>
+    </Link>
   );
 }
 

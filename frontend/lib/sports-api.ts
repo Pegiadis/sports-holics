@@ -185,3 +185,68 @@ export async function fetchSportArticles<T extends BaseStrapiArticle>(
   }
 }
 
+/**
+ * All sport configurations for searching across all sports
+ */
+export const ALL_SPORT_CONFIGS: SportConfig[] = [
+  {
+    endpoint: 'football-articles',
+    category: 'ΠΟΔΟΣΦΑΙΡΟ',
+    categoryColor: 'bg-green-100 text-green-800',
+    fallbackImage: '/football.png',
+  },
+  {
+    endpoint: 'basketball-articles',
+    category: 'ΜΠΑΣΚΕΤ',
+    categoryColor: 'bg-orange-100 text-orange-800',
+    fallbackImage: '/basket1.png',
+  },
+  {
+    endpoint: 'formula1-articles',
+    category: 'FORMULA 1',
+    categoryColor: 'bg-red-100 text-red-800',
+    fallbackImage: '/f1.png',
+  },
+];
+
+/**
+ * Fetch a single article by slug from any sport
+ * Searches across all sport endpoints until found
+ */
+export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | null> {
+  // Try each sport endpoint until we find the article
+  for (const config of ALL_SPORT_CONFIGS) {
+    try {
+      const params = new URLSearchParams();
+      params.append('filters[slug][$eq]', slug);
+      params.append('populate', 'image');
+      
+      const response = await fetch(
+        `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          next: { revalidate: 60 },
+          signal: AbortSignal.timeout(5000),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.data && data.data.length > 0) {
+          const article = data.data[0];
+          return transformArticle(article, config);
+        }
+      }
+    } catch (error) {
+      // Continue to next sport if this one fails
+      console.warn(`Failed to fetch from ${config.endpoint}:`, error);
+    }
+  }
+
+  // Article not found in any sport
+  return null;
+}
+

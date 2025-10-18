@@ -11,6 +11,7 @@ interface StrapiArticle {
   title?: string;
   description?: string;
   author?: string;
+  slug?: string;
   createdAt: string;
   publishedAt?: string;
   image?: {
@@ -62,6 +63,7 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
     author: article.author || "Unknown",
     imageUrl: getImageUrl(article.image?.url),
+    slug: article.slug,
   };
 }
 
