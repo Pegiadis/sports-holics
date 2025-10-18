@@ -26,10 +26,6 @@ export default async function FootballPage() {
           {articles.map((article) => (
             <FootballCard key={article.id} article={article} />
           ))}
-
-          {articles.map((article) => (
-            <FootballCard key={article.id} article={article} />
-          ))}
         </div>
 
         {/* Empty State */}
