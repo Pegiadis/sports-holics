@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "articles",
+  "collectionName": "football_articles",
   "info": {
-    "singularName": "article",
-    "pluralName": "articles",
-    "displayName": "Article",
-    "description": "Sports news articles"
+    "singularName": "football-article",
+    "pluralName": "football-articles",
+    "displayName": "Football Article",
+    "description": "Football news articles"
   },
   "options": {
     "draftAndPublish": true
@@ -20,31 +20,16 @@
       "type": "text",
       "required": true
     },
-    "category": {
-      "type": "string",
-      "required": true
-    },
     "author": {
       "type": "string",
-      "required": true
+      "required": true,
+      "default": "Sports Holics"
     },
     "image": {
       "type": "media",
       "multiple": false,
       "required": false,
       "allowedTypes": ["images"]
-    },
-    "isFeatured": {
-      "type": "boolean",
-      "default": false
-    },
-    "isCarousel": {
-      "type": "boolean",
-      "default": false
-    },
-    "order": {
-      "type": "integer",
-      "default": 0
     },
     "slug": {
       "type": "uid",

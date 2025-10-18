@@ -8,18 +8,11 @@ import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 import SectionTitle from "@/components/SectionTitle";
 import { mainNews, latestNews, footballNews, basketballNews, formulaOneNews, carouselNews } from "@/lib/data";
-import { fetchArticles } from "@/lib/api";
-import { transformStrapiArticles } from "@/lib/transformers";
 
-export default async function Home() {
-  // Fetch carousel articles from Strapi (falls back to mock data if unavailable)
-  let carouselArticles = carouselNews; // Default to mock data
+export default function Home() {
+  // Using mock data for now - will integrate with Strapi later
+  const carouselArticles = carouselNews;
   
-  const response = await fetchArticles({ isCarousel: true, limit: 6 });
-  
-  if (response.data && response.data.length > 0) {
-    carouselArticles = transformStrapiArticles(response.data);
-  }
   return (
     <div className="bg-gray-50">
       <Header />
