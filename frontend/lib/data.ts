@@ -58,8 +58,7 @@ export const mainNews: NewsArticle[] = [
       imageUrl: "/greek_basket.png",
     },
   ];
-  
-export const footballNews: NewsArticle[] = [
+  export const latestNews: NewsArticle[] = [
     {
       category: "PREMIER LEAGUE",
       categoryColor: "bg-green-100 text-green-800",
@@ -96,6 +95,36 @@ export const footballNews: NewsArticle[] = [
         author: "Μαρία Σάντος",
         imageUrl: "/football.png",
       },
+  ];
+
+export const footballNews: NewsArticle[] = [
+    {
+      category: "PREMIER LEAGUE",
+      categoryColor: "bg-green-100 text-green-800",
+      title: "City εναντίον Arsenal: Το Παιχνίδι του Τίτλου",
+      description: "Ο τελευταίος αγώνας υπόσχεται να είναι το πιο δραματικό φινάλε της Premier League των τελευταίων δεκαετιών...",
+      timeAgo: "1 hour ago",
+      author: "Τομ Άντερσον",
+      imageUrl: "/football1.png",
+    },
+    {
+      category: "CHAMPIONS LEAGUE",
+      categoryColor: "bg-blue-100 text-blue-800",
+      title: "Αποτελέσματα Κλήρωσης Ημιτελικών",
+      description: "Οι ευρωπαϊκοί γίγαντες μαθαίνουν τη μοίρα τους καθώς ο δρόμος προς τον τελικό γίνεται ξεκάθαρος...",
+      timeAgo: "2 hours ago",
+      author: "Μαρία Σάντος",
+      imageUrl: "/football.png",
+    },
+    {
+      category: "ΠΑΓΚΟΣΜΙΟ ΚΥΠΕΛΛΟ",
+      categoryColor: "bg-purple-100 text-purple-800",
+      title: "Το Δράμα των Προκριματικών Συνεχίζεται",
+      description: "Πολλά έθνη μάχονται για τις τελευταίες θέσεις στο τουρνουά του επόμενου έτους...",
+      timeAgo: "4 hours ago",
+      author: "Ρομπέρτο Σίλβα",
+      imageUrl: "/football1.png",
+    }
   ];
   
 export const basketballNews: NewsArticle[] = [

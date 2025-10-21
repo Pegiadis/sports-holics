@@ -10,29 +10,31 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
             <div className="h-10">
-              <Image
-                src="/no_back.png"
-                alt="Sports Holics"
-                width={120}
-                height={40}
-                className="h-full w-auto object-contain"
-              />
+              <Link href="/">
+                <Image
+                  src="/no_back.png"
+                  alt="Sports Holics"
+                  width={120}
+                  height={40}
+                  className="h-full w-auto object-contain"
+                />
+              </Link>
             </div>
             <nav className="hidden md:flex space-x-6">
               <Link
-                href="#"
+                href="/football"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
                 Ποδόσφαιρο
               </Link>
               <Link
-                href="#"
+                href="/basketball"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
                 Μπάσκετ
               </Link>
               <Link
-                href="#"
+                href="/formula1"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
               >
                 Formula 1

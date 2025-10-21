@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { NewsArticle, NewsCardSize } from "@/types";
 import { CATEGORY_COLORS } from "@/lib/constants";
 
@@ -14,6 +15,7 @@ export default function NewsCard({
   timeAgo,
   author,
   imageUrl,
+  slug,
   size = "medium",
 }: NewsCardProps) {
   // Define size configurations
@@ -50,7 +52,7 @@ export default function NewsCard({
 
   const config = sizeConfig[size];
 
-  return (
+  const cardContent = (
     <article className="bg-white rounded-lg shadow-md overflow-hidden card-hover h-full">
       <div className={`relative ${config.imageHeight} w-full`}>
         <Image
@@ -78,5 +80,16 @@ export default function NewsCard({
       </div>
     </article>
   );
+
+  // Wrap in Link if slug exists
+  if (slug) {
+    return (
+      <Link href={`/article/${slug}`} className="block h-full">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }
 

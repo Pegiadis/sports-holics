@@ -1,5 +1,3 @@
-"use client";
-
 import Header from "@/components/Header";
 import BreakingNews from "@/components/BreakingNews";
 import HeroSection from "@/components/HeroSection";
@@ -8,11 +6,35 @@ import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
-import { mainNews, footballNews, basketballNews, formulaOneNews } from "@/lib/data";
+import SectionTitle from "@/components/SectionTitle";
+import { mainNews, latestNews, footballNews, basketballNews, formulaOneNews, carouselNews } from "@/lib/data";
+import {
+  fetchCarouselNews,
+  fetchLatestNews,
+  fetchMainNews,
+  fetchHomepageFootball,
+  fetchHomepageBasketball,
+  fetchHomepageFormula1
+} from "./homepage-api";
 
-// Hardcoded Greek news data
-
-export default function Home() {
+export default async function Home() {
+  // Fetch data from Strapi, fallback to mock data
+  const [
+    carouselArticles,
+    mainNewsArticles,
+    latestNewsArticles,
+    footballArticles,
+    basketballArticles,
+    formula1Articles
+  ] = await Promise.all([
+    fetchCarouselNews().then(data => data.length > 0 ? data : carouselNews),
+    fetchMainNews().then(data => data.length > 0 ? data : mainNews),
+    fetchLatestNews().then(data => data.length > 0 ? data : latestNews),
+    fetchHomepageFootball().then(data => data.length > 0 ? data : footballNews),
+    fetchHomepageBasketball().then(data => data.length > 0 ? data : basketballNews),
+    fetchHomepageFormula1().then(data => data.length > 0 ? data : formulaOneNews),
+  ]);
+  
   return (
     <div className="bg-gray-50">
       <Header />
@@ -21,39 +43,32 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hot News Carousel */}
-        <NewsCarousel />
-
-        {/* Section Divider */}
-        <SectionDivider variant="gradient" />
+        <SectionTitle title="Σημαντικά Νέα" icon="/flames-icon.png" />
+        <NewsCarousel articles={carouselArticles} />
 
         {/* Main Content Grid */}
+        <SectionTitle title="Περισσότερα Νέα" icon="/flames-icon.png" />
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
           {/* Main News Section */}
           <div className="lg:col-span-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {mainNews.map((news, index) => (
+              {mainNewsArticles.slice(0, 2).map((news, index) => (
                 <NewsCard key={index} {...news} />
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-              {mainNews.slice(0, 3).map((news, index) => (
+              {mainNewsArticles.slice(2, 5).map((news, index) => (
                 <NewsCard key={index} {...news} size="xs" />
               ))}
             </div>
 
             {/* Section Divider */}
-            <SectionDivider variant="sporty" />
+            <SectionDivider variant="gradient" />
 
-            {/* Latest Football News */}
+            {/* Latest News - Carousel with 10 items */}
             <section className="mb-2">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                Τελευταία Νέα
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                {footballNews.map((news, index) => (
-                  <NewsCard key={index} {...news} size="xs" />
-                ))}
-              </div>
+              <SectionTitle title="Τελευταία Νέα" icon="/speaker-color-icon.svg" />
+              <NewsCarousel articles={latestNewsArticles} />
             </section>
           </div>
 
@@ -66,14 +81,14 @@ export default function Home() {
 
         {/* Football Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Ποδόσφαιρο</h2>
+          <SectionTitle title="Ποδόσφαιρο" icon="/soccer_ball2.svg" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {footballNews.map((news, index) => (
+            {footballArticles.slice(0, 3).map((news, index) => (
               <NewsCard key={index} {...news} />
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {footballNews.map((news, index) => (
+            {footballArticles.slice(3, 6).map((news, index) => (
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
@@ -84,14 +99,14 @@ export default function Home() {
 
         {/* Basketball Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Μπάσκετ</h2>
+          <SectionTitle title="Μπάσκετ" icon="🏀" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {basketballNews.map((news, index) => (
+            {basketballArticles.slice(0, 3).map((news, index) => (
               <NewsCard key={index} {...news} />
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {basketballNews.map((news, index) => (
+            {basketballArticles.slice(3, 6).map((news, index) => (
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
@@ -102,14 +117,14 @@ export default function Home() {
 
         {/* Formula 1 Section */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Formula 1</h2>
+          <SectionTitle title="Formula 1" icon="/formula-1.png" variant="large" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {formulaOneNews.map((news, index) => (
+            {formula1Articles.slice(0, 3).map((news, index) => (
               <NewsCard key={index} {...news} />
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {formulaOneNews.map((news, index) => (
+            {formula1Articles.slice(3, 6).map((news, index) => (
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>

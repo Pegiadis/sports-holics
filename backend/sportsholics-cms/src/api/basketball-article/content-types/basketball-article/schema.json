@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "basketball_articles",
+  "info": {
+    "singularName": "basketball-article",
+    "pluralName": "basketball-articles",
+    "displayName": "Basketball Article",
+    "description": "Basketball news articles"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": true,
+      "default": "Sports Holics"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "isCarousel": {
+      "type": "boolean",
+      "default": false
+    },
+    "isMainNews": {
+      "type": "boolean",
+      "default": false
+    },
+    "isHomeSportSection": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
+

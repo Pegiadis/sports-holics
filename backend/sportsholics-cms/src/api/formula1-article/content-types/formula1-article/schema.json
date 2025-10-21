@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "formula1_articles",
+  "info": {
+    "singularName": "formula1-article",
+    "pluralName": "formula1-articles",
+    "displayName": "Formula1 Article",
+    "description": "Formula 1 news articles"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": true,
+      "default": "Sports Holics"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "isCarousel": {
+      "type": "boolean",
+      "default": false
+    },
+    "isMainNews": {
+      "type": "boolean",
+      "default": false
+    },
+    "isHomeSportSection": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
+

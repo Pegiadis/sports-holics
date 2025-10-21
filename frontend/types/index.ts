@@ -6,6 +6,7 @@ export interface NewsArticle {
   timeAgo: string;
   author: string;
   imageUrl: string;
+  slug?: string;  // Optional for backward compatibility with mock data
 }
 
 export interface TrendingNewsItem {
