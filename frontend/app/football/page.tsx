@@ -22,7 +22,7 @@ export default async function FootballPage() {
         </div>
 
         {/* Articles List - Single Column */}
-        <div className="space-y-6">
+        <div className="space-y-12 mb-10">
           {articles.map((article) => (
             <FootballCard key={article.id} article={article} />
           ))}
