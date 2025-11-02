@@ -75,8 +75,11 @@ export function richtextToHtml(content: unknown): string {
   }
 
   // If it's an object with blocks property
-  if (content && typeof content === 'object' && Array.isArray(content.blocks)) {
-    return content.blocks.map((block: RichtextBlock) => renderBlock(block)).join('');
+  if (content && typeof content === 'object' && 'blocks' in content) {
+    const contentObj = content as { blocks?: unknown };
+    if (Array.isArray(contentObj.blocks)) {
+      return contentObj.blocks.map((block: RichtextBlock) => renderBlock(block)).join('');
+    }
   }
 
   // Fallback: return empty string
