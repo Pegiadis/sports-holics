@@ -6,10 +6,11 @@
   buildCommand = "cd backend/sportsholics-cms && npm install && npm run build"
   
 [deploy]
-  startCommand = "cd backend/sportsholics-cms && npm start"
+  startCommand = "cd backend/sportsholics-cms && npm run start:production"
   restartPolicyType = "ON_FAILURE"
   restartPolicyMaxRetries = 10
 
 # Note: We use 'cd' commands to navigate to the backend directory
 # This way Railway knows to build from backend/sportsholics-cms
+# start:production uses Strapi directly without load-env.js
 

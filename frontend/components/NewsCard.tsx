@@ -12,7 +12,6 @@ export default function NewsCard({
   categoryColor,
   title,
   subtitle,
-  description,
   timeAgo,
   author,
   imageUrl,

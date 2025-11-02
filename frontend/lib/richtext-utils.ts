@@ -63,7 +63,7 @@ function renderBlock(block: RichtextBlock): string {
  * Convert Strapi richtext to HTML string
  * Handles both blocks format and plain string
  */
-export function richtextToHtml(content: any): string {
+export function richtextToHtml(content: unknown): string {
   // If it's already a string, return as is (might be HTML or markdown)
   if (typeof content === 'string') {
     return content;
@@ -86,7 +86,7 @@ export function richtextToHtml(content: any): string {
 /**
  * Extract plain text from richtext (for previews, meta descriptions, etc.)
  */
-export function richtextToPlainText(content: any): string {
+export function richtextToPlainText(content: unknown): string {
   const html = richtextToHtml(content);
   // Simple HTML tag removal (for more robust solution, consider using a library)
   return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();

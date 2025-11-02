@@ -5,11 +5,11 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["cd backend/sportsholics-cms && npm ci"]
+cmds = ["cd backend/sportsholics-cms && npm ci --only=production && npm ci"]
 
 [phases.build]
 cmds = ["cd backend/sportsholics-cms && npm run build"]
 
 [start]
-cmd = "cd backend/sportsholics-cms && npm run start:production"
+cmd = "cd backend/sportsholics-cms && NODE_ENV=production npm run start:production"
 
