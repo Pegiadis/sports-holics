@@ -130,5 +130,8 @@ coverage/
 .idea
 nbproject
 
+# Railway deployment keys (sensitive)
+railway-env-keys.txt
+
 
 
