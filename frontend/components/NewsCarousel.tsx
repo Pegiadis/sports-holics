@@ -3,14 +3,18 @@
 import { useState, useEffect } from "react";
 import NewsCard from "./NewsCard";
 import { CAROUSEL_CONFIG } from "@/lib/constants";
-import { useTranslatedNews } from "@/lib/useTranslatedNews";
-import { useTranslations } from 'next-intl';
+import { NewsArticle } from "@/types";
 
-export default function NewsCarousel() {
+interface NewsCarouselProps {
+  articles: NewsArticle[];
+}
+
+export default function NewsCarousel({ articles }: NewsCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { totalSlides, autoRotateInterval } = CAROUSEL_CONFIG;
-  const { carouselNews } = useTranslatedNews();
-  const t = useTranslations('sections');
+  const { autoRotateInterval } = CAROUSEL_CONFIG;
+  
+  // Calculate total slides based on articles length
+  const totalSlides = Math.ceil(articles.length / 3);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -20,18 +24,25 @@ export default function NewsCarousel() {
     return () => clearInterval(interval);
   }, [totalSlides, autoRotateInterval]);
 
+  // If no articles, show a message
+  if (!articles || articles.length === 0) {
+    return (
+      <section className="mb-12">
+        <div className="text-center py-12 bg-gray-100 rounded-lg">
+          <p className="text-gray-600">No carousel articles available at the moment.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="mb-12">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">{t('hotNews')}</h2>
-      </div>
-
       <div className="relative overflow-hidden">
         <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {carouselNews.map((news, index) => (
+          {articles.map((news, index) => (
             <div key={index} className="min-w-full md:min-w-[33.333%] px-2">
               <NewsCard {...news} />
             </div>
@@ -54,4 +65,3 @@ export default function NewsCarousel() {
     </section>
   );
 }
-

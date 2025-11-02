@@ -1,0 +1,202 @@
+/**
+ * Homepage API - Fetches content from multiple sport APIs
+ */
+
+import { NewsArticle } from "@/types";
+
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+
+interface StrapiArticle {
+  id: number;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  author?: string;
+  slug?: string;
+  createdAt: string;
+  publishedAt?: string;
+  image?: {
+    url?: string;
+  } | null;
+}
+
+// Helper to transform articles to NewsArticle format
+function transformToNewsArticle(article: StrapiArticle, category: string, categoryColor: string): NewsArticle {
+  const getTimeAgo = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60,
+    };
+
+    if (seconds < intervals.minute) return "just now";
+
+    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+      const interval = Math.floor(seconds / secondsInUnit);
+      if (interval >= 1) {
+        return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
+      }
+    }
+
+    return "just now";
+  };
+
+  const getImageUrl = (imageUrl: string | undefined): string => {
+    if (!imageUrl) return '/no_back.png';
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    return `${STRAPI_URL}${imageUrl}`;
+  };
+
+  return {
+    category,
+    categoryColor,
+    title: article.title || "Untitled",
+    subtitle: article.subtitle,
+    description: article.description || "",
+    timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
+    author: article.author || "Unknown",
+    imageUrl: getImageUrl(article.image?.url),
+    slug: article.slug,
+  };
+}
+
+// Fetch articles from a specific endpoint with filters
+async function fetchArticlesFromEndpoint(
+  endpoint: string,
+  category: string,
+  categoryColor: string,
+  options: { isCarousel?: boolean; isMainNews?: boolean; isHomeSportSection?: boolean; limit?: number } = {}
+): Promise<NewsArticle[]> {
+  try {
+    const params = new URLSearchParams();
+    
+    if (options.isCarousel !== undefined) {
+      params.append('filters[isCarousel][$eq]', String(options.isCarousel));
+    }
+    if (options.isMainNews !== undefined) {
+      params.append('filters[isMainNews][$eq]', String(options.isMainNews));
+    }
+    if (options.isHomeSportSection !== undefined) {
+      params.append('filters[isHomeSportSection][$eq]', String(options.isHomeSportSection));
+    }
+    if (options.limit) {
+      params.append('pagination[limit]', String(options.limit));
+    }
+    
+    params.append('populate', 'image');
+    params.append('sort', 'createdAt:desc');
+
+    const response = await fetch(
+      `${STRAPI_URL}/api/${endpoint}?${params.toString()}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        next: { revalidate: 60 },
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    
+    if (data.data && Array.isArray(data.data)) {
+      return data.data.map((article: StrapiArticle) => 
+        transformToNewsArticle(article, category, categoryColor)
+      );
+    }
+
+    return [];
+  } catch (error) {
+    console.warn(`Failed to fetch ${endpoint}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Fetch carousel articles from all sports (Hot News)
+ */
+export async function fetchCarouselNews(): Promise<NewsArticle[]> {
+  const [football, basketball, formula1] = await Promise.all([
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isCarousel: true, limit: 2 }),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isCarousel: true, limit: 2 }),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isCarousel: true, limit: 2 }),
+  ]);
+
+  return [...football, ...basketball, ...formula1].slice(0, 6);
+}
+
+/**
+ * Fetch latest news from all sports (truly latest by date - no filter)
+ * Returns 10 items for carousel
+ */
+export async function fetchLatestNews(): Promise<NewsArticle[]> {
+  const [football, basketball, formula1] = await Promise.all([
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }),
+  ]);
+
+  // Combine all, sort by date (newest first), take 10
+  const allArticles = [...football, ...basketball, ...formula1];
+  return allArticles.slice(0, 10);
+}
+
+/**
+ * Fetch main news from all sports (flagged as main news)
+ * Returns up to 8 most recent articles with isMainNews flag
+ */
+export async function fetchMainNews(): Promise<NewsArticle[]> {
+  const [football, basketball, formula1] = await Promise.all([
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 4 }),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 3 }),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 3 }),
+  ]);
+
+  return [...football, ...basketball, ...formula1].slice(0, 8);
+}
+
+/**
+ * Fetch homepage football section articles
+ */
+export async function fetchHomepageFootball(): Promise<NewsArticle[]> {
+  return fetchArticlesFromEndpoint(
+    'football-articles',
+    'ΠΟΔΟΣΦΑΙΡΟ',
+    'bg-green-100 text-green-800',
+    { isHomeSportSection: true, limit: 9 }
+  );
+}
+
+/**
+ * Fetch homepage basketball section articles
+ */
+export async function fetchHomepageBasketball(): Promise<NewsArticle[]> {
+  return fetchArticlesFromEndpoint(
+    'basketball-articles',
+    'ΜΠΑΣΚΕΤ',
+    'bg-orange-100 text-orange-800',
+    { isHomeSportSection: true, limit: 9 }
+  );
+}
+
+/**
+ * Fetch homepage formula1 section articles
+ */
+export async function fetchHomepageFormula1(): Promise<NewsArticle[]> {
+  return fetchArticlesFromEndpoint(
+    'formula1-articles',
+    'FORMULA 1',
+    'bg-red-100 text-red-800',
+    { isHomeSportSection: true, limit: 9 }
+  );
+}
+

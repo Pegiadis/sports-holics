@@ -2,10 +2,12 @@ export interface NewsArticle {
   category: string;
   categoryColor: string;
   title: string;
+  subtitle?: string;
   description: string;
   timeAgo: string;
   author: string;
   imageUrl: string;
+  slug?: string;  // Optional for backward compatibility with mock data
 }
 
 export interface TrendingNewsItem {
