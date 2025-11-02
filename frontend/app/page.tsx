@@ -61,19 +61,10 @@ export default async function Home() {
                 <NewsCard key={index} {...news} size="xs" />
               ))}
             </div>
-
-            {/* Section Divider */}
-            <SectionDivider variant="gradient" />
-
-            {/* Latest News - Carousel with 10 items */}
-            <section className="mb-2">
-              <SectionTitle title="Τελευταία Νέα" icon="/speaker-color-icon.svg" />
-              <NewsCarousel articles={latestNewsArticles} />
-            </section>
           </div>
 
           {/* Sidebar */}
-          <Sidebar />
+          <Sidebar latestNews={latestNewsArticles} />
         </div>
 
         {/* Section Divider */}
