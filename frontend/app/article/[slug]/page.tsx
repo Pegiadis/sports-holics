@@ -4,6 +4,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { fetchArticleBySlug } from "@/lib/sports-api";
+import { richtextToHtml } from "@/lib/richtext-utils";
 
 interface ArticlePageProps {
   params: Promise<{
@@ -78,6 +79,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {article.title}
             </h1>
 
+            {/* Subtitle */}
+            {article.subtitle && (
+              <h2 className="text-xl text-gray-600 mb-6 leading-relaxed">
+                {article.subtitle}
+              </h2>
+            )}
+
             {/* Meta Information */}
             <div className="flex items-center gap-6 text-gray-600 text-sm mb-8 pb-8 border-b border-gray-200">
               <div className="flex items-center gap-2">
@@ -115,11 +123,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
 
             {/* Article Body */}
-            <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
-                {article.description}
-              </p>
-            </div>
+            <div 
+              className="prose prose-lg max-w-none"
+              dangerouslySetInnerHTML={{ __html: richtextToHtml(article.description) }}
+            />
 
             {/* Share Section */}
             <div className="mt-12 pt-8 border-t border-gray-200">

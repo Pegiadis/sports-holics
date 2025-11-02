@@ -11,6 +11,7 @@ export default function NewsCard({
   category,
   categoryColor,
   title,
+  subtitle,
   description,
   timeAgo,
   author,
@@ -72,7 +73,9 @@ export default function NewsCard({
         <h3 className={`${config.titleSize} font-bold mt-2 mb-2`}>
           {title}
         </h3>
-        <p className={`text-gray-600 mb-3 ${config.textSize}`}>{description}</p>
+        {subtitle && (
+          <p className={`text-gray-600 mb-3 ${config.textSize}`}>{subtitle}</p>
+        )}
         <div className={`flex items-center justify-between text-gray-500 ${config.metaSize}`}>
           <span>{timeAgo}</span>
           <span>By {author}</span>
