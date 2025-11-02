@@ -144,7 +144,7 @@ export default async function Home() {
         {/* Formula 1 Section */}
         {formula1Articles.length > 0 && (
           <section className="mb-12">
-            <SectionTitle title="Formula 1" icon="/formula-1.png" variant="large" />
+            <SectionTitle title="Formula 1" icon="/race.png" variant="large" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {formula1Articles.slice(0, 3).map((news, index) => (
                 <NewsCard key={index} {...news} />
