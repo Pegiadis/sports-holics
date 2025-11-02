@@ -57,7 +57,7 @@ export default async function Home() {
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-              {mainNewsArticles.slice(2, 5).map((news, index) => (
+              {mainNewsArticles.slice(2, 8).map((news, index) => (
                 <NewsCard key={index} {...news} size="xs" />
               ))}
             </div>
@@ -83,6 +83,11 @@ export default async function Home() {
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {footballArticles.slice(6, 9).map((news, index) => (
+              <NewsCard key={index} {...news} size="small" />
+            ))}
+          </div>
         </section>
 
         {/* Section Divider */}
@@ -101,6 +106,11 @@ export default async function Home() {
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {basketballArticles.slice(6, 9).map((news, index) => (
+              <NewsCard key={index} {...news} size="small" />
+            ))}
+          </div>
         </section>
 
         {/* Section Divider */}
@@ -116,6 +126,11 @@ export default async function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
             {formula1Articles.slice(3, 6).map((news, index) => (
+              <NewsCard key={index} {...news} size="small" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {formula1Articles.slice(6, 9).map((news, index) => (
               <NewsCard key={index} {...news} size="small" />
             ))}
           </div>
