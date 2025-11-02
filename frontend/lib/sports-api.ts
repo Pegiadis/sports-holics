@@ -12,6 +12,7 @@ export interface BaseStrapiArticle {
   id: number;
   documentId: string;
   title: string;
+  subtitle?: string;
   description: string;
   author: string;
   slug: string;
@@ -31,6 +32,7 @@ export interface BaseStrapiArticle {
 export interface BaseArticle {
   id: number;
   title: string;
+  subtitle?: string;
   description: string;
   author: string;
   imageUrl: string;
@@ -115,6 +117,7 @@ export function transformArticle<T extends BaseStrapiArticle>(
   return {
     id: article.id,
     title: article.title,
+    subtitle: article.subtitle,
     description: article.description,
     author: article.author,
     imageUrl: getImageUrl(article.image?.url, config.fallbackImage),

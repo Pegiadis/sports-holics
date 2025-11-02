@@ -16,8 +16,12 @@
       "type": "string",
       "required": true
     },
+    "subtitle": {
+      "type": "string",
+      "required": false
+    },
     "description": {
-      "type": "text",
+      "type": "richtext",
       "required": true
     },
     "author": {

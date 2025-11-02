@@ -486,7 +486,7 @@ export interface ApiBasketballArticleBasketballArticle
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     isHomeSportSection: Schema.Attribute.Boolean &
@@ -500,6 +500,7 @@ export interface ApiBasketballArticleBasketballArticle
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
+    subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -526,7 +527,7 @@ export interface ApiFootballArticleFootballArticle
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     isHomeSportSection: Schema.Attribute.Boolean &
@@ -540,6 +541,7 @@ export interface ApiFootballArticleFootballArticle
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
+    subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -566,8 +568,10 @@ export interface ApiFormula1ArticleFormula1Article
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
+    imagePosition: Schema.Attribute.Enumeration<['top', 'center', 'bottom']> &
+      Schema.Attribute.DefaultTo<'center'>;
     isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     isHomeSportSection: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
@@ -580,6 +584,7 @@ export interface ApiFormula1ArticleFormula1Article
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'>;
+    subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

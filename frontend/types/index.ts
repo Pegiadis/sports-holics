@@ -2,6 +2,7 @@ export interface NewsArticle {
   category: string;
   categoryColor: string;
   title: string;
+  subtitle?: string;
   description: string;
   timeAgo: string;
   author: string;

@@ -9,6 +9,7 @@ const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1
 interface StrapiArticle {
   id: number;
   title?: string;
+  subtitle?: string;
   description?: string;
   author?: string;
   slug?: string;
@@ -59,6 +60,7 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     category,
     categoryColor,
     title: article.title || "Untitled",
+    subtitle: article.subtitle,
     description: article.description || "",
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
     author: article.author || "Unknown",
