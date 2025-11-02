@@ -7,7 +7,6 @@ import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 import SectionTitle from "@/components/SectionTitle";
-import { mainNews, latestNews, footballNews, basketballNews, formulaOneNews, carouselNews } from "@/lib/data";
 import {
   fetchCarouselNews,
   fetchLatestNews,
@@ -18,7 +17,7 @@ import {
 } from "./homepage-api";
 
 export default async function Home() {
-  // Fetch data from Strapi, fallback to mock data
+  // Fetch data from Strapi only - no fallback to mock data
   const [
     carouselArticles,
     mainNewsArticles,
@@ -27,12 +26,12 @@ export default async function Home() {
     basketballArticles,
     formula1Articles
   ] = await Promise.all([
-    fetchCarouselNews().then(data => data.length > 0 ? data : carouselNews),
-    fetchMainNews().then(data => data.length > 0 ? data : mainNews),
-    fetchLatestNews().then(data => data.length > 0 ? data : latestNews),
-    fetchHomepageFootball().then(data => data.length > 0 ? data : footballNews),
-    fetchHomepageBasketball().then(data => data.length > 0 ? data : basketballNews),
-    fetchHomepageFormula1().then(data => data.length > 0 ? data : formulaOneNews),
+    fetchCarouselNews(),
+    fetchMainNews(),
+    fetchLatestNews(),
+    fetchHomepageFootball(),
+    fetchHomepageBasketball(),
+    fetchHomepageFormula1(),
   ]);
   
   return (
@@ -43,24 +42,38 @@ export default async function Home() {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hot News Carousel */}
-        <SectionTitle title="Σημαντικά Νέα" icon="/flames-icon.png" />
-        <NewsCarousel articles={carouselArticles} />
+        {carouselArticles.length > 0 && (
+          <>
+            <SectionTitle title="Σημαντικά Νέα" icon="/flames-icon.png" />
+            <NewsCarousel articles={carouselArticles} />
+          </>
+        )}
 
         {/* Main Content Grid */}
         <SectionTitle title="Περισσότερα Νέα" icon="/flames-icon.png" />
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
           {/* Main News Section */}
           <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {mainNewsArticles.slice(0, 2).map((news, index) => (
-                <NewsCard key={index} {...news} />
-              ))}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-              {mainNewsArticles.slice(2, 8).map((news, index) => (
-                <NewsCard key={index} {...news} size="xs" />
-              ))}
-            </div>
+            {mainNewsArticles.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  {mainNewsArticles.slice(0, 2).map((news, index) => (
+                    <NewsCard key={index} {...news} />
+                  ))}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                  {mainNewsArticles.slice(2, 8).map((news, index) => (
+                    <NewsCard key={index} {...news} size="xs" />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">
+                  Δεν υπάρχουν διαθέσιμα άρθρα αυτή τη στιγμή. Παρακαλώ προσθέστε άρθρα με το flag &quot;Main News&quot; στο CMS.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -71,70 +84,88 @@ export default async function Home() {
         <SectionDivider variant="sporty" />
 
         {/* Football Section */}
-        <section className="mb-12">
-          <SectionTitle title="Ποδόσφαιρο" icon="/soccer_ball2.svg" variant="large" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {footballArticles.slice(0, 3).map((news, index) => (
-              <NewsCard key={index} {...news} />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {footballArticles.slice(3, 6).map((news, index) => (
-              <NewsCard key={index} {...news} size="small" />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {footballArticles.slice(6, 9).map((news, index) => (
-              <NewsCard key={index} {...news} size="small" />
-            ))}
-          </div>
-        </section>
+        {footballArticles.length > 0 && (
+          <section className="mb-12">
+            <SectionTitle title="Ποδόσφαιρο" icon="/soccer_ball2.svg" variant="large" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {footballArticles.slice(0, 3).map((news, index) => (
+                <NewsCard key={index} {...news} />
+              ))}
+            </div>
+            {footballArticles.length > 3 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+                {footballArticles.slice(3, 6).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+            {footballArticles.length > 6 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {footballArticles.slice(6, 9).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Section Divider */}
         <SectionDivider variant="sporty" />
 
         {/* Basketball Section */}
-        <section className="mb-12">
-          <SectionTitle title="Μπάσκετ" icon="🏀" variant="large" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {basketballArticles.slice(0, 3).map((news, index) => (
-              <NewsCard key={index} {...news} />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {basketballArticles.slice(3, 6).map((news, index) => (
-              <NewsCard key={index} {...news} size="small" />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {basketballArticles.slice(6, 9).map((news, index) => (
-              <NewsCard key={index} {...news} size="small" />
-            ))}
-          </div>
-        </section>
+        {basketballArticles.length > 0 && (
+          <section className="mb-12">
+            <SectionTitle title="Μπάσκετ" icon="🏀" variant="large" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {basketballArticles.slice(0, 3).map((news, index) => (
+                <NewsCard key={index} {...news} />
+              ))}
+            </div>
+            {basketballArticles.length > 3 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+                {basketballArticles.slice(3, 6).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+            {basketballArticles.length > 6 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {basketballArticles.slice(6, 9).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Section Divider */}
         <SectionDivider variant="sporty" />
 
         {/* Formula 1 Section */}
-        <section className="mb-12">
-          <SectionTitle title="Formula 1" icon="/formula-1.png" variant="large" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {formula1Articles.slice(0, 3).map((news, index) => (
-              <NewsCard key={index} {...news} />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-            {formula1Articles.slice(3, 6).map((news, index) => (
-              <NewsCard key={index} {...news} size="small" />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {formula1Articles.slice(6, 9).map((news, index) => (
-              <NewsCard key={index} {...news} size="small" />
-            ))}
-          </div>
-        </section>
+        {formula1Articles.length > 0 && (
+          <section className="mb-12">
+            <SectionTitle title="Formula 1" icon="/formula-1.png" variant="large" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {formula1Articles.slice(0, 3).map((news, index) => (
+                <NewsCard key={index} {...news} />
+              ))}
+            </div>
+            {formula1Articles.length > 3 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+                {formula1Articles.slice(3, 6).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+            {formula1Articles.length > 6 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {formula1Articles.slice(6, 9).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
       </main>
 
       <Footer />

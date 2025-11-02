@@ -15,7 +15,8 @@ export default function Sidebar({ latestNews }: SidebarProps) {
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <SectionTitle title="Τελευταία Νέα" icon="/speaker-color-icon.svg" variant="default" hideDots={true} />
         <div className="space-y-4">
-          {latestNews.map((news, index) => (
+          {latestNews.length > 0 ? (
+            latestNews.map((news, index) => (
             <Link 
               key={index} 
               href={`/article/${news.slug}`}
@@ -41,7 +42,14 @@ export default function Sidebar({ latestNews }: SidebarProps) {
                 </div>
               </div>
             </Link>
-          ))}
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-sm">
+                Δεν υπάρχουν διαθέσιμα νέα αυτή τη στιγμή.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </aside>
