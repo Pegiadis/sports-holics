@@ -570,8 +570,6 @@ export interface ApiFormula1ArticleFormula1Article
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    imagePosition: Schema.Attribute.Enumeration<['top', 'center', 'bottom']> &
-      Schema.Attribute.DefaultTo<'center'>;
     isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     isHomeSportSection: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
