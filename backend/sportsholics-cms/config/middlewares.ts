@@ -6,8 +6,11 @@ export default [
     name: 'strapi::cors',
     config: {
       origin: [
-        'http://localhost:3000', // Local development
-        'https://*.vercel.app',   // Vercel deployments
+        'http://localhost:3000',     // Local development
+        'https://*.vercel.app',       // Vercel deployments
+        // Add your custom domain here once you set it up:
+        // 'https://yourdomain.com',
+        // 'https://www.yourdomain.com',
       ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
