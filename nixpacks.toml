@@ -1,0 +1,15 @@
+# Nixpacks configuration for Railway
+# Place this at repository ROOT
+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["cd backend/sportsholics-cms && npm ci"]
+
+[phases.build]
+cmds = ["cd backend/sportsholics-cms && npm run build"]
+
+[start]
+cmd = "cd backend/sportsholics-cms && npm run start:production"
+
