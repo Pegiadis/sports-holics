@@ -2,54 +2,134 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Header() {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50">
+    <header className="bg-white shadow-md sticky top-0 z-50 border-b-2 border-gray-100">
+      {/* Subtle brand accent bar */}
+      <div className="h-1 bg-gradient-to-r from-primary via-red-600 to-primary"></div>
+      
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-8">
-            <div className="h-10">
-              <Link href="/">
-                <Image
-                  src="/no_back.png"
-                  alt="Sports Holics"
-                  width={120}
-                  height={40}
-                  className="h-full w-auto object-contain"
-                />
-              </Link>
-            </div>
-            <nav className="hidden md:flex space-x-6">
+          <div className="flex items-center space-x-10">
+            {/* Logo with subtle hover effect */}
+            <Link href="/" className="h-10 transition-transform hover:scale-105 duration-300">
+              <Image
+                src="/no_back.png"
+                alt="Sports Holics"
+                width={120}
+                height={40}
+                className="h-full w-auto object-contain"
+              />
+            </Link>
+            
+            {/* Vertical divider */}
+            <div className="hidden md:block h-8 w-px bg-gray-200"></div>
+            
+            {/* Navigation with enhanced hover effects */}
+            <nav className="hidden md:flex items-center space-x-1">
+              {/* ΑΡΧΙΚΗ - Home */}
               <Link
-                href="/football"
-                className="text-gray-700 hover:text-primary font-medium transition-colors"
+                href="/"
+                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
               >
-                Ποδόσφαιρο
+                Αρχική
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              <Link
-                href="/basketball"
-                className="text-gray-700 hover:text-primary font-medium transition-colors"
+
+              {/* Δημοφιλείς Κατηγορίες - Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
               >
-                Μπάσκετ
+                <button
+                  className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group flex items-center space-x-1"
+                >
+                  <span>Δημοφιλείς Κατηγορίες</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 pt-2 w-56">
+                    <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-2 animate-dropdownFadeIn">
+                      <Link
+                        href="/football"
+                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors group"
+                      >
+                        <span className="text-2xl mr-3">⚽</span>
+                        <span className="font-medium">Ποδόσφαιρο</span>
+                        <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                      <Link
+                        href="/basketball"
+                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors group"
+                      >
+                        <span className="text-2xl mr-3">🏀</span>
+                        <span className="font-medium">Μπάσκετ</span>
+                        <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                      <Link
+                        href="/formula1"
+                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors group"
+                      >
+                        <span className="text-2xl mr-3">🏎️</span>
+                        <span className="font-medium">Formula 1</span>
+                        <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Blog */}
+              <Link
+                href="/blog"
+                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
+              >
+                Blog
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
+
+              {/* Ειδήσεις - News */}
               <Link
-                href="/formula1"
-                className="text-gray-700 hover:text-primary font-medium transition-colors"
+                href="/news"
+                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
               >
-                Formula 1
+                Ειδήσεις
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </nav>
           </div>
 
-          {/* Social Media Links */}
-          <div className="flex items-center space-x-3">
+          {/* Social Media Links with enhanced presentation */}
+          <div className="flex items-center space-x-1">
+            <span className="hidden sm:block text-xs text-gray-500 mr-2 font-medium">Ακολουθήστε μας</span>
+            
             {/* Instagram */}
             <a
               href="https://www.instagram.com/sportsholics.gr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-pink-600 transition-colors"
+              className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-gradient-to-br hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 transition-all duration-300 hover:scale-110"
               aria-label="Instagram"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +142,7 @@ export default function Header() {
               href="https://x.com/sportsholics_gr?t=KWX1YZspcZdMVfJxXN0Erw&s=09"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-black transition-colors"
+              className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-black transition-all duration-300 hover:scale-110"
               aria-label="Twitter/X"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -75,7 +155,7 @@ export default function Header() {
               href="https://www.facebook.com/p/Sportsholics-61579664206346/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-blue-600 transition-all duration-300 hover:scale-110"
               aria-label="Facebook"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
