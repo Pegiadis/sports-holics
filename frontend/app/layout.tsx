@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sports Holics - Τελευταία Αθλητικά Νέα",
   description: "Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις",
+  icons: {
+    icon: '/soccer_ball2.svg', // Sports icon - perfect for a sports site!
+  },
 };
 
 export default function RootLayout({

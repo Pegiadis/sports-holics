@@ -9,7 +9,7 @@ interface BasketballCardProps {
 export default function BasketballCard({ article }: BasketballCardProps) {
   return (
     <Link href={`/article/${article.slug}`}>
-      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer mb-3">
       <div className="flex flex-col md:flex-row">
         {/* Image Section - Left */}
         <div className="relative w-full md:w-80 h-48 md:h-auto flex-shrink-0">

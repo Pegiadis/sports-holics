@@ -50,9 +50,6 @@ export default function HeroSection() {
             <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105">
               Διαβάστε περισσότερα →
             </button>
-            <button className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-5 py-2.5 rounded-lg font-medium text-sm border border-white/30 transition-all duration-300">
-              Παρακολούθηση Live
-            </button>
           </div>
 
           {/* Stats bar - smaller and more compact */}

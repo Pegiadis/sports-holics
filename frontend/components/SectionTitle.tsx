@@ -4,13 +4,15 @@ import Image from 'next/image';
 interface SectionTitleProps {
   title: string;
   icon?: string;
-  variant?: 'default' | 'large';
+  variant?: 'default' | 'large' | 'small';
+  hideDots?: boolean;
 }
 
 const SectionTitle: React.FC<SectionTitleProps> = ({ 
   title, 
   icon = "⚽", 
-  variant = 'default' 
+  variant = 'default',
+  hideDots = false
 }) => {
   const isLarge = variant === 'large';
   
@@ -45,11 +47,13 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
         </div>
         
         {/* Decorative dots */}
-        <div className="hidden md:flex items-center gap-1.5">
-          <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-          <div className="w-2 h-2 bg-red-500 rounded-full opacity-70"></div>
-          <div className="w-2 h-2 bg-red-400 rounded-full opacity-50"></div>
-        </div>
+        {!hideDots && (
+          <div className="hidden md:flex items-center gap-1.5">
+            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+            <div className="w-2 h-2 bg-red-500 rounded-full opacity-70"></div>
+            <div className="w-2 h-2 bg-red-400 rounded-full opacity-50"></div>
+          </div>
+        )}
       </div>
     </div>
   );

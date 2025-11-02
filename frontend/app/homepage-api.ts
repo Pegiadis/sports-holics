@@ -150,15 +150,16 @@ export async function fetchLatestNews(): Promise<NewsArticle[]> {
 
 /**
  * Fetch main news from all sports (flagged as main news)
+ * Returns up to 8 most recent articles with isMainNews flag
  */
 export async function fetchMainNews(): Promise<NewsArticle[]> {
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 2 }),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 1 }),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 1 }),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 4 }),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 3 }),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 3 }),
   ]);
 
-  return [...football, ...basketball, ...formula1].slice(0, 4);
+  return [...football, ...basketball, ...formula1].slice(0, 8);
 }
 
 /**
@@ -169,7 +170,7 @@ export async function fetchHomepageFootball(): Promise<NewsArticle[]> {
     'football-articles',
     'ΠΟΔΟΣΦΑΙΡΟ',
     'bg-green-100 text-green-800',
-    { isHomeSportSection: true, limit: 6 }
+    { isHomeSportSection: true, limit: 9 }
   );
 }
 
@@ -181,7 +182,7 @@ export async function fetchHomepageBasketball(): Promise<NewsArticle[]> {
     'basketball-articles',
     'ΜΠΑΣΚΕΤ',
     'bg-orange-100 text-orange-800',
-    { isHomeSportSection: true, limit: 6 }
+    { isHomeSportSection: true, limit: 9 }
   );
 }
 
@@ -193,7 +194,7 @@ export async function fetchHomepageFormula1(): Promise<NewsArticle[]> {
     'formula1-articles',
     'FORMULA 1',
     'bg-red-100 text-red-800',
-    { isHomeSportSection: true, limit: 6 }
+    { isHomeSportSection: true, limit: 9 }
   );
 }
 
