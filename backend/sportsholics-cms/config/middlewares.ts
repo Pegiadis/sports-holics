@@ -24,11 +24,10 @@ export default [
     name: 'strapi::session',
     config: {
       // Configure session cookies for Railway HTTPS proxy
-      // Railway provides HTTPS, so we trust the proxy headers
+      // Railway terminates HTTPS at the edge, connection to container is HTTP
+      // So we set secure to false for production (Railway handles HTTPS)
       cookie: {
-        // Set secure to false if X-Forwarded-Proto is not detected
-        // Railway will forward HTTPS as X-Forwarded-Proto: https
-        secure: process.env.NODE_ENV === 'production' && process.env.TRUST_PROXY !== 'false',
+        secure: false, // Railway handles HTTPS at the edge
         sameSite: 'lax',
         httpOnly: true,
       },
