@@ -104,6 +104,18 @@ backend/public/uploads/*
 backend/license.txt
 backend/specification.json
 
+# Strapi CMS specific
+backend/sportsholics-cms/.strapi/
+backend/sportsholics-cms/.strapi-updater.json
+backend/sportsholics-cms/.strapi-cloud.json
+backend/sportsholics-cms/.tmp/
+backend/sportsholics-cms/build/
+backend/sportsholics-cms/dist/
+backend/sportsholics-cms/exports/
+backend/sportsholics-cms/.cache/
+backend/sportsholics-cms/public/uploads/*
+!backend/sportsholics-cms/public/uploads/.gitkeep
+
 ############################
 # Databases
 ############################
