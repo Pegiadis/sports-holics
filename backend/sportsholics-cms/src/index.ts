@@ -16,30 +16,45 @@ export default {
    */
   async bootstrap({ strapi }) {
     // Create default admin user if none exists
-    const adminUsers = await strapi.admin.services.user.findAll();
-    
-    if (adminUsers.length === 0) {
-      try {
-        // Create default admin user
-        const defaultAdmin = await strapi.admin.services.user.create({
-          firstname: 'Admin',
-          lastname: 'User',
-          email: 'admin@example.com',
-          password: 'admin',
-          isActive: true,
-        });
+    // Wrap in try-catch to prevent bootstrap from blocking startup
+    try {
+      // Wait a bit for Strapi to fully initialize
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const adminUsers = await strapi.admin.services.user.findAll();
+      
+      if (adminUsers.length === 0) {
+        try {
+          strapi.log.info('🔧 No admin users found. Creating default admin...');
+          
+          // Create default admin user
+          const defaultAdmin = await strapi.admin.services.user.create({
+            firstname: 'Admin',
+            lastname: 'User',
+            email: 'admin@example.com',
+            password: 'admin',
+            isActive: true,
+          });
 
-        // Assign Super Admin role
-        const superAdminRole = await strapi.admin.services.role.getSuperAdmin();
-        await strapi.admin.services.user.assignARole(defaultAdmin.id, superAdminRole.id);
+          // Assign Super Admin role
+          const superAdminRole = await strapi.admin.services.role.getSuperAdmin();
+          await strapi.admin.services.user.assignARole(defaultAdmin.id, superAdminRole.id);
 
-        strapi.log.info('✅ Default admin user created:');
-        strapi.log.info('   Email: admin@example.com');
-        strapi.log.info('   Password: admin');
-        strapi.log.warn('⚠️  Please change the default password after first login!');
-      } catch (error) {
-        strapi.log.error('❌ Error creating default admin user:', error);
+          strapi.log.info('✅ Default admin user created:');
+          strapi.log.info('   Email: admin@example.com');
+          strapi.log.info('   Password: admin');
+          strapi.log.warn('⚠️  Please change the default password after first login!');
+        } catch (error) {
+          strapi.log.error('❌ Error creating default admin user:', error);
+          strapi.log.warn('⚠️  You can create an admin user via the registration form at /admin');
+        }
+      } else {
+        strapi.log.info(`ℹ️  Found ${adminUsers.length} existing admin user(s).`);
       }
+    } catch (error) {
+      // Don't block startup if bootstrap fails
+      strapi.log.error('❌ Bootstrap error (non-blocking):', error);
+      strapi.log.warn('⚠️  Strapi will continue to start. You can create an admin user via /admin');
     }
   },
 };
