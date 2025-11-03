@@ -4,4 +4,8 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
+  // Trust proxy for Railway (HTTPS)
+  proxy: true,
+  // Enable trust for X-Forwarded-* headers
+  trustProxy: true,
 });

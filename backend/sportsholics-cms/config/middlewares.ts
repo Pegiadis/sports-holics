@@ -20,7 +20,20 @@ export default [
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',
-  'strapi::session',
+  {
+    name: 'strapi::session',
+    config: {
+      // Configure session cookies for Railway HTTPS proxy
+      // Railway provides HTTPS, so we trust the proxy headers
+      cookie: {
+        // Set secure to false if X-Forwarded-Proto is not detected
+        // Railway will forward HTTPS as X-Forwarded-Proto: https
+        secure: process.env.NODE_ENV === 'production' && process.env.TRUST_PROXY !== 'false',
+        sameSite: 'lax',
+        httpOnly: true,
+      },
+    },
+  },
   'strapi::favicon',
   'strapi::public',
 ];
