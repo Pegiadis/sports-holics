@@ -1,4 +1,4 @@
-export default [
+export default ({ env }) => [
   'strapi::logger',
   'strapi::errors',
   'strapi::security',
@@ -7,11 +7,16 @@ export default [
     config: {
       origin: [
         'http://localhost:3000',     // Local development
+        'http://localhost:1337',     // Local Strapi admin
         'https://*.vercel.app',       // Vercel deployments
+        'https://*.railway.app',      // Railway deployments (wildcard)
+        'https://sincere-gentleness-production-b689.up.railway.app',  // Backend Railway URL
+        'https://sports-holics-production.up.railway.app',  // Frontend Railway URL
+        env('RAILWAY_PUBLIC_DOMAIN') ? `https://${env('RAILWAY_PUBLIC_DOMAIN')}` : null,
         // Add your custom domain here once you set it up:
         // 'https://yourdomain.com',
         // 'https://www.yourdomain.com',
-      ],
+      ].filter(Boolean), // Remove null values
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
       keepHeaderOnError: true,
