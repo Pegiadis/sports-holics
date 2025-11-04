@@ -1,6 +1,14 @@
 export default ({ env }) => ({
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
+    // Configure sessions for Railway (HTTPS proxy)
+    sessions: {
+      cookie: {
+        secure: false, // Railway handles HTTPS at the edge
+        sameSite: 'lax',
+        httpOnly: true,
+      },
+    },
   },
   apiToken: {
     salt: env('API_TOKEN_SALT'),
