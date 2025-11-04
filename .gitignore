@@ -99,8 +99,6 @@ backend/build/
 backend/dist/
 backend/exports/
 backend/.cache/
-backend/public/uploads/*
-!backend/public/uploads/.gitkeep
 backend/license.txt
 backend/specification.json
 
