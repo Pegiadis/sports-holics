@@ -9,14 +9,10 @@ export default ({ env }) => [
         'http://localhost:3000',     // Local development
         'http://localhost:1337',     // Local Strapi admin
         'https://*.vercel.app',       // Vercel deployments
-        'https://*.railway.app',      // Railway deployments (wildcard)
-        'https://sincere-gentleness-production-b689.up.railway.app',  // Backend Railway URL
-        'https://sports-holics-production.up.railway.app',  // Frontend Railway URL
-        env('RAILWAY_PUBLIC_DOMAIN') ? `https://${env('RAILWAY_PUBLIC_DOMAIN')}` : null,
-        // Add your custom domain here once you set it up:
+        // Add your production domain here:
         // 'https://yourdomain.com',
         // 'https://www.yourdomain.com',
-      ].filter(Boolean), // Remove null values
+      ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
       keepHeaderOnError: true,
@@ -28,11 +24,10 @@ export default ({ env }) => [
   {
     name: 'strapi::session',
     config: {
-      // Configure session cookies for Railway HTTPS proxy
-      // Railway terminates HTTPS at the edge, connection to container is HTTP
-      // So we set secure to false for production (Railway handles HTTPS)
+      // Configure session cookies for production HTTPS proxy
+      // Set secure to false when using a reverse proxy that handles HTTPS
       cookie: {
-        secure: false, // Railway handles HTTPS at the edge
+        secure: false, // Set to true if not using a reverse proxy
         sameSite: 'lax',
         httpOnly: true,
       },

@@ -1,10 +1,10 @@
 export default ({ env }) => ({
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
-    // Configure sessions for Railway (HTTPS proxy)
+    // Configure sessions for HTTPS proxy deployments
     sessions: {
       cookie: {
-        secure: false, // Railway handles HTTPS at the edge
+        secure: false, // Set to true if not using a reverse proxy
         sameSite: 'lax',
         httpOnly: true,
       },
