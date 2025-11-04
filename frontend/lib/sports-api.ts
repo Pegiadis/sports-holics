@@ -3,7 +3,9 @@
  * Shared across all sport pages (football, basketball, formula1)
  */
 
-export const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+// Remove trailing slash from STRAPI_URL to prevent double slashes in API calls
+const rawStrapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+export const STRAPI_URL = rawStrapiUrl.endsWith('/') ? rawStrapiUrl.slice(0, -1) : rawStrapiUrl;
 
 /**
  * Base Strapi article structure (common fields across all sports)

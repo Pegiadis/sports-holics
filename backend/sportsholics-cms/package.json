@@ -6,6 +6,7 @@
   "scripts": {
     "build": "strapi build",
     "console": "strapi console",
+    "create-admin": "node scripts/create-admin.js",
     "deploy": "strapi deploy",
     "dev": "node -r ./load-env.js node_modules/@strapi/strapi/bin/strapi.js develop",
     "develop": "node -r ./load-env.js node_modules/@strapi/strapi/bin/strapi.js develop",

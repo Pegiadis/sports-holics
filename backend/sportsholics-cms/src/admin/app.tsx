@@ -10,12 +10,12 @@ export default {
     
     // Customize authentication page
     auth: {
-      logo: '/uploads/no_back.png', // Custom logo (you can add your own)
+      logo: '/no_back.png', // Custom logo (you can add your own)
     },
     
     // Customize main navigation
     head: {
-      favicon: '/uploads/no_back.png',
+      favicon: '/no_back.png',
     },
     
     // Customize the admin panel's look and feel
@@ -128,7 +128,7 @@ export default {
     
     // Custom menu configuration
     menu: {
-      logo: '/uploads/no_back.png',
+      logo: '/no_back.png',
     },
     
     // Tutorials configuration
