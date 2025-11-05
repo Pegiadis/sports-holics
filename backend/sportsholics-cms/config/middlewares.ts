@@ -1,7 +1,32 @@
 export default ({ env }) => [
   'strapi::logger',
   'strapi::errors',
-  'strapi::security',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': [
+            "'self'",
+            'data:',
+            'blob:',
+            'dl.airtable.com',
+            'market-assets.strapi.io',
+            '*.strapiapp.com',
+          ],
+          'media-src': [
+            "'self'",
+            'data:',
+            'blob:',
+            '*.strapiapp.com',
+          ],
+          upgradeInsecureRequests: null,
+        },
+      },
+    },
+  },
   {
     name: 'strapi::cors',
     config: {
@@ -9,9 +34,6 @@ export default ({ env }) => [
         'http://localhost:3000',     // Local development
         'http://localhost:1337',     // Local Strapi admin
         'https://*.vercel.app',       // Vercel deployments
-        // Add your production domain here:
-        // 'https://yourdomain.com',
-        // 'https://www.yourdomain.com',
       ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
