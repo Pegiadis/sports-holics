@@ -200,3 +200,81 @@ export async function fetchHomepageFormula1(): Promise<NewsArticle[]> {
   );
 }
 
+/**
+ * Hero Section Data Interface
+ */
+export interface HeroSectionData {
+  id: number;
+  title: string;
+  titleHighlight?: string;
+  description: string;
+  categoryLabel: string;
+  categoryEmoji?: string;
+  timeAgo?: string;
+  buttonText: string;
+  buttonLink?: string;
+  backgroundImageUrl: string;
+  views?: string;
+  comments?: string;
+  trending?: string;
+}
+
+/**
+ * Fetch active hero section content
+ */
+export async function fetchHeroSection(): Promise<HeroSectionData | null> {
+  try {
+    const params = new URLSearchParams();
+    params.append('filters[isActive][$eq]', 'true');
+    params.append('sort[0]', 'priority:desc');
+    params.append('populate', 'backgroundImage');
+    params.append('pagination[limit]', '1');
+
+    const response = await fetch(
+      `${STRAPI_URL}/api/hero-sections?${params.toString()}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        next: { revalidate: 60 },
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('Failed to fetch hero section:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      return null;
+    }
+
+    const hero = data.data[0];
+    const imageUrl = hero.backgroundImage?.url
+      ? `${STRAPI_URL}${hero.backgroundImage.url}`
+      : '/216-scaled-1.jpg'; // Fallback to default image
+
+    return {
+      id: hero.id,
+      title: hero.title || 'Τελικός Champions League',
+      titleHighlight: hero.titleHighlight || 'Έτοιμος για Επική Αναμέτρηση',
+      description: hero.description || 'Δύο γίγαντες του ποδοσφαίρου ετοιμάζονται για την απόλυτη μάχη.',
+      categoryLabel: hero.categoryLabel || 'Ποδόσφαιρο',
+      categoryEmoji: hero.categoryEmoji || '🔥',
+      timeAgo: hero.timeAgo || '5 λεπτά πριν',
+      buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
+      buttonLink: hero.buttonLink || '#',
+      backgroundImageUrl: imageUrl,
+      views: hero.views || '2.5K προβολές',
+      comments: hero.comments || '156 σχόλια',
+      trending: hero.trending || 'Trending #1',
+    };
+  } catch (error) {
+    console.error('Error fetching hero section:', error);
+    return null;
+  }
+}
+

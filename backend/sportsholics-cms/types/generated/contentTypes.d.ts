@@ -590,6 +590,58 @@ export interface ApiFormula1ArticleFormula1Article
   };
 }
 
+export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
+  collectionName: 'hero_sections';
+  info: {
+    description: 'Homepage hero section content';
+    displayName: 'Hero Section';
+    pluralName: 'hero-sections';
+    singularName: 'hero-section';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    backgroundImage: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.Required;
+    buttonLink: Schema.Attribute.String;
+    buttonText: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u0394\u03B9\u03B1\u03B2\u03AC\u03C3\u03C4\u03B5 \u03C0\u03B5\u03C1\u03B9\u03C3\u03C3\u03CC\u03C4\u03B5\u03C1\u03B1 \u2192'>;
+    categoryEmoji: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'\uD83D\uDD25'>;
+    categoryLabel: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'\u03A0\u03BF\u03B4\u03CC\u03C3\u03C6\u03B1\u03B9\u03C1\u03BF'>;
+    comments: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'156 \u03C3\u03C7\u03CC\u03BB\u03B9\u03B1'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::hero-section.hero-section'
+    > &
+      Schema.Attribute.Private;
+    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    timeAgo: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'5 \u03BB\u03B5\u03C0\u03C4\u03AC \u03C0\u03C1\u03B9\u03BD'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    titleHighlight: Schema.Attribute.String;
+    trending: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Trending #1'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    views: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'2.5K \u03C0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AD\u03C2'>;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1104,6 +1156,7 @@ declare module '@strapi/strapi' {
       'api::basketball-article.basketball-article': ApiBasketballArticleBasketballArticle;
       'api::football-article.football-article': ApiFootballArticleFootballArticle;
       'api::formula1-article.formula1-article': ApiFormula1ArticleFormula1Article;
+      'api::hero-section.hero-section': ApiHeroSectionHeroSection;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
