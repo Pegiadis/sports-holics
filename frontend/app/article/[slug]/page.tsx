@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Sidebar from "@/components/Sidebar";
 import { fetchArticleBySlug } from "@/lib/sports-api";
+import { fetchLatestNews } from "@/app/homepage-api";
 import { richtextToHtml } from "@/lib/richtext-utils";
 
 interface ArticlePageProps {
@@ -14,7 +16,12 @@ interface ArticlePageProps {
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const article = await fetchArticleBySlug(slug);
+  
+  // Fetch article and latest news in parallel
+  const [article, latestNews] = await Promise.all([
+    fetchArticleBySlug(slug),
+    fetchLatestNews()
+  ]);
 
   // If article not found in any sport, show 404
   if (!article) {
@@ -25,7 +32,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb / Back Navigation */}
         <div className="mb-6">
           <Link
@@ -49,8 +56,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </Link>
         </div>
 
-        {/* Article Container */}
-        <article className="bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Article Container - Main Column */}
+          <div className="lg:col-span-3">
+            <article className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Hero Image */}
           <div className="relative w-full h-96">
             <Image
@@ -165,6 +175,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
           </div>
         </article>
+          </div>
+
+          {/* Sidebar */}
+          <Sidebar latestNews={latestNews} />
+        </div>
       </main>
 
       <Footer />
