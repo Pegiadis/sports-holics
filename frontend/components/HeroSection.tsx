@@ -27,7 +27,7 @@ export default function HeroSection({
   backgroundImageUrl = "/216-scaled-1.jpg",
 }: HeroSectionProps) {
   return (
-    <section className="relative h-96 md:h-[450px] overflow-hidden group">
+    <section className="relative h-[450px] md:h-[550px] overflow-hidden group shadow-lg">
       {/* Background Image with subtle zoom effect on hover */}
       <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
         <Image
@@ -42,7 +42,7 @@ export default function HeroSection({
       
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-transparent z-[1]"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-[1]"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-[1]"></div>
       
       {/* Content on top of image */}
       <div className="relative max-w-7xl mx-auto px-4 md:px-6 h-full flex items-center z-10">
@@ -90,9 +90,6 @@ export default function HeroSection({
           </div>
         </div>
       </div>
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-50 to-transparent z-[2]"></div>
     </section>
   );
 }

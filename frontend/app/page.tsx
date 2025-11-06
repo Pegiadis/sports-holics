@@ -46,7 +46,7 @@ export default async function Home() {
       <BreakingNews items={breakingNews} />
       <HeroSection {...heroSection} />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hot News Carousel */}
         {carouselArticles.length > 0 && (
           <>
