@@ -1,0 +1,68 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blog_articles",
+  "info": {
+    "singularName": "blog-article",
+    "pluralName": "blog-articles",
+    "displayName": "Blog Article",
+    "description": "Blog articles written by journalists"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "string",
+      "required": false
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "content": {
+      "type": "richtext",
+      "required": true
+    },
+    "excerpt": {
+      "type": "text",
+      "required": false,
+      "maxLength": 300
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "journalist": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::journalist.journalist",
+      "inversedBy": "blogArticles"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["Ποδόσφαιρο", "Μπάσκετ", "Formula 1", "Γενικά", "Ανάλυση", "Συνεντεύξεις"],
+      "required": false
+    },
+    "tags": {
+      "type": "json",
+      "required": false
+    },
+    "readTime": {
+      "type": "integer",
+      "required": false,
+      "default": 5
+    },
+    "isFeatured": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
+

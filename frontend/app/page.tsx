@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import NewsCarousel from "@/components/NewsCarousel";
 import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
+import JournalistsSection from "@/components/JournalistsSection";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 import SectionTitle from "@/components/SectionTitle";
@@ -15,7 +16,8 @@ import {
   fetchHomepageBasketball,
   fetchHomepageFormula1,
   fetchHeroSection,
-  fetchBreakingNews
+  fetchBreakingNews,
+  fetchJournalists
 } from "./homepage-api";
 
 export default async function Home() {
@@ -26,6 +28,7 @@ export default async function Home() {
     carouselArticles,
     mainNewsArticles,
     latestNewsArticles,
+    journalists,
     footballArticles,
     basketballArticles,
     formula1Articles
@@ -35,6 +38,7 @@ export default async function Home() {
     fetchCarouselNews(),
     fetchMainNews(),
     fetchLatestNews(),
+    fetchJournalists(),
     fetchHomepageFootball(),
     fetchHomepageBasketball(),
     fetchHomepageFormula1(),
@@ -85,6 +89,11 @@ export default async function Home() {
           {/* Sidebar */}
           <Sidebar latestNews={latestNewsArticles} />
         </div>
+
+        {/* Journalists Section */}
+        {journalists.length > 0 && (
+          <JournalistsSection journalists={journalists} />
+        )}
 
         {/* Section Divider */}
         <SectionDivider variant="sporty" />

@@ -217,6 +217,46 @@ export interface HeroSectionData {
 }
 
 /**
+ * Journalist Data Interface
+ */
+export interface JournalistData {
+  id: number;
+  name: string;
+  slug: string;
+  title?: string;
+  bio?: string;
+  avatarUrl: string;
+  specialty?: string;
+  twitter?: string;
+  instagram?: string;
+}
+
+/**
+ * Blog Article Data Interface
+ */
+export interface BlogArticleData {
+  id: number;
+  title: string;
+  subtitle?: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  coverImageUrl: string;
+  category?: string;
+  tags?: string[];
+  readTime?: number;
+  isFeatured: boolean;
+  publishedAt: string;
+  timeAgo: string;
+  journalist: {
+    id: number;
+    name: string;
+    slug: string;
+    avatarUrl: string;
+  };
+}
+
+/**
  * Breaking News Data Interface
  */
 export interface BreakingNewsItem {
@@ -265,6 +305,56 @@ export async function fetchBreakingNews(): Promise<BreakingNewsItem[]> {
     }));
   } catch (error) {
     console.error('Error fetching breaking news:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch active journalists
+ */
+export async function fetchJournalists(): Promise<JournalistData[]> {
+  try {
+    const params = new URLSearchParams();
+    params.append('filters[isActive][$eq]', 'true');
+    params.append('sort[0]', 'priority:desc');
+    params.append('sort[1]', 'name:asc');
+    params.append('populate', 'avatar');
+
+    const response = await fetch(
+      `${STRAPI_URL}/api/journalists?${params.toString()}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        next: { revalidate: 300 }, // 5 minutes
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('Failed to fetch journalists:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      return [];
+    }
+
+    return data.data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      slug: item.slug,
+      title: item.title || '',
+      bio: item.bio || '',
+      avatarUrl: item.avatar?.url ? `${STRAPI_URL}${item.avatar.url}` : '/default-avatar.png',
+      specialty: item.specialty || '',
+      twitter: item.twitter || '',
+      instagram: item.instagram || '',
+    }));
+  } catch (error) {
+    console.error('Error fetching journalists:', error);
     return [];
   }
 }

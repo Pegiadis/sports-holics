@@ -14,10 +14,10 @@ interface BreakingNewsProps {
 
 export default function BreakingNews({ items = [] }: BreakingNewsProps) {
   // Default items if none provided
-  const defaultItems = [
-    { id: 1, text: "Manchester United defeats Liverpool 3-1 in Premier League clash" },
-    { id: 2, text: "NBA Finals: Lakers lead series 3-2 after dominant Game 5 performance" },
-    { id: 3, text: "Formula 1: Max Verstappen wins Monaco Grand Prix in thrilling race" },
+  const defaultItems: BreakingNewsItem[] = [
+    { id: 1, text: "Manchester United defeats Liverpool 3-1 in Premier League clash", link: undefined },
+    { id: 2, text: "NBA Finals: Lakers lead series 3-2 after dominant Game 5 performance", link: undefined },
+    { id: 3, text: "Formula 1: Max Verstappen wins Monaco Grand Prix in thrilling race", link: undefined },
   ];
 
   const newsItems = items.length > 0 ? items : defaultItems;

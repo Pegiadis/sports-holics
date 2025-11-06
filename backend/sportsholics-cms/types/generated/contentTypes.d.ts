@@ -508,6 +508,60 @@ export interface ApiBasketballArticleBasketballArticle
   };
 }
 
+export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
+  collectionName: 'blog_articles';
+  info: {
+    description: 'Blog articles written by journalists';
+    displayName: 'Blog Article';
+    pluralName: 'blog-articles';
+    singularName: 'blog-article';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    category: Schema.Attribute.Enumeration<
+      [
+        '\u03A0\u03BF\u03B4\u03CC\u03C3\u03C6\u03B1\u03B9\u03C1\u03BF',
+        '\u039C\u03C0\u03AC\u03C3\u03BA\u03B5\u03C4',
+        'Formula 1',
+        '\u0393\u03B5\u03BD\u03B9\u03BA\u03AC',
+        '\u0391\u03BD\u03AC\u03BB\u03C5\u03C3\u03B7',
+        '\u03A3\u03C5\u03BD\u03B5\u03BD\u03C4\u03B5\u03CD\u03BE\u03B5\u03B9\u03C2',
+      ]
+    >;
+    content: Schema.Attribute.RichText & Schema.Attribute.Required;
+    coverImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    excerpt: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    journalist: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::journalist.journalist'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-article.blog-article'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    readTime: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<5>;
+    slug: Schema.Attribute.UID<'title'>;
+    subtitle: Schema.Attribute.String;
+    tags: Schema.Attribute.JSON;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBreakingNewsBreakingNews
   extends Struct.CollectionTypeSchema {
   collectionName: 'breaking_news';
@@ -667,6 +721,49 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'5 \u03BB\u03B5\u03C0\u03C4\u03AC \u03C0\u03C1\u03B9\u03BD'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     titleHighlight: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
+  collectionName: 'journalists';
+  info: {
+    description: 'Sports journalists and content creators';
+    displayName: 'Journalist';
+    pluralName: 'journalists';
+    singularName: 'journalist';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    avatar: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    bio: Schema.Attribute.Text;
+    blogArticles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-article.blog-article'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email;
+    instagram: Schema.Attribute.String;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::journalist.journalist'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'>;
+    specialty: Schema.Attribute.String;
+    title: Schema.Attribute.String;
+    twitter: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1185,10 +1282,12 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::basketball-article.basketball-article': ApiBasketballArticleBasketballArticle;
+      'api::blog-article.blog-article': ApiBlogArticleBlogArticle;
       'api::breaking-news.breaking-news': ApiBreakingNewsBreakingNews;
       'api::football-article.football-article': ApiFootballArticleFootballArticle;
       'api::formula1-article.formula1-article': ApiFormula1ArticleFormula1Article;
       'api::hero-section.hero-section': ApiHeroSectionHeroSection;
+      'api::journalist.journalist': ApiJournalistJournalist;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
