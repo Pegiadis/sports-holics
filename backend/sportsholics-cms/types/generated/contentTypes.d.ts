@@ -650,8 +650,6 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
     categoryLabel: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u03A0\u03BF\u03B4\u03CC\u03C3\u03C6\u03B1\u03B9\u03C1\u03BF'>;
-    comments: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'156 \u03C3\u03C7\u03CC\u03BB\u03B9\u03B1'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -669,13 +667,9 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'5 \u03BB\u03B5\u03C0\u03C4\u03AC \u03C0\u03C1\u03B9\u03BD'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     titleHighlight: Schema.Attribute.String;
-    trending: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Trending #1'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    views: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'2.5K \u03C0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AD\u03C2'>;
   };
 }
 

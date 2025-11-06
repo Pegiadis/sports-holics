@@ -27,9 +27,6 @@ The Hero Section allows content editors to control:
 - **categoryEmoji** (string): Emoji for the category badge (default: "🔥")
 - **timeAgo** (string): Timestamp text (default: "5 λεπτά πριν")
 - **buttonLink** (string): URL for the CTA button (can be article slug like "/article/my-article")
-- **views** (string): Views count display (default: "2.5K προβολές")
-- **comments** (string): Comments count display (default: "156 σχόλια")
-- **trending** (string): Trending text (default: "Trending #1")
 
 ### System Fields
 - **isActive** (boolean): Set to true to show this hero section on the homepage
@@ -51,7 +48,6 @@ The Hero Section allows content editors to control:
    - Title Highlight: Part of title to highlight in red
    - Category Emoji: Change the emoji
    - Button Link: Add article link
-   - Stats: Customize views/comments/trending
 5. Set **isActive** to `true` to enable
 6. Set **priority** (higher = shown first)
 7. Save and Publish
@@ -88,9 +84,6 @@ The Hero Section allows content editors to control:
       "timeAgo": "5 λεπτά πριν",
       "buttonText": "Διαβάστε περισσότερα →",
       "buttonLink": "/article/champions-league-final",
-      "views": "2.5K προβολές",
-      "comments": "156 σχόλια",
-      "trending": "Trending #1",
       "isActive": true,
       "priority": 10,
       "backgroundImage": {

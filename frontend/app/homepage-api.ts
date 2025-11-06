@@ -214,9 +214,6 @@ export interface HeroSectionData {
   buttonText: string;
   buttonLink?: string;
   backgroundImageUrl: string;
-  views?: string;
-  comments?: string;
-  trending?: string;
 }
 
 /**
@@ -321,9 +318,6 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
       buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
       buttonLink: hero.buttonLink || '#',
       backgroundImageUrl: imageUrl,
-      views: hero.views || '2.5K προβολές',
-      comments: hero.comments || '156 σχόλια',
-      trending: hero.trending || 'Trending #1',
     };
   } catch (error) {
     console.error('Error fetching hero section:', error);

@@ -13,9 +13,6 @@ interface HeroSectionProps {
   buttonText?: string;
   buttonLink?: string;
   backgroundImageUrl?: string;
-  views?: string;
-  comments?: string;
-  trending?: string;
 }
 
 export default function HeroSection({
@@ -28,9 +25,6 @@ export default function HeroSection({
   buttonText = "Διαβάστε περισσότερα →",
   buttonLink = "#",
   backgroundImageUrl = "/216-scaled-1.jpg",
-  views = "2.5K προβολές",
-  comments = "156 σχόλια",
-  trending = "Trending #1",
 }: HeroSectionProps) {
   return (
     <section className="relative h-96 md:h-[450px] overflow-hidden group">
@@ -92,28 +86,6 @@ export default function HeroSection({
               <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105">
                 {buttonText}
               </button>
-            )}
-          </div>
-
-          {/* Stats bar - smaller and more compact */}
-          <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-white/20">
-            {views && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-red-500 text-sm">👁️</span>
-                <span className="text-xs text-gray-300">{views}</span>
-              </div>
-            )}
-            {comments && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-red-500 text-sm">💬</span>
-                <span className="text-xs text-gray-300">{comments}</span>
-              </div>
-            )}
-            {trending && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-red-500 text-sm">⚡</span>
-                <span className="text-xs text-gray-300">{trending}</span>
-              </div>
             )}
           </div>
         </div>
