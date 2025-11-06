@@ -14,12 +14,14 @@ import {
   fetchHomepageFootball,
   fetchHomepageBasketball,
   fetchHomepageFormula1,
-  fetchHeroSection
+  fetchHeroSection,
+  fetchBreakingNews
 } from "./homepage-api";
 
 export default async function Home() {
   // Fetch data from Strapi only - no fallback to mock data
   const [
+    breakingNews,
     heroSection,
     carouselArticles,
     mainNewsArticles,
@@ -28,6 +30,7 @@ export default async function Home() {
     basketballArticles,
     formula1Articles
   ] = await Promise.all([
+    fetchBreakingNews(),
     fetchHeroSection(),
     fetchCarouselNews(),
     fetchMainNews(),
@@ -40,7 +43,7 @@ export default async function Home() {
   return (
     <div className="bg-gray-100">
       <Header />
-      <BreakingNews />
+      <BreakingNews items={breakingNews} />
       <HeroSection {...heroSection} />
 
       <main className="max-w-7xl mx-auto px-4 py-8">

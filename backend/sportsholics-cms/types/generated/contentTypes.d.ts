@@ -508,6 +508,43 @@ export interface ApiBasketballArticleBasketballArticle
   };
 }
 
+export interface ApiBreakingNewsBreakingNews
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'breaking_news';
+  info: {
+    description: 'Breaking news ticker items';
+    displayName: 'Breaking News';
+    pluralName: 'breaking-news-items';
+    singularName: 'breaking-news';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    link: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::breaking-news.breaking-news'
+    > &
+      Schema.Attribute.Private;
+    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    text: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiFootballArticleFootballArticle
   extends Struct.CollectionTypeSchema {
   collectionName: 'football_articles';
@@ -1154,6 +1191,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::basketball-article.basketball-article': ApiBasketballArticleBasketballArticle;
+      'api::breaking-news.breaking-news': ApiBreakingNewsBreakingNews;
       'api::football-article.football-article': ApiFootballArticleFootballArticle;
       'api::formula1-article.formula1-article': ApiFormula1ArticleFormula1Article;
       'api::hero-section.hero-section': ApiHeroSectionHeroSection;

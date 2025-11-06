@@ -220,6 +220,59 @@ export interface HeroSectionData {
 }
 
 /**
+ * Breaking News Data Interface
+ */
+export interface BreakingNewsItem {
+  id: number;
+  text: string;
+  link?: string;
+}
+
+/**
+ * Fetch active breaking news items
+ */
+export async function fetchBreakingNews(): Promise<BreakingNewsItem[]> {
+  try {
+    const params = new URLSearchParams();
+    params.append('filters[isActive][$eq]', 'true');
+    params.append('sort[0]', 'priority:desc');
+    params.append('sort[1]', 'createdAt:desc');
+    params.append('pagination[limit]', '10');
+
+    const response = await fetch(
+      `${STRAPI_URL}/api/breaking-news-items?${params.toString()}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        next: { revalidate: 30 }, // Revalidate more frequently for breaking news
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('Failed to fetch breaking news:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      return [];
+    }
+
+    return data.data.map((item: any) => ({
+      id: item.id,
+      text: item.text,
+      link: item.link || undefined,
+    }));
+  } catch (error) {
+    console.error('Error fetching breaking news:', error);
+    return [];
+  }
+}
+
+/**
  * Fetch active hero section content
  */
 export async function fetchHeroSection(): Promise<HeroSectionData | null> {
