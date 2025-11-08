@@ -62,6 +62,25 @@ export interface FetchOptions {
   isMainNews?: boolean;
   isHomeSportSection?: boolean;
   limit?: number;
+  page?: number;
+}
+
+/**
+ * Pagination metadata from Strapi
+ */
+export interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
+/**
+ * Response with pagination data
+ */
+export interface PaginatedResponse<T> {
+  articles: T[];
+  pagination: PaginationMeta;
 }
 
 /**
@@ -131,13 +150,25 @@ export function transformArticle<T extends BaseStrapiArticle>(
 }
 
 /**
- * Generic fetch function for sport articles
+ * Generic fetch function for sport articles (simple version without pagination metadata)
  * Works with any sport by passing the appropriate config
  */
 export async function fetchSportArticles<T extends BaseStrapiArticle>(
   config: SportConfig,
   options: FetchOptions = {}
 ): Promise<BaseArticle[]> {
+  const result = await fetchSportArticlesWithPagination<T>(config, options);
+  return result.articles;
+}
+
+/**
+ * Generic fetch function for sport articles with pagination metadata
+ * Works with any sport by passing the appropriate config
+ */
+export async function fetchSportArticlesWithPagination<T extends BaseStrapiArticle>(
+  config: SportConfig,
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<BaseArticle>> {
   try {
     const params = new URLSearchParams();
     
@@ -153,9 +184,10 @@ export async function fetchSportArticles<T extends BaseStrapiArticle>(
     }
     
     // Add pagination
-    if (options.limit) {
-      params.append('pagination[limit]', String(options.limit));
-    }
+    const page = options.page || 1;
+    const pageSize = options.limit || 10;
+    params.append('pagination[page]', String(page));
+    params.append('pagination[pageSize]', String(pageSize));
     
     // Always populate image and sort by date (newest first)
     params.append('populate', 'image');
@@ -174,19 +206,33 @@ export async function fetchSportArticles<T extends BaseStrapiArticle>(
 
     if (!response.ok) {
       console.warn(`Strapi API returned ${response.status} for ${config.endpoint}`);
-      return [];
+      return {
+        articles: [],
+        pagination: { page: 1, pageSize: pageSize, pageCount: 0, total: 0 }
+      };
     }
 
     const data = await response.json();
     
-    if (data.data && Array.isArray(data.data)) {
-      return data.data.map((article: T) => transformArticle(article, config));
-    }
+    const articles = data.data && Array.isArray(data.data)
+      ? data.data.map((article: T) => transformArticle(article, config))
+      : [];
 
-    return [];
+    const pagination: PaginationMeta = data.meta?.pagination || {
+      page: 1,
+      pageSize: pageSize,
+      pageCount: Math.ceil(articles.length / pageSize),
+      total: articles.length
+    };
+
+    return { articles, pagination };
   } catch (error) {
     console.warn(`Failed to fetch ${config.endpoint}:`, error);
-    return [];
+    const pageSize = options.limit || 10;
+    return {
+      articles: [],
+      pagination: { page: 1, pageSize: pageSize, pageCount: 0, total: 0 }
+    };
   }
 }
 

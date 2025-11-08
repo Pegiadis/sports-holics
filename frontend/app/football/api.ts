@@ -3,7 +3,7 @@
  * Uses shared sports-api utilities
  */
 
-import { fetchSportArticles, FetchOptions, SportConfig, BaseArticle } from "@/lib/sports-api";
+import { fetchSportArticles, fetchSportArticlesWithPagination, FetchOptions, SportConfig, BaseArticle, PaginatedResponse } from "@/lib/sports-api";
 
 // Football-specific configuration
 const FOOTBALL_CONFIG: SportConfig = {
@@ -18,4 +18,11 @@ const FOOTBALL_CONFIG: SportConfig = {
  */
 export async function fetchFootballArticles(options: FetchOptions = {}): Promise<BaseArticle[]> {
   return fetchSportArticles(FOOTBALL_CONFIG, options);
+}
+
+/**
+ * Fetch football articles with pagination metadata
+ */
+export async function fetchFootballArticlesWithPagination(options: FetchOptions = {}): Promise<PaginatedResponse<BaseArticle>> {
+  return fetchSportArticlesWithPagination(FOOTBALL_CONFIG, options);
 }

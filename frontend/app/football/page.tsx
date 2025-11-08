@@ -1,14 +1,21 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
+import Pagination from "@/components/Pagination";
 import FootballCard from "./FootballCard";
-import { fetchFootballArticles } from "./api";
+import { fetchFootballArticlesWithPagination } from "./api";
 import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
-export default async function FootballPage() {
-  // Fetch articles from Strapi
-  const [articles, latestNews, hotNews] = await Promise.all([
-    fetchFootballArticles(),
+export default async function FootballPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = Number(searchParams.page) || 1;
+  
+  // Fetch articles from Strapi with pagination
+  const [{ articles, pagination }, latestNews, hotNews] = await Promise.all([
+    fetchFootballArticlesWithPagination({ page: currentPage, limit: 10 }),
     fetchLatestNews(),
     fetchCarouselNews()
   ]);
@@ -45,6 +52,14 @@ export default async function FootballPage() {
                 </p>
               </div>
             )}
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pageCount}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.pageSize}
+            />
           </div>
 
           {/* Sidebar */}

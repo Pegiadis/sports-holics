@@ -3,7 +3,7 @@
  * Uses shared sports-api utilities
  */
 
-import { fetchSportArticles, FetchOptions, SportConfig, BaseArticle } from "@/lib/sports-api";
+import { fetchSportArticles, fetchSportArticlesWithPagination, FetchOptions, SportConfig, BaseArticle, PaginatedResponse } from "@/lib/sports-api";
 
 // Formula1-specific configuration
 const FORMULA1_CONFIG: SportConfig = {
@@ -18,4 +18,11 @@ const FORMULA1_CONFIG: SportConfig = {
  */
 export async function fetchFormula1Articles(options: FetchOptions = {}): Promise<BaseArticle[]> {
   return fetchSportArticles(FORMULA1_CONFIG, options);
+}
+
+/**
+ * Fetch formula1 articles with pagination metadata
+ */
+export async function fetchFormula1ArticlesWithPagination(options: FetchOptions = {}): Promise<PaginatedResponse<BaseArticle>> {
+  return fetchSportArticlesWithPagination(FORMULA1_CONFIG, options);
 }

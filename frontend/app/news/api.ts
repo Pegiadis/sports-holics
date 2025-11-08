@@ -16,12 +16,30 @@ interface StrapiArticle {
   } | null;
 }
 
-export async function fetchNewsArticles(): Promise<NewsArticle[]> {
+export interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
+export interface PaginatedNewsResponse {
+  articles: NewsArticle[];
+  pagination: PaginationMeta;
+}
+
+export async function fetchNewsArticles(page?: number, pageSize: number = 10): Promise<NewsArticle[]> {
+  const result = await fetchNewsArticlesWithPagination(page, pageSize);
+  return result.articles;
+}
+
+export async function fetchNewsArticlesWithPagination(page: number = 1, pageSize: number = 10): Promise<PaginatedNewsResponse> {
   try {
     const params = new URLSearchParams();
     params.append('populate', 'image');
     params.append('sort', 'createdAt:desc');
-    params.append('pagination[limit]', '50');
+    params.append('pagination[page]', String(page));
+    params.append('pagination[pageSize]', String(pageSize));
 
     const response = await fetch(
       `${STRAPI_URL}/api/news-articles?${params.toString()}`,
@@ -36,16 +54,22 @@ export async function fetchNewsArticles(): Promise<NewsArticle[]> {
 
     if (!response.ok) {
       console.warn('Failed to fetch news articles:', response.status);
-      return [];
+      return {
+        articles: [],
+        pagination: { page: 1, pageSize, pageCount: 0, total: 0 }
+      };
     }
 
     const data = await response.json();
 
     if (!data.data || data.data.length === 0) {
-      return [];
+      return {
+        articles: [],
+        pagination: { page: 1, pageSize, pageCount: 0, total: 0 }
+      };
     }
 
-    return data.data.map((item: StrapiArticle) => {
+    const articles = data.data.map((item: StrapiArticle) => {
       const getTimeAgo = (dateString: string): string => {
         const date = new Date(dateString);
         const now = new Date();
@@ -86,9 +110,21 @@ export async function fetchNewsArticles(): Promise<NewsArticle[]> {
         categoryColor: 'bg-purple-100 text-purple-800',
       };
     });
+
+    const pagination: PaginationMeta = data.meta?.pagination || {
+      page: 1,
+      pageSize,
+      pageCount: Math.ceil(articles.length / pageSize),
+      total: articles.length
+    };
+
+    return { articles, pagination };
   } catch (error) {
     console.error('Error fetching news articles:', error);
-    return [];
+    return {
+      articles: [],
+      pagination: { page: 1, pageSize, pageCount: 0, total: 0 }
+    };
   }
 }
 

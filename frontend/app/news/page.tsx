@@ -1,14 +1,21 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
+import Pagination from "@/components/Pagination";
 import NewsCard from "./NewsCard";
-import { fetchNewsArticles } from "./api";
+import { fetchNewsArticlesWithPagination } from "./api";
 import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
-export default async function NewsPage() {
-  // Fetch articles from Strapi
-  const [articles, latestNews, hotNews] = await Promise.all([
-    fetchNewsArticles(),
+export default async function NewsPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = Number(searchParams.page) || 1;
+  
+  // Fetch articles from Strapi with pagination
+  const [{ articles, pagination }, latestNews, hotNews] = await Promise.all([
+    fetchNewsArticlesWithPagination(currentPage, 10),
     fetchLatestNews(),
     fetchCarouselNews()
   ]);
@@ -45,6 +52,14 @@ export default async function NewsPage() {
                 </p>
               </div>
             )}
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pageCount}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.pageSize}
+            />
           </div>
 
           {/* Sidebar */}

@@ -1,14 +1,21 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
+import Pagination from "@/components/Pagination";
 import Formula1Card from "./Formula1Card";
-import { fetchFormula1Articles } from "./api";
+import { fetchFormula1ArticlesWithPagination } from "./api";
 import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
-export default async function Formula1Page() {
-  // Fetch articles from Strapi
-  const [articles, latestNews, hotNews] = await Promise.all([
-    fetchFormula1Articles(),
+export default async function Formula1Page({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = Number(searchParams.page) || 1;
+  
+  // Fetch articles from Strapi with pagination
+  const [{ articles, pagination }, latestNews, hotNews] = await Promise.all([
+    fetchFormula1ArticlesWithPagination({ page: currentPage, limit: 10 }),
     fetchLatestNews(),
     fetchCarouselNews()
   ]);
@@ -45,6 +52,14 @@ export default async function Formula1Page() {
                 </p>
               </div>
             )}
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pageCount}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.pageSize}
+            />
           </div>
 
           {/* Sidebar */}
