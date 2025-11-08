@@ -99,7 +99,7 @@ async function fetchArticlesFromEndpoint(
       `${STRAPI_URL}/api/${endpoint}?${params.toString()}`,
       {
         headers: { 'Content-Type': 'application/json' },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -282,7 +282,7 @@ export async function fetchBreakingNews(): Promise<BreakingNewsItem[]> {
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 30 }, // Revalidate more frequently for breaking news
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -326,7 +326,7 @@ export async function fetchJournalists(): Promise<JournalistData[]> {
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 300 }, // 5 minutes
+        cache: 'no-store', // Disable caching for real-time updates during development
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -376,7 +376,7 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );

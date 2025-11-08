@@ -167,7 +167,7 @@ export async function fetchSportArticles<T extends BaseStrapiArticle>(
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000), // 5 second timeout
       }
     );
@@ -232,7 +232,7 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
           headers: {
             'Content-Type': 'application/json',
           },
-          next: { revalidate: 60 },
+          cache: 'no-store', // Disable caching for real-time updates
           signal: AbortSignal.timeout(5000),
         }
       );

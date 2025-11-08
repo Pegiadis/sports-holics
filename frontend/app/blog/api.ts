@@ -48,7 +48,7 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -98,7 +98,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -130,7 +130,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -193,7 +193,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );
