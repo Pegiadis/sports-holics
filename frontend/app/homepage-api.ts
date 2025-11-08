@@ -360,7 +360,7 @@ export async function fetchJournalists(): Promise<JournalistData[]> {
       slug: item.slug,
       title: item.title || '',
       bio: item.bio || '',
-      avatarUrl: item.avatar?.url ? `${STRAPI_URL}${item.avatar.url}` : '/default-avatar.png',
+      avatarUrl: item.avatar?.url ? `${STRAPI_URL}${item.avatar.url}` : '/default-avatar.jpg',
       specialty: item.specialty || '',
       twitter: item.twitter || '',
       instagram: item.instagram || '',
