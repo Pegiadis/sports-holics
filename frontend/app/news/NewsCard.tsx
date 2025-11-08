@@ -15,7 +15,7 @@ export default function NewsCard({ article }: NewsCardProps) {
       {/* Image Section */}
       <div className="relative md:w-2/5 h-64 md:h-auto flex-shrink-0 overflow-hidden">
         <Image
-          src={article.image}
+          src={article.image || article.imageUrl || '/default-news.jpg'}
           alt={article.title}
           fill
           className="object-cover group-hover:scale-110 transition-transform duration-500"

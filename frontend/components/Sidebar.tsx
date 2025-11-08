@@ -80,7 +80,7 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
                 <div className="flex space-x-3 hover:bg-gray-50 rounded-lg p-2 transition-colors">
                   <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden">
                     <Image
-                      src={news.imageUrl}
+                      src={news.image || news.imageUrl || '/default-news.jpg'}
                       alt={news.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"

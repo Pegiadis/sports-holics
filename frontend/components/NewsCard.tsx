@@ -15,9 +15,12 @@ export default function NewsCard({
   timeAgo,
   author,
   imageUrl,
+  image,
   slug,
   size = "medium",
 }: NewsCardProps) {
+  // Support both image and imageUrl properties
+  const imageSrc = image || imageUrl || '/default-news.jpg';
   // Define size configurations with aspect ratio approach (like sidebar)
   const sizeConfig = {
     xs: {
@@ -57,7 +60,7 @@ export default function NewsCard({
       {/* Image section with dynamic aspect ratio */}
       <div className={`relative ${config.aspectRatio} w-full overflow-hidden bg-gray-200`}>
         <Image
-          src={imageUrl}
+          src={imageSrc}
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
