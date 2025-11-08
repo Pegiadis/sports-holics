@@ -201,6 +201,18 @@ export async function fetchHomepageFormula1(): Promise<NewsArticle[]> {
 }
 
 /**
+ * Fetch news articles for the homepage News section
+ */
+export async function fetchHomepageNews(): Promise<NewsArticle[]> {
+  return fetchArticlesFromEndpoint(
+    'news-articles',
+    'NEWS',
+    'bg-purple-100 text-purple-800',
+    { isHomeSportSection: true, limit: 9 }
+  );
+}
+
+/**
  * Hero Section Data Interface
  */
 export interface HeroSectionData {

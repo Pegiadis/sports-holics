@@ -15,6 +15,7 @@ import {
   fetchHomepageFootball,
   fetchHomepageBasketball,
   fetchHomepageFormula1,
+  fetchHomepageNews,
   fetchHeroSection,
   fetchBreakingNews,
   fetchJournalists
@@ -29,6 +30,7 @@ export default async function Home() {
     mainNewsArticles,
     latestNewsArticles,
     journalists,
+    newsArticles,
     footballArticles,
     basketballArticles,
     formula1Articles
@@ -39,6 +41,7 @@ export default async function Home() {
     fetchMainNews(),
     fetchLatestNews(),
     fetchJournalists(),
+    fetchHomepageNews(),
     fetchHomepageFootball(),
     fetchHomepageBasketball(),
     fetchHomepageFormula1(),
@@ -93,6 +96,35 @@ export default async function Home() {
         {/* Journalists Section */}
         {journalists.length > 0 && (
           <JournalistsSection journalists={journalists} />
+        )}
+
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
+
+        {/* News Section */}
+        {newsArticles.length > 0 && (
+          <section className="mb-12">
+            <SectionTitle title="Ειδήσεις" icon="📰" variant="large" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {newsArticles.slice(0, 3).map((news, index) => (
+                <NewsCard key={index} {...news} />
+              ))}
+            </div>
+            {newsArticles.length > 3 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+                {newsArticles.slice(3, 6).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+            {newsArticles.length > 6 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {newsArticles.slice(6, 9).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+          </section>
         )}
 
         {/* Section Divider */}
