@@ -115,3 +115,11 @@ build
 
 # Strapi cloud
 .strapi-cloud.json
+
+############################
+# Seeding Scripts
+############################
+
+# API tokens for seeding
+scripts/*.token
+scripts/.env.*

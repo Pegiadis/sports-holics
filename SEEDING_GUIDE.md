@@ -17,7 +17,7 @@ The `seed-all-data.js` script automatically creates test data for your entire we
 
 ## 📋 Step-by-Step Instructions
 
-### Step 1: Get Your JWT Token
+### Step 1: Create API Token in Strapi
 
 1. **Start Strapi** (if not running):
    ```bash
@@ -27,33 +27,40 @@ The `seed-all-data.js` script automatically creates test data for your entire we
 
 2. **Open Strapi Admin**: `http://localhost:1337/admin`
 
-3. **Login** with your admin credentials
-
-4. **Open Browser DevTools**:
-   - Press `F12` or right-click → "Inspect"
-   - Go to **"Application"** tab (Chrome) or **"Storage"** tab (Firefox)
-
-5. **Find JWT Token**:
-   - In the left sidebar, expand **"Local Storage"**
-   - Click on `http://localhost:1337`
-   - Find the key named **`jwtToken`**
-   - **Copy the entire value** (it's a long string)
-
-### Step 2: Add Token to Script
-
-1. **Open the script**: `backend/sportsholics-cms/scripts/seed-all-data.js`
-
-2. **Find line 12**:
-   ```javascript
-   const ADMIN_JWT = 'YOUR_JWT_TOKEN_HERE';
+3. **Navigate to API Tokens**:
+   ```
+   Settings → API Tokens → Create new API Token
    ```
 
-3. **Replace** `YOUR_JWT_TOKEN_HERE` with your actual token:
-   ```javascript
-   const ADMIN_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Your actual token
+4. **Create Token**:
+   - **Name**: `Seeding Script`
+   - **Description**: `Token for seeding data`
+   - **Token duration**: `Unlimited` (or 30/90 days)
+   - **Token type**: `Full Access`
+   - Click **"Save"**
+
+5. **⚠️ IMPORTANT**: Copy the token immediately! It shows only once!
+
+### Step 2: Save Token to File
+
+1. **Create token file**:
+   ```bash
+   cd backend/sportsholics-cms/scripts
+   # Copy the example file
+   cp strapi.token.example strapi.token
    ```
 
-4. **Save the file**
+2. **Edit** `scripts/strapi.token`:
+   - Open the file
+   - Replace `YOUR_STRAPI_API_TOKEN_HERE` with your actual token
+   - Save the file
+
+   The file should contain only the token (no quotes, no spaces):
+   ```
+   a6e5c7fb641d68f31802ba4df133416f5369c9692d8d670459e36e8...
+   ```
+
+3. **✅ Done!** The token file is gitignored and won't be committed
 
 ### Step 3: Run the Script
 

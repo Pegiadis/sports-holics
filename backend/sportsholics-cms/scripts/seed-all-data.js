@@ -3,15 +3,79 @@
  * Creates test data for all collection types
  * 
  * Usage:
- * 1. Get your JWT token from Strapi admin (see instructions below)
- * 2. Replace ADMIN_JWT with your token
+ * 1. Create API token in Strapi admin
+ * 2. Save token to scripts/strapi.token file
  * 3. Run: node scripts/seed-all-data.js
  */
 
 const fetch = require('node-fetch');
+const fs = require('fs');
+const path = require('path');
+const FormData = require('form-data');
 
 const STRAPI_URL = 'http://127.0.0.1:1337';
-const ADMIN_JWT = 'a6e5c7fb641d68f31802ba4df133416f5369c9692d8d670459e36e862f9569de56ecd7fcfd67ef3bd903e1adeebb75f37b8454499820034083a5a232add44f3d4adc783d4dd37791dd649cd6a44c231ac7c7120e2aa9333ca066409628e23646e19486d8a7b7d7083bcde4f1596c56e9d08ff20e51f2455b25a92f690c3f8c62'; // Replace with your actual JWT token
+
+// Read token from file
+let ADMIN_JWT = '';
+try {
+  const tokenPath = path.join(__dirname, 'strapi.token');
+  ADMIN_JWT = fs.readFileSync(tokenPath, 'utf8').trim();
+} catch (error) {
+  console.error('❌ Error reading token file:', error.message);
+  console.log('\n📝 Please create a file: scripts/strapi.token');
+  console.log('   and paste your Strapi API token inside it.\n');
+  process.exit(1);
+}
+
+// Available images from frontend/public
+const AVAILABLE_IMAGES = [
+  '216-scaled-1.jpg',
+  'BG-football-1600x1000-1170x600-1.jpeg',
+  'Ferrari_F1.jpg',
+  'formula.png',
+  'images.jpeg',
+  'wp14783249.jpg'
+];
+
+// Get random image path
+function getRandomImage() {
+  return AVAILABLE_IMAGES[Math.floor(Math.random() * AVAILABLE_IMAGES.length)];
+}
+
+// Upload image to Strapi
+async function uploadImage(imageName) {
+  try {
+    const imagePath = path.join(__dirname, '..', '..', '..', 'frontend', 'public', imageName);
+    
+    // Check if file exists
+    if (!fs.existsSync(imagePath)) {
+      console.warn(`⚠️  Image not found: ${imageName}`);
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append('files', fs.createReadStream(imagePath), imageName);
+
+    const response = await fetch(`${STRAPI_URL}/api/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${ADMIN_JWT}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      console.warn(`⚠️  Failed to upload ${imageName}: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data[0]?.id || null;
+  } catch (error) {
+    console.warn(`⚠️  Error uploading ${imageName}:`, error.message);
+    return null;
+  }
+}
 
 // Greek article content for realistic testing
 const greekTitles = {
@@ -208,6 +272,9 @@ async function seedAllData() {
   // 2. Create Football Articles
   console.log('⚽ Creating Football Articles...\n');
   for (let i = 0; i < 15; i++) {
+    // Upload random image
+    const imageId = await uploadImage(getRandomImage());
+    
     const article = {
       title: greekTitles.football[i],
       subtitle: randomItem(greekSubtitles),
@@ -216,7 +283,8 @@ async function seedAllData() {
       slug: `football-article-${i + 1}`,
       isCarousel: true,
       isMainNews: true,
-      isHomeSportSection: true
+      isHomeSportSection: true,
+      ...(imageId && { image: imageId })
     };
     
     const result = await apiCall('football-articles', article);
@@ -228,6 +296,9 @@ async function seedAllData() {
   // 3. Create Basketball Articles
   console.log('\n🏀 Creating Basketball Articles...\n');
   for (let i = 0; i < 15; i++) {
+    // Upload random image
+    const imageId = await uploadImage(getRandomImage());
+    
     const article = {
       title: greekTitles.basketball[i],
       subtitle: randomItem(greekSubtitles),
@@ -236,7 +307,8 @@ async function seedAllData() {
       slug: `basketball-article-${i + 1}`,
       isCarousel: true,
       isMainNews: true,
-      isHomeSportSection: true
+      isHomeSportSection: true,
+      ...(imageId && { image: imageId })
     };
     
     const result = await apiCall('basketball-articles', article);
@@ -248,6 +320,9 @@ async function seedAllData() {
   // 4. Create Formula1 Articles
   console.log('\n🏎️  Creating Formula 1 Articles...\n');
   for (let i = 0; i < 15; i++) {
+    // Upload random image
+    const imageId = await uploadImage(getRandomImage());
+    
     const article = {
       title: greekTitles.formula1[i],
       subtitle: randomItem(greekSubtitles),
@@ -256,7 +331,8 @@ async function seedAllData() {
       slug: `formula1-article-${i + 1}`,
       isCarousel: true,
       isMainNews: true,
-      isHomeSportSection: true
+      isHomeSportSection: true,
+      ...(imageId && { image: imageId })
     };
     
     const result = await apiCall('formula1-articles', article);
@@ -268,6 +344,9 @@ async function seedAllData() {
   // 5. Create News Articles
   console.log('\n📰 Creating News Articles...\n');
   for (let i = 0; i < 15; i++) {
+    // Upload random image
+    const imageId = await uploadImage(getRandomImage());
+    
     const article = {
       title: greekTitles.news[i],
       subtitle: randomItem(greekSubtitles),
@@ -276,7 +355,8 @@ async function seedAllData() {
       slug: `news-article-${i + 1}`,
       isCarousel: true,
       isMainNews: true,
-      isHomeSportSection: true
+      isHomeSportSection: true,
+      ...(imageId && { image: imageId })
     };
     
     const result = await apiCall('news-articles', article);
@@ -299,6 +379,9 @@ async function seedAllData() {
 
     for (const journalist of createdJournalists) {
       for (let i = 0; i < 3; i++) {
+        // Upload random image
+        const imageId = await uploadImage(getRandomImage());
+        
         const blogArticle = {
           title: `${blogTitles[i]} - ${journalist.name}`,
           subtitle: randomItem(greekSubtitles),
@@ -308,7 +391,8 @@ async function seedAllData() {
           tags: ['analysis', 'opinion', 'exclusive'],
           readTime: Math.floor(Math.random() * 10) + 3,
           isFeatured: i === 0,
-          journalist: journalist.id
+          journalist: journalist.id,
+          ...(imageId && { coverImage: imageId })
         };
 
         const result = await apiCall('blog-articles', blogArticle);
