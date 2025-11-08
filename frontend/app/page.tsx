@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import NewsCarousel from "@/components/NewsCarousel";
 import NewsCard from "@/components/NewsCard";
 import Sidebar from "@/components/Sidebar";
+import JournalistsSection from "@/components/JournalistsSection";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 import SectionTitle from "@/components/SectionTitle";
@@ -13,22 +14,34 @@ import {
   fetchMainNews,
   fetchHomepageFootball,
   fetchHomepageBasketball,
-  fetchHomepageFormula1
+  fetchHomepageFormula1,
+  fetchHomepageNews,
+  fetchHeroSection,
+  fetchBreakingNews,
+  fetchJournalists
 } from "./homepage-api";
 
 export default async function Home() {
   // Fetch data from Strapi only - no fallback to mock data
   const [
+    breakingNews,
+    heroSection,
     carouselArticles,
     mainNewsArticles,
     latestNewsArticles,
+    journalists,
+    newsArticles,
     footballArticles,
     basketballArticles,
     formula1Articles
   ] = await Promise.all([
+    fetchBreakingNews(),
+    fetchHeroSection(),
     fetchCarouselNews(),
     fetchMainNews(),
     fetchLatestNews(),
+    fetchJournalists(),
+    fetchHomepageNews(),
     fetchHomepageFootball(),
     fetchHomepageBasketball(),
     fetchHomepageFormula1(),
@@ -37,10 +50,10 @@ export default async function Home() {
   return (
     <div className="bg-gray-100">
       <Header />
-      <BreakingNews />
-      <HeroSection />
+      <BreakingNews items={breakingNews} />
+      <HeroSection {...heroSection} />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hot News Carousel */}
         {carouselArticles.length > 0 && (
           <>
@@ -77,8 +90,42 @@ export default async function Home() {
           </div>
 
           {/* Sidebar */}
-          <Sidebar latestNews={latestNewsArticles} />
+          <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
         </div>
+
+        {/* Journalists Section */}
+        {journalists.length > 0 && (
+          <JournalistsSection journalists={journalists} />
+        )}
+
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
+
+        {/* News Section */}
+        {newsArticles.length > 0 && (
+          <section className="mb-12">
+            <SectionTitle title="Ειδήσεις" icon="📰" variant="large" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {newsArticles.slice(0, 3).map((news, index) => (
+                <NewsCard key={index} {...news} />
+              ))}
+            </div>
+            {newsArticles.length > 3 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+                {newsArticles.slice(3, 6).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+            {newsArticles.length > 6 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {newsArticles.slice(6, 9).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Section Divider */}
         <SectionDivider variant="sporty" />

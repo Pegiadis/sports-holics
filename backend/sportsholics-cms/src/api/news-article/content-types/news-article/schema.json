@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "news_articles",
+  "info": {
+    "singularName": "news-article",
+    "pluralName": "news-articles",
+    "displayName": "News Article",
+    "description": "General news articles"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "richtext",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": true,
+      "default": "Sports Holics"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "isCarousel": {
+      "type": "boolean",
+      "default": false
+    },
+    "isMainNews": {
+      "type": "boolean",
+      "default": false
+    },
+    "isHomeSportSection": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
+

@@ -2,8 +2,10 @@
  * Utilities for rendering Strapi richtext content
  * 
  * Strapi richtext fields can return content in blocks format (array of content blocks)
- * or as a string. This utility handles both cases.
+ * or as a markdown string. This utility handles both cases.
  */
+
+import { marked } from 'marked';
 
 export interface RichtextBlock {
   type: string;
@@ -15,15 +17,27 @@ export interface RichtextBlock {
     underline?: boolean;
     strikethrough?: boolean;
     code?: boolean;
+    url?: string;
   }>;
   level?: number;
   format?: string;
+  url?: string;
+  image?: {
+    url?: string;
+    alternativeText?: string;
+  };
 }
 
 /**
  * Render a single richtext block to HTML
  */
 function renderBlock(block: RichtextBlock): string {
+  if (block.type === 'image' && block.image) {
+    const imageUrl = block.image.url || '';
+    const alt = block.image.alternativeText || '';
+    return `<img src="${imageUrl}" alt="${alt}" />`;
+  }
+
   if (!block.children) return '';
 
   const content = block.children.map(child => {
@@ -35,6 +49,9 @@ function renderBlock(block: RichtextBlock): string {
       if (child.strikethrough) text = `<s>${text}</s>`;
       if (child.code) text = `<code>${text}</code>`;
       return text;
+    }
+    if (child.type === 'link' && child.url) {
+      return `<a href="${child.url}">${child.text || child.url}</a>`;
     }
     return child.text || '';
   }).join('');
@@ -61,12 +78,18 @@ function renderBlock(block: RichtextBlock): string {
 
 /**
  * Convert Strapi richtext to HTML string
- * Handles both blocks format and plain string
+ * Handles blocks format, markdown strings, and plain HTML
  */
 export function richtextToHtml(content: unknown): string {
-  // If it's already a string, return as is (might be HTML or markdown)
+  // If it's already a string, assume it's markdown and parse it
   if (typeof content === 'string') {
-    return content;
+    try {
+      // Parse markdown to HTML
+      return marked.parse(content) as string;
+    } catch (error) {
+      console.error('Error parsing markdown:', error);
+      return content;
+    }
   }
 
   // If it's an array of blocks, render each block

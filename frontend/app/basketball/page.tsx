@@ -1,15 +1,23 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
+import Pagination from "@/components/Pagination";
 import BasketballCard from "./BasketballCard";
-import { fetchBasketballArticles } from "./api";
-import { fetchLatestNews } from "../homepage-api";
+import { fetchBasketballArticlesWithPagination } from "./api";
+import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
-export default async function BasketballPage() {
-  // Fetch articles from Strapi
-  const [articles, latestNews] = await Promise.all([
-    fetchBasketballArticles(),
-    fetchLatestNews()
+export default async function BasketballPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = Number(searchParams.page) || 1;
+  
+  // Fetch articles from Strapi with pagination
+  const [{ articles, pagination }, latestNews, hotNews] = await Promise.all([
+    fetchBasketballArticlesWithPagination({ page: currentPage, limit: 10 }),
+    fetchLatestNews(),
+    fetchCarouselNews()
   ]);
 
   return (
@@ -44,10 +52,18 @@ export default async function BasketballPage() {
                 </p>
               </div>
             )}
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pageCount}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.pageSize}
+            />
           </div>
 
           {/* Sidebar */}
-          <Sidebar latestNews={latestNews} />
+          <Sidebar latestNews={latestNews} hotNews={hotNews} />
         </div>
       </main>
 

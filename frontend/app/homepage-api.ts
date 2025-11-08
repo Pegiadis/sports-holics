@@ -99,7 +99,7 @@ async function fetchArticlesFromEndpoint(
       `${STRAPI_URL}/api/${endpoint}?${params.toString()}`,
       {
         headers: { 'Content-Type': 'application/json' },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Disable caching for real-time updates
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -198,5 +198,232 @@ export async function fetchHomepageFormula1(): Promise<NewsArticle[]> {
     'bg-red-100 text-red-800',
     { isHomeSportSection: true, limit: 9 }
   );
+}
+
+/**
+ * Fetch news articles for the homepage News section
+ */
+export async function fetchHomepageNews(): Promise<NewsArticle[]> {
+  return fetchArticlesFromEndpoint(
+    'news-articles',
+    'NEWS',
+    'bg-purple-100 text-purple-800',
+    { isHomeSportSection: true, limit: 9 }
+  );
+}
+
+/**
+ * Hero Section Data Interface
+ */
+export interface HeroSectionData {
+  id: number;
+  title: string;
+  titleHighlight?: string;
+  description: string;
+  categoryLabel: string;
+  categoryEmoji?: string;
+  timeAgo?: string;
+  buttonText: string;
+  buttonLink?: string;
+  backgroundImageUrl: string;
+}
+
+/**
+ * Journalist Data Interface
+ */
+export interface JournalistData {
+  id: number;
+  name: string;
+  slug: string;
+  title?: string;
+  bio?: string;
+  avatarUrl: string;
+  specialty?: string;
+  twitter?: string;
+  instagram?: string;
+}
+
+/**
+ * Blog Article Data Interface
+ */
+export interface BlogArticleData {
+  id: number;
+  title: string;
+  subtitle?: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  coverImageUrl: string;
+  category?: string;
+  tags?: string[];
+  readTime?: number;
+  isFeatured: boolean;
+  publishedAt: string;
+  timeAgo: string;
+  journalist: {
+    id: number;
+    name: string;
+    slug: string;
+    avatarUrl: string;
+  };
+}
+
+/**
+ * Breaking News Data Interface
+ */
+export interface BreakingNewsItem {
+  id: number;
+  text: string;
+  link?: string;
+}
+
+/**
+ * Fetch active breaking news items
+ */
+export async function fetchBreakingNews(): Promise<BreakingNewsItem[]> {
+  try {
+    const params = new URLSearchParams();
+    params.append('filters[isActive][$eq]', 'true');
+    params.append('sort[0]', 'priority:desc');
+    params.append('sort[1]', 'createdAt:desc');
+    params.append('pagination[limit]', '10');
+
+    const response = await fetch(
+      `${STRAPI_URL}/api/breaking-news-items?${params.toString()}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store', // Disable caching for real-time updates
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('Failed to fetch breaking news:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      return [];
+    }
+
+    return data.data.map((item: any) => ({
+      id: item.id,
+      text: item.text,
+      link: item.link || undefined,
+    }));
+  } catch (error) {
+    console.error('Error fetching breaking news:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch active journalists
+ */
+export async function fetchJournalists(): Promise<JournalistData[]> {
+  try {
+    const params = new URLSearchParams();
+    params.append('filters[isActive][$eq]', 'true');
+    params.append('sort[0]', 'priority:desc');
+    params.append('sort[1]', 'name:asc');
+    params.append('populate', 'avatar');
+
+    const response = await fetch(
+      `${STRAPI_URL}/api/journalists?${params.toString()}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store', // Disable caching for real-time updates during development
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('Failed to fetch journalists:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      return [];
+    }
+
+    return data.data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      slug: item.slug,
+      title: item.title || '',
+      bio: item.bio || '',
+      avatarUrl: item.avatar?.url ? `${STRAPI_URL}${item.avatar.url}` : '/default-avatar.jpg',
+      specialty: item.specialty || '',
+      twitter: item.twitter || '',
+      instagram: item.instagram || '',
+    }));
+  } catch (error) {
+    console.error('Error fetching journalists:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch active hero section content
+ */
+export async function fetchHeroSection(): Promise<HeroSectionData | null> {
+  try {
+    const params = new URLSearchParams();
+    params.append('filters[isActive][$eq]', 'true');
+    params.append('sort[0]', 'priority:desc');
+    params.append('populate', 'backgroundImage');
+    params.append('pagination[limit]', '1');
+
+    const response = await fetch(
+      `${STRAPI_URL}/api/hero-sections?${params.toString()}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store', // Disable caching for real-time updates
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!response.ok) {
+      console.warn('Failed to fetch hero section:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (!data.data || data.data.length === 0) {
+      return null;
+    }
+
+    const hero = data.data[0];
+    const imageUrl = hero.backgroundImage?.url
+      ? `${STRAPI_URL}${hero.backgroundImage.url}`
+      : '/216-scaled-1.jpg'; // Fallback to default image
+
+    return {
+      id: hero.id,
+      title: hero.title || 'Τελικός Champions League',
+      titleHighlight: hero.titleHighlight || 'Έτοιμος για Επική Αναμέτρηση',
+      description: hero.description || 'Δύο γίγαντες του ποδοσφαίρου ετοιμάζονται για την απόλυτη μάχη.',
+      categoryLabel: hero.categoryLabel || 'Ποδόσφαιρο',
+      categoryEmoji: hero.categoryEmoji || '🔥',
+      timeAgo: hero.timeAgo || '5 λεπτά πριν',
+      buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
+      buttonLink: hero.buttonLink || '#',
+      backgroundImageUrl: imageUrl,
+    };
+  } catch (error) {
+    console.error('Error fetching hero section:', error);
+    return null;
+  }
 }
 

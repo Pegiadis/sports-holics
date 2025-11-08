@@ -1,25 +1,69 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Sidebar from "@/components/Sidebar";
+import Pagination from "@/components/Pagination";
+import NewsCard from "./NewsCard";
+import { fetchNewsArticlesWithPagination } from "./api";
+import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
-export default function NewsPage() {
+export default async function NewsPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = Number(searchParams.page) || 1;
+  
+  // Fetch articles from Strapi with pagination
+  const [{ articles, pagination }, latestNews, hotNews] = await Promise.all([
+    fetchNewsArticlesWithPagination(currentPage, 10),
+    fetchLatestNews(),
+    fetchCarouselNews()
+  ]);
+
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      <main className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Ειδήσεις
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Η σελίδα ειδήσεων είναι υπό κατασκευή. Σύντομα θα βρείτε εδώ όλες τις τελευταίες ειδήσεις από τον κόσμο του αθλητισμού.
-          </p>
-          <div className="mt-12">
-            <div className="inline-flex items-center gap-3 px-8 py-4 bg-white rounded-full shadow-lg">
-              <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
-              <span className="text-gray-700 font-semibold">Έρχεται Σύντομα</span>
-            </div>
+
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Page Title */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-4xl">📰</span>
+            <h1 className="text-4xl font-bold text-gray-900">Ειδήσεις</h1>
           </div>
+          <p className="text-gray-600">Όλα τα νέα και οι γενικές ειδήσεις</p>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Articles List - Main Column */}
+          <div className="lg:col-span-3">
+            <div className="space-y-12 mb-10">
+              {articles.map((article) => (
+                <NewsCard key={article.id} article={article} />
+              ))}
+            </div>
+
+            {/* Empty State */}
+            {articles.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">
+                  Δεν υπάρχουν διαθέσιμα άρθρα αυτή τη στιγμή.
+                </p>
+              </div>
+            )}
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pageCount}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.pageSize}
+            />
+          </div>
+
+          {/* Sidebar */}
+          <Sidebar latestNews={latestNews} hotNews={hotNews} />
         </div>
       </main>
 
@@ -27,4 +71,3 @@ export default function NewsPage() {
     </div>
   );
 }
-

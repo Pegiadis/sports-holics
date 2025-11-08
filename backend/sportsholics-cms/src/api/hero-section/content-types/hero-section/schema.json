@@ -1,0 +1,67 @@
+{
+  "kind": "collectionType",
+  "collectionName": "hero_sections",
+  "info": {
+    "singularName": "hero-section",
+    "pluralName": "hero-sections",
+    "displayName": "Hero Section",
+    "description": "Homepage hero section content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "titleHighlight": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "categoryLabel": {
+      "type": "string",
+      "required": true,
+      "default": "Ποδόσφαιρο"
+    },
+    "categoryEmoji": {
+      "type": "string",
+      "required": false,
+      "default": "🔥"
+    },
+    "timeAgo": {
+      "type": "string",
+      "required": false,
+      "default": "5 λεπτά πριν"
+    },
+    "buttonText": {
+      "type": "string",
+      "required": true,
+      "default": "Διαβάστε περισσότερα →"
+    },
+    "buttonLink": {
+      "type": "string",
+      "required": false
+    },
+    "backgroundImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": false
+    },
+    "priority": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
+
