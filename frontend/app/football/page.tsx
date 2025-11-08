@@ -3,13 +3,14 @@ import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import FootballCard from "./FootballCard";
 import { fetchFootballArticles } from "./api";
-import { fetchLatestNews } from "../homepage-api";
+import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
 export default async function FootballPage() {
   // Fetch articles from Strapi
-  const [articles, latestNews] = await Promise.all([
+  const [articles, latestNews, hotNews] = await Promise.all([
     fetchFootballArticles(),
-    fetchLatestNews()
+    fetchLatestNews(),
+    fetchCarouselNews()
   ]);
 
   return (
@@ -47,7 +48,7 @@ export default async function FootballPage() {
           </div>
 
           {/* Sidebar */}
-          <Sidebar latestNews={latestNews} />
+          <Sidebar latestNews={latestNews} hotNews={hotNews} />
         </div>
       </main>
 

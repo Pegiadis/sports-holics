@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
 import { fetchArticleBySlug } from "@/lib/sports-api";
-import { fetchLatestNews } from "@/app/homepage-api";
+import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 import { richtextToHtml } from "@/lib/richtext-utils";
 
 interface ArticlePageProps {
@@ -18,10 +18,11 @@ interface ArticlePageProps {
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
   
-  // Fetch article and latest news in parallel
-  const [article, latestNews] = await Promise.all([
+  // Fetch article, latest news, and hot news in parallel
+  const [article, latestNews, hotNews] = await Promise.all([
     fetchArticleBySlug(slug),
-    fetchLatestNews()
+    fetchLatestNews(),
+    fetchCarouselNews()
   ]);
 
   // If article not found in any sport, show 404
@@ -150,7 +151,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
 
           {/* Sidebar */}
-          <Sidebar latestNews={latestNews} />
+          <Sidebar latestNews={latestNews} hotNews={hotNews} />
         </div>
       </main>
 

@@ -90,7 +90,7 @@ export default async function Home() {
           </div>
 
           {/* Sidebar */}
-          <Sidebar latestNews={latestNewsArticles} />
+          <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
         </div>
 
         {/* Journalists Section */}
