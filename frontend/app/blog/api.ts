@@ -4,7 +4,9 @@
 
 import { BlogArticleData, JournalistData } from "../homepage-api";
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+// Remove trailing slash from STRAPI_URL to prevent double slashes in API calls
+const rawStrapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+const STRAPI_URL = rawStrapiUrl.endsWith('/') ? rawStrapiUrl.slice(0, -1) : rawStrapiUrl;
 
 // Helper to calculate time ago
 function getTimeAgo(dateString: string): string {
@@ -185,7 +187,8 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
   try {
     const params = new URLSearchParams();
     params.append('filters[slug][$eq]', slug);
-    params.append('populate', '*');
+    params.append('populate[coverImage]', 'true');
+    params.append('populate[journalist][populate][0]', 'avatar');
 
     const response = await fetch(
       `${STRAPI_URL}/api/blog-articles?${params.toString()}`,
@@ -205,10 +208,16 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
     const data = await response.json();
 
     if (!data.data || data.data.length === 0) {
+      console.warn(`No blog article found with slug: ${slug}`);
       return null;
     }
 
     const article = data.data[0];
+
+    // Debug logging
+    if (!article.journalist) {
+      console.error('Blog article is missing journalist data:', article);
+    }
 
     return {
       id: article.id,
@@ -226,8 +235,8 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
       timeAgo: getTimeAgo(article.publishedAt || new Date().toISOString()),
       journalist: {
         id: article.journalist?.id || 0,
-        name: article.journalist?.name || '',
-        slug: article.journalist?.slug || '',
+        name: article.journalist?.name || 'Unknown',
+        slug: article.journalist?.slug || 'unknown',
         avatarUrl: article.journalist?.avatar?.url ? `${STRAPI_URL}${article.journalist.avatar.url}` : '/default-avatar.jpg',
       },
     };

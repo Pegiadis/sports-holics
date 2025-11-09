@@ -13,6 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
 
+// const STRAPI_URL = 'https://clever-garden-138bbdfa99.strapiapp.com';
 const STRAPI_URL = 'http://127.0.0.1:1337';
 
 // Read token from file
@@ -59,7 +60,8 @@ async function uploadImage(imageName) {
     const response = await fetch(`${STRAPI_URL}/api/upload`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${ADMIN_JWT}`
+        'Authorization': `Bearer ${ADMIN_JWT}`,
+        ...formData.getHeaders() // Important for multipart/form-data
       },
       body: formData
     });
@@ -384,6 +386,7 @@ async function seedAllData() {
         
         const blogArticle = {
           title: `${blogTitles[i]} - ${journalist.name}`,
+          slug: `${journalist.slug}-blog-${i + 1}`,
           subtitle: randomItem(greekSubtitles),
           content: randomItem(greekDescriptions),
           excerpt: randomItem(greekSubtitles),

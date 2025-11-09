@@ -258,6 +258,12 @@ export const ALL_SPORT_CONFIGS: SportConfig[] = [
     categoryColor: 'bg-red-100 text-red-800',
     fallbackImage: '/f1.png',
   },
+  {
+    endpoint: 'news-articles',
+    category: 'ΕΙΔΗΣΕΙΣ',
+    categoryColor: 'bg-blue-100 text-blue-800',
+    fallbackImage: '/default-news.jpg',
+  },
 ];
 
 /**

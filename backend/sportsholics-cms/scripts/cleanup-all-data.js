@@ -13,6 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
+// const STRAPI_URL = 'https://clever-garden-138bbdfa99.strapiapp.com';
 const STRAPI_URL = 'http://127.0.0.1:1337';
 
 // Read token from file
