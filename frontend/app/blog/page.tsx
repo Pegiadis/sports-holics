@@ -3,6 +3,9 @@ import Footer from "@/components/Footer";
 import JournalistsSection from "@/components/JournalistsSection";
 import { fetchJournalists } from "../homepage-api";
 
+// Force dynamic rendering for real-time CMS updates
+export const dynamic = 'force-dynamic';
+
 export default async function BlogPage() {
   const journalists = await fetchJournalists();
 

@@ -21,7 +21,13 @@ import {
   fetchJournalists
 } from "./homepage-api";
 
+// Force dynamic rendering for real-time CMS updates
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
+  // Capture a single timestamp for all time calculations to ensure SSR/client consistency
+  const now = new Date();
+  
   // Fetch data from Strapi only - no fallback to mock data
   const [
     breakingNews,
@@ -37,14 +43,14 @@ export default async function Home() {
   ] = await Promise.all([
     fetchBreakingNews(),
     fetchHeroSection(),
-    fetchCarouselNews(),
-    fetchMainNews(),
-    fetchLatestNews(),
+    fetchCarouselNews(now),
+    fetchMainNews(now),
+    fetchLatestNews(now),
     fetchJournalists(),
-    fetchHomepageNews(),
-    fetchHomepageFootball(),
-    fetchHomepageBasketball(),
-    fetchHomepageFormula1(),
+    fetchHomepageNews(now),
+    fetchHomepageFootball(now),
+    fetchHomepageBasketball(now),
+    fetchHomepageFormula1(now),
   ]);
   
   return (

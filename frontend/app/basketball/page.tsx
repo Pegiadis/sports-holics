@@ -6,6 +6,9 @@ import BasketballCard from "./BasketballCard";
 import { fetchBasketballArticlesWithPagination } from "./api";
 import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
+// Force dynamic rendering for real-time CMS updates
+export const dynamic = 'force-dynamic';
+
 export default async function BasketballPage({
   searchParams,
 }: {

@@ -50,7 +50,7 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -100,7 +100,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -132,7 +132,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -196,7 +196,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );

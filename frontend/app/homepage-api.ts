@@ -21,11 +21,10 @@ interface StrapiArticle {
 }
 
 // Helper to transform articles to NewsArticle format
-function transformToNewsArticle(article: StrapiArticle, category: string, categoryColor: string): NewsArticle {
-  const getTimeAgo = (dateString: string): string => {
+function transformToNewsArticle(article: StrapiArticle, category: string, categoryColor: string, now?: Date): NewsArticle {
+  const getTimeAgo = (dateString: string, referenceTime: Date): string => {
     const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const seconds = Math.floor((referenceTime.getTime() - date.getTime()) / 1000);
 
     const intervals = {
       year: 31536000,
@@ -56,13 +55,15 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     return `${STRAPI_URL}${imageUrl}`;
   };
 
+  const referenceTime = now || new Date();
+  
   return {
     category,
     categoryColor,
     title: article.title || "Untitled",
     subtitle: article.subtitle,
     description: article.description || "",
-    timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
+    timeAgo: getTimeAgo(article.publishedAt || article.createdAt, referenceTime),
     author: article.author || "Unknown",
     imageUrl: getImageUrl(article.image?.url),
     slug: article.slug,
@@ -74,7 +75,8 @@ async function fetchArticlesFromEndpoint(
   endpoint: string,
   category: string,
   categoryColor: string,
-  options: { isCarousel?: boolean; isMainNews?: boolean; isHomeSportSection?: boolean; limit?: number } = {}
+  options: { isCarousel?: boolean; isMainNews?: boolean; isHomeSportSection?: boolean; limit?: number } = {},
+  referenceTime?: Date
 ): Promise<NewsArticle[]> {
   try {
     const params = new URLSearchParams();
@@ -99,7 +101,7 @@ async function fetchArticlesFromEndpoint(
       `${STRAPI_URL}/api/${endpoint}?${params.toString()}`,
       {
         headers: { 'Content-Type': 'application/json' },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -108,9 +110,12 @@ async function fetchArticlesFromEndpoint(
 
     const data = await response.json();
     
+    // Use the same reference time for all articles to ensure consistency
+    const now = referenceTime || new Date();
+    
     if (data.data && Array.isArray(data.data)) {
       return data.data.map((article: StrapiArticle) => 
-        transformToNewsArticle(article, category, categoryColor)
+        transformToNewsArticle(article, category, categoryColor, now)
       );
     }
 
@@ -124,11 +129,12 @@ async function fetchArticlesFromEndpoint(
 /**
  * Fetch carousel articles from all sports (Hot News)
  */
-export async function fetchCarouselNews(): Promise<NewsArticle[]> {
+export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isCarousel: true, limit: 2 }),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isCarousel: true, limit: 2 }),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isCarousel: true, limit: 2 }),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isCarousel: true, limit: 2 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isCarousel: true, limit: 2 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isCarousel: true, limit: 2 }, now),
   ]);
 
   return [...football, ...basketball, ...formula1].slice(0, 6);
@@ -138,11 +144,12 @@ export async function fetchCarouselNews(): Promise<NewsArticle[]> {
  * Fetch latest news from all sports (truly latest by date - no filter)
  * Returns 10 items for carousel
  */
-export async function fetchLatestNews(): Promise<NewsArticle[]> {
+export async function fetchLatestNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }, now),
   ]);
 
   // Combine all, sort by date (newest first), take 10
@@ -154,11 +161,12 @@ export async function fetchLatestNews(): Promise<NewsArticle[]> {
  * Fetch main news from all sports (flagged as main news)
  * Returns up to 8 most recent articles with isMainNews flag
  */
-export async function fetchMainNews(): Promise<NewsArticle[]> {
+export async function fetchMainNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 4 }),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 3 }),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 3 }),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 4 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 3 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 3 }, now),
   ]);
 
   return [...football, ...basketball, ...formula1].slice(0, 8);
@@ -167,48 +175,56 @@ export async function fetchMainNews(): Promise<NewsArticle[]> {
 /**
  * Fetch homepage football section articles
  */
-export async function fetchHomepageFootball(): Promise<NewsArticle[]> {
+export async function fetchHomepageFootball(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'football-articles',
     'ΠΟΔΟΣΦΑΙΡΟ',
     'bg-green-100 text-green-800',
-    { isHomeSportSection: true, limit: 9 }
+    { isHomeSportSection: true, limit: 9 },
+    now
   );
 }
 
 /**
  * Fetch homepage basketball section articles
  */
-export async function fetchHomepageBasketball(): Promise<NewsArticle[]> {
+export async function fetchHomepageBasketball(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'basketball-articles',
     'ΜΠΑΣΚΕΤ',
     'bg-orange-100 text-orange-800',
-    { isHomeSportSection: true, limit: 9 }
+    { isHomeSportSection: true, limit: 9 },
+    now
   );
 }
 
 /**
  * Fetch homepage formula1 section articles
  */
-export async function fetchHomepageFormula1(): Promise<NewsArticle[]> {
+export async function fetchHomepageFormula1(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'formula1-articles',
     'FORMULA 1',
     'bg-red-100 text-red-800',
-    { isHomeSportSection: true, limit: 9 }
+    { isHomeSportSection: true, limit: 9 },
+    now
   );
 }
 
 /**
  * Fetch news articles for the homepage News section
  */
-export async function fetchHomepageNews(): Promise<NewsArticle[]> {
+export async function fetchHomepageNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'news-articles',
     'NEWS',
     'bg-purple-100 text-purple-800',
-    { isHomeSportSection: true, limit: 9 }
+    { isHomeSportSection: true, limit: 9 },
+    now
   );
 }
 
@@ -294,7 +310,7 @@ export async function fetchBreakingNews(): Promise<BreakingNewsItem[]> {
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -338,7 +354,7 @@ export async function fetchJournalists(): Promise<JournalistData[]> {
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates during development
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -388,7 +404,7 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );

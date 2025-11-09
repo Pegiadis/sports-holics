@@ -47,7 +47,7 @@ export async function fetchNewsArticlesWithPagination(page: number = 1, pageSize
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );

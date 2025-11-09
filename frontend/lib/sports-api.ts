@@ -199,7 +199,7 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Disable caching for real-time updates
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000), // 5 second timeout
       }
     );
@@ -284,7 +284,7 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
           headers: {
             'Content-Type': 'application/json',
           },
-          cache: 'no-store', // Disable caching for real-time updates
+          cache: 'no-store', // Real-time updates from CMS
           signal: AbortSignal.timeout(5000),
         }
       );

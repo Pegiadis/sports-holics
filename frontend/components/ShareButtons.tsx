@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 interface ShareButtonsProps {
   url: string;
   title: string;
@@ -7,7 +9,15 @@ interface ShareButtonsProps {
 }
 
 export default function ShareButtons({ url, title, description }: ShareButtonsProps) {
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : url;
+  const [shareUrl, setShareUrl] = useState(url);
+  
+  // Update the share URL on the client side to avoid hydration mismatch
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setShareUrl(window.location.href);
+    }
+  }, []);
+  
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedTitle = encodeURIComponent(title);
   const encodedDescription = encodeURIComponent(description || title);
