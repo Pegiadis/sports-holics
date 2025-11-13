@@ -421,9 +421,15 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
     }
 
     const hero = data.data[0];
-    const imageUrl = hero.backgroundImage?.url
-      ? `${STRAPI_URL}${hero.backgroundImage.url}`
-      : '/216-scaled-1.jpg'; // Fallback to default image
+    
+    // Helper function to construct image URL properly
+    const getImageUrl = (imageUrl: string | undefined): string => {
+      if (!imageUrl) return '/216-scaled-1.jpg';
+      if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+      }
+      return `${STRAPI_URL}${imageUrl}`;
+    };
 
     return {
       id: hero.id,
@@ -435,7 +441,7 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
       timeAgo: hero.timeAgo || '5 λεπτά πριν',
       buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
       buttonLink: hero.buttonLink || '#',
-      backgroundImageUrl: imageUrl,
+      backgroundImageUrl: getImageUrl(hero.backgroundImage?.url),
     };
   } catch (error) {
     console.error('Error fetching hero section:', error);

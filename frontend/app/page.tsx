@@ -57,7 +57,7 @@ export default async function Home() {
     <div className="bg-gray-100">
       <Header />
       <BreakingNews items={breakingNews} />
-      <HeroSection {...heroSection} />
+      {heroSection && <HeroSection {...heroSection} />}
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hot News Carousel */}
