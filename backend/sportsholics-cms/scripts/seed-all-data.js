@@ -13,13 +13,13 @@ const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
 
-// const STRAPI_URL = 'https://clever-garden-138bbdfa99.strapiapp.com';
-const STRAPI_URL = 'http://127.0.0.1:1337';
+const STRAPI_URL = 'https://clever-garden-138bbdfa99.strapiapp.com';
+// const STRAPI_URL = 'http://127.0.0.1:1337';
 
 // Read token from file
 let ADMIN_JWT = '';
 try {
-  const tokenPath = path.join(__dirname, 'strapi.token');
+  const tokenPath = path.join(__dirname, 'strapi_stage.token');
   ADMIN_JWT = fs.readFileSync(tokenPath, 'utf8').trim();
 } catch (error) {
   console.error('❌ Error reading token file:', error.message);
