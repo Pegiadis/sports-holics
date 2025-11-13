@@ -1,5 +1,6 @@
 /**
  * Homepage API - Fetches content from multiple sport APIs
+ * Version: 2024-11-13 - Fixed absolute URL handling
  */
 
 import { NewsArticle } from "@/types";
@@ -398,13 +399,18 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
     params.append('populate', 'backgroundImage');
     params.append('pagination[limit]', '1');
 
+    // Add cache buster to ensure fresh data
+    params.append('_t', Date.now().toString());
+    
     const response = await fetch(
       `${STRAPI_URL}/api/hero-sections?${params.toString()}`,
       {
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
         },
         cache: 'no-store', // Real-time updates from CMS
+        next: { revalidate: 0 }, // Disable Next.js caching completely
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -425,20 +431,38 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
     // Helper function to construct image URL properly
     // Strapi can return either relative paths or full URLs depending on configuration
     const getImageUrl = (imageData: any): string => {
-      if (!imageData) return '/216-scaled-1.jpg';
+      if (!imageData) {
+        return '/216-scaled-1.jpg';
+      }
       
       // Get the URL from the image data
       const imageUrl = imageData.url;
-      if (!imageUrl) return '/216-scaled-1.jpg';
+      
+      if (!imageUrl) {
+        return '/216-scaled-1.jpg';
+      }
+      
+      // Debug logging for production
+      console.log('[fetchHeroSection] STRAPI_URL:', STRAPI_URL);
+      console.log('[fetchHeroSection] imageUrl from Strapi:', imageUrl);
+      console.log('[fetchHeroSection] imageUrl type:', typeof imageUrl);
+      console.log('[fetchHeroSection] imageUrl starts with http:', imageUrl.startsWith('http://'));
+      console.log('[fetchHeroSection] imageUrl starts with https:', imageUrl.startsWith('https://'));
       
       // If it's already a full URL, return it as is
       if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        console.log('[fetchHeroSection] Returning absolute URL:', imageUrl);
         return imageUrl;
       }
       
       // Otherwise, prepend the Strapi URL for relative paths
-      return `${STRAPI_URL}${imageUrl}`;
+      const constructedUrl = `${STRAPI_URL}${imageUrl}`;
+      console.log('[fetchHeroSection] Constructed URL:', constructedUrl);
+      return constructedUrl;
     };
+
+    const finalImageUrl = getImageUrl(hero.backgroundImage);
+    console.log('[fetchHeroSection] FINAL backgroundImageUrl:', finalImageUrl);
 
     return {
       id: hero.id,
@@ -450,7 +474,7 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
       timeAgo: hero.timeAgo || '5 λεπτά πριν',
       buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
       buttonLink: hero.buttonLink || '#',
-      backgroundImageUrl: getImageUrl(hero.backgroundImage),
+      backgroundImageUrl: finalImageUrl,
     };
   } catch (error) {
     console.error('Error fetching hero section:', error);
