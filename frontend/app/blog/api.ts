@@ -185,7 +185,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
         id: article.journalist?.id || journalistId,
         name: article.journalist?.name || '',
         slug: article.journalist?.slug || journalistSlug,
-        avatarUrl: article.journalist?.avatar?.url ? `${STRAPI_URL}${article.journalist.avatar.url}` : '/default-avatar.jpg',
+        avatarUrl: getImageUrl(article.journalist?.avatar?.url, '/default-avatar.jpg'),
       },
     }));
   } catch (error) {
@@ -251,7 +251,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
         id: article.journalist?.id || 0,
         name: article.journalist?.name || 'Unknown',
         slug: article.journalist?.slug || 'unknown',
-        avatarUrl: article.journalist?.avatar?.url ? `${STRAPI_URL}${article.journalist.avatar.url}` : '/default-avatar.jpg',
+        avatarUrl: getImageUrl(article.journalist?.avatar?.url, '/default-avatar.jpg'),
       },
     };
   } catch (error) {
