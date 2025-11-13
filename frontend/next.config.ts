@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'clever-garden-138bbdfa99.media.strapiapp.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: '*.media.strapiapp.com',
         pathname: '/**',
       },

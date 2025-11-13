@@ -423,11 +423,20 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
     const hero = data.data[0];
     
     // Helper function to construct image URL properly
-    const getImageUrl = (imageUrl: string | undefined): string => {
+    // Strapi can return either relative paths or full URLs depending on configuration
+    const getImageUrl = (imageData: any): string => {
+      if (!imageData) return '/216-scaled-1.jpg';
+      
+      // Get the URL from the image data
+      const imageUrl = imageData.url;
       if (!imageUrl) return '/216-scaled-1.jpg';
+      
+      // If it's already a full URL, return it as is
       if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
         return imageUrl;
       }
+      
+      // Otherwise, prepend the Strapi URL for relative paths
       return `${STRAPI_URL}${imageUrl}`;
     };
 
@@ -441,7 +450,7 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
       timeAgo: hero.timeAgo || '5 λεπτά πριν',
       buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
       buttonLink: hero.buttonLink || '#',
-      backgroundImageUrl: getImageUrl(hero.backgroundImage?.url),
+      backgroundImageUrl: getImageUrl(hero.backgroundImage),
     };
   } catch (error) {
     console.error('Error fetching hero section:', error);
