@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // Force cache invalidation - updated 2024-11-13
   eslint: {
     // Disable ESLint during build to allow deployment
     ignoreDuringBuilds: true,
