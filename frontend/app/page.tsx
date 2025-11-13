@@ -123,13 +123,6 @@ export default async function Home() {
                 ))}
               </div>
             )}
-            {newsArticles.length > 6 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                {newsArticles.slice(6, 9).map((news, index) => (
-                  <NewsCard key={index} {...news} size="small" />
-                ))}
-              </div>
-            )}
           </section>
         )}
 
@@ -148,13 +141,6 @@ export default async function Home() {
             {footballArticles.length > 3 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
                 {footballArticles.slice(3, 6).map((news, index) => (
-                  <NewsCard key={index} {...news} size="small" />
-                ))}
-              </div>
-            )}
-            {footballArticles.length > 6 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                {footballArticles.slice(6, 9).map((news, index) => (
                   <NewsCard key={index} {...news} size="small" />
                 ))}
               </div>
@@ -181,13 +167,6 @@ export default async function Home() {
                 ))}
               </div>
             )}
-            {basketballArticles.length > 6 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                {basketballArticles.slice(6, 9).map((news, index) => (
-                  <NewsCard key={index} {...news} size="small" />
-                ))}
-              </div>
-            )}
           </section>
         )}
 
@@ -206,13 +185,6 @@ export default async function Home() {
             {formula1Articles.length > 3 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
                 {formula1Articles.slice(3, 6).map((news, index) => (
-                  <NewsCard key={index} {...news} size="small" />
-                ))}
-              </div>
-            )}
-            {formula1Articles.length > 6 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                {formula1Articles.slice(6, 9).map((news, index) => (
                   <NewsCard key={index} {...news} size="small" />
                 ))}
               </div>
