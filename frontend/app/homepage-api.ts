@@ -428,36 +428,55 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
 
     const hero = data.data[0];
     
+    // Debug: Log the entire hero object structure
+    console.log('[fetchHeroSection] Full hero object:', JSON.stringify(hero, null, 2));
+    console.log('[fetchHeroSection] backgroundImage:', JSON.stringify(hero.backgroundImage, null, 2));
+    
     // Helper function to construct image URL properly
     // Strapi can return either relative paths or full URLs depending on configuration
     const getImageUrl = (imageData: any): string => {
+      console.log('[getImageUrl] Received imageData:', typeof imageData, imageData);
+      
       if (!imageData) {
         return '/216-scaled-1.jpg';
       }
       
-      // Get the URL from the image data
+      // Handle if imageData is already a string (direct URL)
+      if (typeof imageData === 'string') {
+        console.log('[getImageUrl] imageData is already a string:', imageData);
+        if (imageData.startsWith('http://') || imageData.startsWith('https://')) {
+          console.log('[getImageUrl] Returning absolute URL string:', imageData);
+          return imageData;
+        }
+        const constructed = `${STRAPI_URL}${imageData}`;
+        console.log('[getImageUrl] Constructed URL from string:', constructed);
+        return constructed;
+      }
+      
+      // Get the URL from the image object
       const imageUrl = imageData.url;
+      console.log('[getImageUrl] Extracted imageUrl:', typeof imageUrl, imageUrl);
       
       if (!imageUrl) {
         return '/216-scaled-1.jpg';
       }
       
       // Debug logging for production
-      console.log('[fetchHeroSection] STRAPI_URL:', STRAPI_URL);
-      console.log('[fetchHeroSection] imageUrl from Strapi:', imageUrl);
-      console.log('[fetchHeroSection] imageUrl type:', typeof imageUrl);
-      console.log('[fetchHeroSection] imageUrl starts with http:', imageUrl.startsWith('http://'));
-      console.log('[fetchHeroSection] imageUrl starts with https:', imageUrl.startsWith('https://'));
+      console.log('[getImageUrl] STRAPI_URL:', STRAPI_URL);
+      console.log('[getImageUrl] imageUrl from Strapi:', imageUrl);
+      console.log('[getImageUrl] imageUrl type:', typeof imageUrl);
+      console.log('[getImageUrl] imageUrl starts with http:', imageUrl.startsWith('http://'));
+      console.log('[getImageUrl] imageUrl starts with https:', imageUrl.startsWith('https://'));
       
       // If it's already a full URL, return it as is
       if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-        console.log('[fetchHeroSection] Returning absolute URL:', imageUrl);
+        console.log('[getImageUrl] Returning absolute URL:', imageUrl);
         return imageUrl;
       }
       
       // Otherwise, prepend the Strapi URL for relative paths
       const constructedUrl = `${STRAPI_URL}${imageUrl}`;
-      console.log('[fetchHeroSection] Constructed URL:', constructedUrl);
+      console.log('[getImageUrl] Constructed URL:', constructedUrl);
       return constructedUrl;
     };
 

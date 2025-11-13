@@ -26,6 +26,9 @@ export default function HeroSection({
   buttonLink = "#",
   backgroundImageUrl = "/216-scaled-1.jpg",
 }: HeroSectionProps) {
+  // Debug logging
+  console.log('[HeroSection CLIENT] backgroundImageUrl received:', backgroundImageUrl);
+  
   return (
     <section className="relative h-[450px] md:h-[550px] overflow-hidden group shadow-lg">
       {/* Background Image with subtle zoom effect on hover */}
