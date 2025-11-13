@@ -2,6 +2,20 @@ import { NewsArticle } from "@/types";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
+// Helper to construct image URL properly
+// Handles both relative paths and absolute URLs from Strapi
+function getImageUrl(imageUrl: string | undefined, fallback: string): string {
+  if (!imageUrl) return fallback;
+  
+  // If it's already a full URL, return it as is
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  
+  // Otherwise, prepend the Strapi URL for relative paths
+  return `${STRAPI_URL}${imageUrl}`;
+}
+
 interface StrapiArticle {
   id: number;
   title?: string;
@@ -102,7 +116,7 @@ export async function fetchNewsArticlesWithPagination(page: number = 1, pageSize
         subtitle: item.subtitle,
         description: item.description || '',
         author: item.author || 'Sports Holics',
-        image: item.image?.url ? `${STRAPI_URL}${item.image.url}` : '/default-news.jpg',
+        image: getImageUrl(item.image?.url, '/default-news.jpg'),
         slug: item.slug || '',
         date: item.publishedAt || item.createdAt,
         timeAgo: getTimeAgo(item.createdAt),

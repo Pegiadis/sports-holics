@@ -6,6 +6,20 @@ import { NewsArticle } from "@/types";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
+// Helper to construct image URL properly
+// Handles both relative paths and absolute URLs from Strapi
+function getImageUrl(imageUrl: string | undefined, fallback: string): string {
+  if (!imageUrl) return fallback;
+  
+  // If it's already a full URL, return it as is
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  
+  // Otherwise, prepend the Strapi URL for relative paths
+  return `${STRAPI_URL}${imageUrl}`;
+}
+
 interface StrapiArticle {
   id: number;
   title?: string;
@@ -47,14 +61,6 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     return "just now";
   };
 
-  const getImageUrl = (imageUrl: string | undefined): string => {
-    if (!imageUrl) return '/no_back.png';
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return imageUrl;
-    }
-    return `${STRAPI_URL}${imageUrl}`;
-  };
-
   const referenceTime = now || new Date();
   
   return {
@@ -65,7 +71,7 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     description: article.description || "",
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt, referenceTime),
     author: article.author || "Unknown",
-    imageUrl: getImageUrl(article.image?.url),
+    imageUrl: getImageUrl(article.image?.url, '/no_back.png'),
     slug: article.slug,
   };
 }
@@ -376,7 +382,7 @@ export async function fetchJournalists(): Promise<JournalistData[]> {
       slug: item.slug,
       title: item.title || '',
       bio: item.bio || '',
-      avatarUrl: item.avatar?.url ? `${STRAPI_URL}${item.avatar.url}` : '/default-avatar.jpg',
+      avatarUrl: getImageUrl(item.avatar?.url, '/default-avatar.jpg'),
       specialty: item.specialty || '',
       twitter: item.twitter || '',
       instagram: item.instagram || '',
@@ -422,38 +428,15 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
 
     const hero = data.data[0];
     
-    // Helper function to construct image URL properly
-    // Strapi can return either relative paths or full URLs depending on configuration
-    const getImageUrl = (imageData: { url?: string } | string | null | undefined): string => {
-      if (!imageData) {
-        return '/216-scaled-1.jpg';
-      }
-      
-      // Handle if imageData is already a string (direct URL)
-      if (typeof imageData === 'string') {
-        if (imageData.startsWith('http://') || imageData.startsWith('https://')) {
-          return imageData;
-        }
-        return `${STRAPI_URL}${imageData}`;
-      }
-      
-      // Get the URL from the image object
-      const imageUrl = imageData.url;
-      
-      if (!imageUrl) {
-        return '/216-scaled-1.jpg';
-      }
-      
-      // If it's already a full URL, return it as is
-      if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-        return imageUrl;
-      }
-      
-      // Otherwise, prepend the Strapi URL for relative paths
-      return `${STRAPI_URL}${imageUrl}`;
-    };
-
-    const finalImageUrl = getImageUrl(hero.backgroundImage);
+    // Extract URL from background image (can be object or string)
+    let backgroundImageUrl: string | undefined;
+    if (typeof hero.backgroundImage === 'string') {
+      backgroundImageUrl = hero.backgroundImage;
+    } else if (hero.backgroundImage && typeof hero.backgroundImage === 'object') {
+      backgroundImageUrl = hero.backgroundImage.url;
+    }
+    
+    const finalImageUrl = getImageUrl(backgroundImageUrl, '/216-scaled-1.jpg');
 
     return {
       id: hero.id,

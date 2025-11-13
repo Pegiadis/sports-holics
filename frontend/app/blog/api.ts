@@ -8,6 +8,20 @@ import { BlogArticleData, JournalistData } from "../homepage-api";
 const rawStrapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 const STRAPI_URL = rawStrapiUrl.endsWith('/') ? rawStrapiUrl.slice(0, -1) : rawStrapiUrl;
 
+// Helper to construct image URL properly
+// Handles both relative paths and absolute URLs from Strapi
+function getImageUrl(imageUrl: string | undefined, fallback: string): string {
+  if (!imageUrl) return fallback;
+  
+  // If it's already a full URL, return it as is
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  
+  // Otherwise, prepend the Strapi URL for relative paths
+  return `${STRAPI_URL}${imageUrl}`;
+}
+
 // Helper to calculate time ago
 function getTimeAgo(dateString: string): string {
   const date = new Date(dateString);
@@ -73,7 +87,7 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
       slug: journalist.slug,
       title: journalist.title || '',
       bio: journalist.bio || '',
-      avatarUrl: journalist.avatar?.url ? `${STRAPI_URL}${journalist.avatar.url}` : '/default-avatar.jpg',
+      avatarUrl: getImageUrl(journalist.avatar?.url, '/default-avatar.jpg'),
       specialty: journalist.specialty || '',
       twitter: journalist.twitter || '',
       instagram: journalist.instagram || '',
@@ -160,7 +174,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
       slug: article.slug,
       content: article.content || '',
       excerpt: article.excerpt || '',
-      coverImageUrl: article.coverImage?.url ? `${STRAPI_URL}${article.coverImage.url}` : '/default-blog.jpg',
+      coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
       category: article.category || '',
       tags: article.tags || [],
       readTime: article.readTime || 5,
@@ -226,7 +240,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
       slug: article.slug,
       content: article.content || '',
       excerpt: article.excerpt || '',
-      coverImageUrl: article.coverImage?.url ? `${STRAPI_URL}${article.coverImage.url}` : '/default-blog.jpg',
+      coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
       category: article.category || '',
       tags: article.tags || [],
       readTime: article.readTime || 5,
