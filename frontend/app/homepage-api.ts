@@ -73,6 +73,7 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     author: article.author || "Unknown",
     imageUrl: getImageUrl(article.image?.url, '/no_back.png'),
     slug: article.slug,
+    date: article.publishedAt || article.createdAt, // Add date for sorting
   };
 }
 
@@ -148,19 +149,27 @@ export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArtic
 
 /**
  * Fetch latest news from all sports (truly latest by date - no filter)
- * Returns 10 items for carousel
+ * Returns 10 items sorted by publication date (newest first)
  */
 export async function fetchLatestNews(referenceTime?: Date): Promise<NewsArticle[]> {
   const now = referenceTime || new Date();
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }, now),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 10 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 10 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 10 }, now),
   ]);
 
-  // Combine all, sort by date (newest first), take 10
+  // Combine all articles
   const allArticles = [...football, ...basketball, ...formula1];
-  return allArticles.slice(0, 10);
+  
+  // Sort by date (newest first) - using publishedAt or createdAt
+  const sortedArticles = allArticles.sort((a, b) => {
+    const dateA = new Date(a.date || 0);
+    const dateB = new Date(b.date || 0);
+    return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
+  });
+  
+  return sortedArticles.slice(0, 10);
 }
 
 /**
