@@ -13,7 +13,11 @@ interface SidebarProps {
 export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<'latest' | 'hot'>('latest');
 
-  const currentNews = activeTab === 'latest' ? latestNews : hotNews;
+  // Limit to 6 articles for both tabs
+  const limitedLatestNews = latestNews.slice(0, 6);
+  const limitedHotNews = hotNews.slice(0, 6);
+  
+  const currentNews = activeTab === 'latest' ? limitedLatestNews : limitedHotNews;
   const showTabs = hotNews.length > 0;
 
   return (
@@ -93,7 +97,7 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
                     <h4 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
                       {news.title}
                     </h4>
-                    <p className="text-xs text-gray-500 mt-1">{news.timeAgo}</p>
+                    <p className="text-xs text-gray-500 mt-1" suppressHydrationWarning>{news.timeAgo}</p>
                   </div>
                 </div>
               </Link>

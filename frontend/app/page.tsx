@@ -23,6 +23,8 @@ import {
 
 // Force dynamic rendering for real-time CMS updates
 export const dynamic = 'force-dynamic';
+export const revalidate = 0; // Disable caching to prevent hydration mismatches
+export const fetchCache = 'force-no-store'; // Ensure no caching at all
 
 export default async function Home() {
   // Capture a single timestamp for all time calculations to ensure SSR/client consistency
@@ -98,11 +100,6 @@ export default async function Home() {
           {/* Sidebar */}
           <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
         </div>
-
-        {/* Journalists Section */}
-        {journalists.length > 0 && (
-          <JournalistsSection journalists={journalists} />
-        )}
 
         {/* Section Divider */}
         <SectionDivider variant="sporty" />
@@ -190,6 +187,14 @@ export default async function Home() {
               </div>
             )}
           </section>
+        )}
+
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
+
+        {/* Journalists Section */}
+        {journalists.length > 0 && (
+          <JournalistsSection journalists={journalists} />
         )}
       </main>
 
