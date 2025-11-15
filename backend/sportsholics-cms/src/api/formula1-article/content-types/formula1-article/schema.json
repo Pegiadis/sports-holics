@@ -25,9 +25,10 @@
       "required": true
     },
     "author": {
-      "type": "string",
-      "required": true,
-      "default": "Sports Holics"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::journalist.journalist",
+      "inversedBy": "formula1Articles"
     },
     "image": {
       "type": "media",

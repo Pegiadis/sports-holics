@@ -30,7 +30,14 @@ export interface BaseStrapiArticle {
   title: string;
   subtitle?: string;
   description: string;
-  author: string;
+  author: {
+    id: number;
+    name: string;
+    slug: string;
+    avatar?: {
+      url: string;
+    } | null;
+  } | null;
   slug: string;
   createdAt: string;
   updatedAt: string;
@@ -52,6 +59,9 @@ export interface BaseArticle {
   subtitle?: string;
   description: string;
   author: string;
+  authorName?: string;
+  authorSlug?: string;
+  authorAvatarUrl?: string;
   imageUrl: string;
   category: string;
   categoryColor: string;
@@ -156,7 +166,10 @@ export function transformArticle<T extends BaseStrapiArticle>(
     title: article.title,
     subtitle: article.subtitle,
     description: article.description,
-    author: article.author,
+    author: article.author?.name || 'Sports Holics',
+    authorName: article.author?.name,
+    authorSlug: article.author?.slug,
+    authorAvatarUrl: article.author?.avatar?.url ? getImageUrl(article.author.avatar.url, '/default-avatar.jpg') : undefined,
     imageUrl: getImageUrl(article.image?.url, config.fallbackImage),
     category: config.category,
     categoryColor: config.categoryColor,
@@ -206,10 +219,12 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('pagination[page]', String(page));
     params.append('pagination[pageSize]', String(pageSize));
     
-    // Always populate image, SEO, and sort by date (newest first)
+    // Always populate image, SEO, author (journalist), and sort by date (newest first)
     params.append('populate[0]', 'image');
     params.append('populate[1]', 'seo');
     params.append('populate[2]', 'seo.metaImage');
+    params.append('populate[3]', 'author');
+    params.append('populate[4]', 'author.avatar');
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -298,6 +313,8 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
       params.append('populate[0]', 'image');
       params.append('populate[1]', 'seo');
       params.append('populate[2]', 'seo.metaImage');
+      params.append('populate[3]', 'author');
+      params.append('populate[4]', 'author.avatar');
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,

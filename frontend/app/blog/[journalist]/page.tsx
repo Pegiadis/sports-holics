@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { fetchJournalistBySlug, fetchBlogArticlesByJournalist } from "../api";
+import { fetchJournalistBySlug, fetchAllArticlesByJournalist } from "../api";
 
 interface JournalistPageProps {
   params: Promise<{
@@ -16,7 +16,7 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
   
   const [journalist, articles] = await Promise.all([
     fetchJournalistBySlug(journalistSlug),
-    fetchBlogArticlesByJournalist(journalistSlug)
+    fetchAllArticlesByJournalist(journalistSlug)
   ]);
 
   if (!journalist) {
@@ -103,41 +103,30 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map((article) => (
                 <Link
-                  key={article.id}
-                  href={`/blog/${journalistSlug}/${article.slug}`}
+                  key={`${article.category}-${article.id}`}
+                  href={article.linkHref}
                   className="group"
                 >
                   <article className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden h-full flex flex-col">
                     {/* Cover Image */}
                     <div className="relative h-48 overflow-hidden">
                       <Image
-                        src={article.coverImageUrl}
+                        src={article.imageUrl}
                         alt={article.title}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-300"
                       />
-                      {article.isFeatured && (
-                        <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-                          Featured
-                        </div>
-                      )}
                     </div>
 
                     {/* Content */}
                     <div className="p-6 flex-1 flex flex-col">
-                      {/* Category & Read Time */}
+                      {/* Category Badge */}
                       <div className="flex items-center gap-3 mb-3">
                         {article.category && (
-                          <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full">
+                          <span className={`px-3 py-1 text-xs font-semibold rounded-full ${article.categoryColor}`}>
                             {article.category}
                           </span>
                         )}
-                        <span className="text-xs text-gray-500 flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          {article.readTime} λεπτά
-                        </span>
                       </div>
 
                       {/* Title */}

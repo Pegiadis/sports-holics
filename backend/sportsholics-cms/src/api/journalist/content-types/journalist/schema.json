@@ -56,6 +56,30 @@
       "target": "api::blog-article.blog-article",
       "mappedBy": "journalist"
     },
+    "footballArticles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::football-article.football-article",
+      "mappedBy": "author"
+    },
+    "basketballArticles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::basketball-article.basketball-article",
+      "mappedBy": "author"
+    },
+    "formula1Articles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::formula1-article.formula1-article",
+      "mappedBy": "author"
+    },
+    "newsArticles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::news-article.news-article",
+      "mappedBy": "author"
+    },
     "isActive": {
       "type": "boolean",
       "default": true

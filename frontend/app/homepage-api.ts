@@ -25,7 +25,14 @@ interface StrapiArticle {
   title?: string;
   subtitle?: string;
   description?: string;
-  author?: string;
+  author?: {
+    id: number;
+    name: string;
+    slug: string;
+    avatar?: {
+      url: string;
+    } | null;
+  } | null;
   slug?: string;
   createdAt: string;
   publishedAt?: string;
@@ -70,7 +77,7 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     subtitle: article.subtitle,
     description: article.description || "",
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt, referenceTime),
-    author: article.author || "Unknown",
+    author: article.author?.name || "Sports Holics",
     imageUrl: getImageUrl(article.image?.url, '/no_back.png'),
     slug: article.slug,
     date: article.publishedAt || article.createdAt, // Add date for sorting
@@ -101,7 +108,9 @@ async function fetchArticlesFromEndpoint(
       params.append('pagination[limit]', String(options.limit));
     }
     
-    params.append('populate', 'image');
+    params.append('populate[0]', 'image');
+    params.append('populate[1]', 'author');
+    params.append('populate[2]', 'author.avatar');
     params.append('sort', 'createdAt:desc');
 
     const response = await fetch(
