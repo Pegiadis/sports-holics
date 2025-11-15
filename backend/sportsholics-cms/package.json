@@ -21,6 +21,7 @@
     "@strapi/plugin-seo": "^2.0.8",
     "@strapi/plugin-users-permissions": "5.27.0",
     "@strapi/strapi": "5.27.0",
+    "@tailwindcss/typography": "^0.5.19",
     "axios": "^1.13.2",
     "better-sqlite3": "11.3.0",
     "pg": "^8.11.3",

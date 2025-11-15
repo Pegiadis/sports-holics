@@ -84,8 +84,15 @@ export function richtextToHtml(content: unknown): string {
   // If it's already a string, assume it's markdown and parse it
   if (typeof content === 'string') {
     try {
-      // Parse markdown to HTML
-      return marked.parse(content) as string;
+      // Configure marked for better parsing
+      marked.setOptions({
+        breaks: true,
+        gfm: true,
+      });
+      
+      // Parse markdown to HTML synchronously
+      const html = marked.parse(content, { async: false }) as string;
+      return html;
     } catch (error) {
       console.error('Error parsing markdown:', error);
       return content;
