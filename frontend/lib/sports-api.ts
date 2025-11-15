@@ -8,6 +8,20 @@ const rawStrapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost
 export const STRAPI_URL = rawStrapiUrl.endsWith('/') ? rawStrapiUrl.slice(0, -1) : rawStrapiUrl;
 
 /**
+ * SEO metadata structure
+ */
+export interface SeoData {
+  metaTitle?: string;
+  metaDescription?: string;
+  metaImage?: {
+    url: string;
+  } | null;
+  keywords?: string;
+  metaRobots?: string;
+  canonicalURL?: string;
+}
+
+/**
  * Base Strapi article structure (common fields across all sports)
  */
 export interface BaseStrapiArticle {
@@ -26,6 +40,7 @@ export interface BaseStrapiArticle {
     name: string;
     alternativeText: string | null;
   } | null;
+  seo?: SeoData | null;
 }
 
 /**
@@ -42,6 +57,7 @@ export interface BaseArticle {
   categoryColor: string;
   timeAgo: string;
   slug: string;
+  seo?: SeoData | null;
 }
 
 /**
@@ -146,6 +162,7 @@ export function transformArticle<T extends BaseStrapiArticle>(
     categoryColor: config.categoryColor,
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
     slug: article.slug,
+    seo: article.seo,
   };
 }
 
@@ -189,8 +206,10 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('pagination[page]', String(page));
     params.append('pagination[pageSize]', String(pageSize));
     
-    // Always populate image and sort by date (newest first)
-    params.append('populate', 'image');
+    // Always populate image, SEO, and sort by date (newest first)
+    params.append('populate[0]', 'image');
+    params.append('populate[1]', 'seo');
+    params.append('populate[2]', 'seo.metaImage');
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -276,7 +295,9 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
     try {
       const params = new URLSearchParams();
       params.append('filters[slug][$eq]', slug);
-      params.append('populate', 'image');
+      params.append('populate[0]', 'image');
+      params.append('populate[1]', 'seo');
+      params.append('populate[2]', 'seo.metaImage');
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,

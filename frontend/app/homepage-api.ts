@@ -200,11 +200,11 @@ export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArtic
     console.warn('Failed to fetch carousel from homepage configuration, using fallback:', error);
   }
 
-  // Fallback to old method with isCarousel flags
+  // Fallback: fetch latest articles (since old flags don't exist anymore)
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isCarousel: true, limit: 2 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isCarousel: true, limit: 2 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isCarousel: true, limit: 2 }, now),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 2 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 2 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 2 }, now),
   ]);
 
   return [...football, ...basketball, ...formula1].slice(0, 6);
@@ -302,11 +302,11 @@ export async function fetchMainNews(referenceTime?: Date): Promise<NewsArticle[]
     console.warn('Failed to fetch main news from homepage configuration, using fallback:', error);
   }
 
-  // Fallback to old method with isMainNews flags
+  // Fallback: fetch latest articles (since old flags don't exist anymore)
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 4 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 3 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 3 }, now),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }, now),
   ]);
 
   return [...football, ...basketball, ...formula1].slice(0, 8);
@@ -321,7 +321,7 @@ export async function fetchHomepageFootball(referenceTime?: Date): Promise<NewsA
     'football-articles',
     'ΠΟΔΟΣΦΑΙΡΟ',
     'bg-green-100 text-green-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }
@@ -335,7 +335,7 @@ export async function fetchHomepageBasketball(referenceTime?: Date): Promise<New
     'basketball-articles',
     'ΜΠΑΣΚΕΤ',
     'bg-orange-100 text-orange-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }
@@ -349,7 +349,7 @@ export async function fetchHomepageFormula1(referenceTime?: Date): Promise<NewsA
     'formula1-articles',
     'FORMULA 1',
     'bg-red-100 text-red-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }
@@ -363,7 +363,7 @@ export async function fetchHomepageNews(referenceTime?: Date): Promise<NewsArtic
     'news-articles',
     'NEWS',
     'bg-purple-100 text-purple-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }

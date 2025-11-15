@@ -38,6 +38,11 @@
     "slug": {
       "type": "uid",
       "targetField": "title"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
     }
   }
 }

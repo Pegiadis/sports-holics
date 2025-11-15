@@ -488,10 +488,6 @@ export interface ApiBasketballArticleBasketballArticle
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -499,6 +495,7 @@ export interface ApiBasketballArticleBasketballArticle
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -627,6 +624,7 @@ export interface ApiFootballArticleFootballArticle
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -657,10 +655,6 @@ export interface ApiFormula1ArticleFormula1Article
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -668,6 +662,7 @@ export interface ApiFormula1ArticleFormula1Article
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -852,10 +847,6 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -863,6 +854,7 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;

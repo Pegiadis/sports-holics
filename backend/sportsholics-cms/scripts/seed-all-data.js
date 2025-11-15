@@ -8,18 +8,18 @@
  * 3. Run: node scripts/seed-all-data.js
  */
 
-const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
+const axios = require('axios');
 
-const STRAPI_URL = 'https://clever-garden-138bbdfa99.strapiapp.com';
-// const STRAPI_URL = 'http://127.0.0.1:1337';
+// const STRAPI_URL = 'https://clever-garden-138bbdfa99.strapiapp.com';
+const STRAPI_URL = 'http://127.0.0.1:1337';
 
 // Read token from file
 let ADMIN_JWT = '';
 try {
-  const tokenPath = path.join(__dirname, 'strapi_stage.token');
+  const tokenPath = path.join(__dirname, 'strapi.token');
   ADMIN_JWT = fs.readFileSync(tokenPath, 'utf8').trim();
 } catch (error) {
   console.error('❌ Error reading token file:', error.message);
@@ -32,15 +32,25 @@ try {
 const AVAILABLE_IMAGES = [
   '216-scaled-1.jpg',
   'BG-football-1600x1000-1170x600-1.jpeg',
-  'Ferrari_F1.jpg',
-  'formula.png',
-  'images.jpeg',
-  'wp14783249.jpg'
 ];
 
 // Get random image path
 function getRandomImage() {
   return AVAILABLE_IMAGES[Math.floor(Math.random() * AVAILABLE_IMAGES.length)];
+}
+
+// Get MIME type from file extension
+function getMimeType(filename) {
+  const ext = path.extname(filename).toLowerCase();
+  const mimeTypes = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.svg': 'image/svg+xml'
+  };
+  return mimeTypes[ext] || 'image/jpeg';
 }
 
 // Upload image to Strapi
@@ -54,27 +64,42 @@ async function uploadImage(imageName) {
       return null;
     }
 
+    // Read file as buffer
+    const fileBuffer = fs.readFileSync(imagePath);
+    const mimeType = getMimeType(imageName);
+    
+    // Use FormData for multipart/form-data
     const formData = new FormData();
-    formData.append('files', fs.createReadStream(imagePath), imageName);
-
-    const response = await fetch(`${STRAPI_URL}/api/upload`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${ADMIN_JWT}`,
-        ...formData.getHeaders() // Important for multipart/form-data
-      },
-      body: formData
+    formData.append('files', fileBuffer, {
+      filename: imageName,
+      contentType: mimeType
     });
 
-    if (!response.ok) {
-      console.warn(`⚠️  Failed to upload ${imageName}: ${response.status}`);
-      return null;
-    }
+    // Use axios which handles form-data streams properly
+    const response = await axios.post(
+      `${STRAPI_URL}/api/upload`,
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          'Authorization': `Bearer ${ADMIN_JWT}`
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      }
+    );
 
-    const data = await response.json();
-    return data[0]?.id || null;
+    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      return response.data[0].id || null;
+    }
+    return null;
   } catch (error) {
-    console.warn(`⚠️  Error uploading ${imageName}:`, error.message);
+    if (error.response) {
+      const errorText = JSON.stringify(error.response.data || error.response.statusText);
+      console.warn(`⚠️  Failed to upload ${imageName}: ${error.response.status} - ${errorText.substring(0, 200)}`);
+    } else {
+      console.warn(`⚠️  Error uploading ${imageName}:`, error.message);
+    }
     return null;
   }
 }
@@ -241,6 +266,12 @@ function randomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+// Strapi v5 uses Markdown for richtext fields, not JSON
+// Just return the plain text and Strapi will handle it
+function toRichText(text) {
+  return text;
+}
+
 // Main seeding function
 async function seedAllData() {
   console.log('🌱 Starting Complete Data Seeding...\n');
@@ -280,12 +311,9 @@ async function seedAllData() {
     const article = {
       title: greekTitles.football[i],
       subtitle: randomItem(greekSubtitles),
-      description: randomItem(greekDescriptions),
+      description: toRichText(randomItem(greekDescriptions)),
       author: 'Sports Holics',
       slug: `football-article-${i + 1}`,
-      isCarousel: true,
-      isMainNews: true,
-      isHomeSportSection: true,
       ...(imageId && { image: imageId })
     };
     
@@ -304,12 +332,9 @@ async function seedAllData() {
     const article = {
       title: greekTitles.basketball[i],
       subtitle: randomItem(greekSubtitles),
-      description: randomItem(greekDescriptions),
+      description: toRichText(randomItem(greekDescriptions)),
       author: 'Sports Holics',
       slug: `basketball-article-${i + 1}`,
-      isCarousel: true,
-      isMainNews: true,
-      isHomeSportSection: true,
       ...(imageId && { image: imageId })
     };
     
@@ -328,12 +353,9 @@ async function seedAllData() {
     const article = {
       title: greekTitles.formula1[i],
       subtitle: randomItem(greekSubtitles),
-      description: randomItem(greekDescriptions),
+      description: toRichText(randomItem(greekDescriptions)),
       author: 'Sports Holics',
       slug: `formula1-article-${i + 1}`,
-      isCarousel: true,
-      isMainNews: true,
-      isHomeSportSection: true,
       ...(imageId && { image: imageId })
     };
     
@@ -352,12 +374,9 @@ async function seedAllData() {
     const article = {
       title: greekTitles.news[i],
       subtitle: randomItem(greekSubtitles),
-      description: randomItem(greekDescriptions),
+      description: toRichText(randomItem(greekDescriptions)),
       author: 'Sports Holics',
       slug: `news-article-${i + 1}`,
-      isCarousel: true,
-      isMainNews: true,
-      isHomeSportSection: true,
       ...(imageId && { image: imageId })
     };
     
@@ -388,7 +407,7 @@ async function seedAllData() {
           title: `${blogTitles[i]} - ${journalist.name}`,
           slug: `${journalist.slug}-blog-${i + 1}`,
           subtitle: randomItem(greekSubtitles),
-          content: randomItem(greekDescriptions),
+          content: toRichText(randomItem(greekDescriptions)),
           excerpt: randomItem(greekSubtitles),
           category: randomItem(['Ποδόσφαιρο', 'Μπάσκετ', 'Formula 1', 'Ανάλυση']),
           tags: ['analysis', 'opinion', 'exclusive'],
