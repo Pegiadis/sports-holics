@@ -38,18 +38,6 @@
     "slug": {
       "type": "uid",
       "targetField": "title"
-    },
-    "isCarousel": {
-      "type": "boolean",
-      "default": false
-    },
-    "isMainNews": {
-      "type": "boolean",
-      "default": false
-    },
-    "isHomeSportSection": {
-      "type": "boolean",
-      "default": false
     }
   }
 }

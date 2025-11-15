@@ -620,10 +620,6 @@ export interface ApiFootballArticleFootballArticle
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
