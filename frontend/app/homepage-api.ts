@@ -535,8 +535,11 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
   try {
     const params = new URLSearchParams();
     params.append('filters[isActive][$eq]', 'true');
-    params.append('sort[0]', 'priority:desc');
-    params.append('populate', 'backgroundImage');
+    params.append('populate[0]', 'backgroundImage');
+    params.append('populate[1]', 'linkedFootballArticle');
+    params.append('populate[2]', 'linkedBasketballArticle');
+    params.append('populate[3]', 'linkedFormula1Article');
+    params.append('populate[4]', 'linkedNewsArticle');
     params.append('pagination[limit]', '1');
 
     const response = await fetch(
@@ -573,6 +576,18 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
     
     const finalImageUrl = getImageUrl(backgroundImageUrl, '/216-scaled-1.jpg');
 
+    // Generate buttonLink from linked article
+    let buttonLink = '#';
+    if (hero.linkedFootballArticle?.slug) {
+      buttonLink = `/article/${hero.linkedFootballArticle.slug}`;
+    } else if (hero.linkedBasketballArticle?.slug) {
+      buttonLink = `/article/${hero.linkedBasketballArticle.slug}`;
+    } else if (hero.linkedFormula1Article?.slug) {
+      buttonLink = `/article/${hero.linkedFormula1Article.slug}`;
+    } else if (hero.linkedNewsArticle?.slug) {
+      buttonLink = `/article/${hero.linkedNewsArticle.slug}`;
+    }
+
     return {
       id: hero.id,
       title: hero.title || 'Τελικός Champions League',
@@ -582,7 +597,7 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
       categoryEmoji: hero.categoryEmoji || '🔥',
       timeAgo: hero.timeAgo || '5 λεπτά πριν',
       buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
-      buttonLink: hero.buttonLink || '#',
+      buttonLink: buttonLink,
       backgroundImageUrl: finalImageUrl,
     };
   } catch (error) {

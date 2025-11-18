@@ -689,7 +689,6 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
   attributes: {
     backgroundImage: Schema.Attribute.Media<'images'> &
       Schema.Attribute.Required;
-    buttonLink: Schema.Attribute.String;
     buttonText: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u0394\u03B9\u03B1\u03B2\u03AC\u03C3\u03C4\u03B5 \u03C0\u03B5\u03C1\u03B9\u03C3\u03C3\u03CC\u03C4\u03B5\u03C1\u03B1 \u2192'>;
@@ -703,13 +702,28 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.Text & Schema.Attribute.Required;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    linkedBasketballArticle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::basketball-article.basketball-article'
+    >;
+    linkedFootballArticle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::football-article.football-article'
+    >;
+    linkedFormula1Article: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::formula1-article.formula1-article'
+    >;
+    linkedNewsArticle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::news-article.news-article'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::hero-section.hero-section'
     > &
       Schema.Attribute.Private;
-    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     timeAgo: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'5 \u03BB\u03B5\u03C0\u03C4\u03AC \u03C0\u03C1\u03B9\u03BD'>;
