@@ -81,6 +81,13 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
 
     const journalist = data.data[0];
 
+    // Count all article types
+    const totalArticles = (journalist.blogArticles?.length || 0) +
+                          (journalist.footballArticles?.length || 0) +
+                          (journalist.basketballArticles?.length || 0) +
+                          (journalist.formula1Articles?.length || 0) +
+                          (journalist.newsArticles?.length || 0);
+
     return {
       id: journalist.id,
       name: journalist.name,
@@ -91,7 +98,7 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
       specialty: journalist.specialty || '',
       twitter: journalist.twitter || '',
       instagram: journalist.instagram || '',
-      articleCount: journalist.blogArticles?.length || 0,
+      articleCount: totalArticles,
     };
   } catch (error) {
     console.error('Error fetching journalist:', error);
@@ -257,6 +264,113 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
   } catch (error) {
     console.error('Error fetching blog article:', error);
     return null;
+  }
+}
+
+/**
+ * Fetch ALL articles (blog + sports) by journalist slug
+ * Returns a unified list of all article types
+ */
+export async function fetchAllArticlesByJournalist(journalistSlug: string): Promise<any[]> {
+  try {
+    // First get the journalist ID
+    const journalistParams = new URLSearchParams();
+    journalistParams.append('filters[slug][$eq]', journalistSlug);
+    
+    const journalistResponse = await fetch(
+      `${STRAPI_URL}/api/journalists?${journalistParams.toString()}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (!journalistResponse.ok) return [];
+    const journalistData = await journalistResponse.json();
+    if (!journalistData.data || journalistData.data.length === 0) return [];
+    
+    const journalistId = journalistData.data[0].id;
+
+    // Fetch from all article endpoints in parallel
+    const endpoints = [
+      { url: 'blog-articles', category: 'Blog', color: 'bg-blue-100 text-blue-800', isBlog: true },
+      { url: 'football-articles', category: 'ΠΟΔΟΣΦΑΙΡΟ', color: 'bg-green-100 text-green-800', isBlog: false },
+      { url: 'basketball-articles', category: 'ΜΠΑΣΚΕΤ', color: 'bg-orange-100 text-orange-800', isBlog: false },
+      { url: 'formula1-articles', category: 'FORMULA 1', color: 'bg-red-100 text-red-800', isBlog: false },
+      { url: 'news-articles', category: 'NEWS', color: 'bg-purple-100 text-purple-800', isBlog: false },
+    ];
+
+    const fetchPromises = endpoints.map(async (endpoint) => {
+      try {
+        const params = new URLSearchParams();
+        params.append('populate[0]', endpoint.isBlog ? 'coverImage' : 'image');
+        params.append('populate[1]', endpoint.isBlog ? 'journalist' : 'author');
+        params.append('populate[2]', endpoint.isBlog ? 'journalist.avatar' : 'author.avatar');
+        params.append('sort[0]', 'publishedAt:desc');
+        params.append('pagination[limit]', '100');
+
+        const response = await fetch(
+          `${STRAPI_URL}/api/${endpoint.url}?${params.toString()}`,
+          {
+            headers: { 'Content-Type': 'application/json' },
+            cache: 'no-store',
+            signal: AbortSignal.timeout(5000),
+          }
+        );
+
+        if (!response.ok) return [];
+        const data = await response.json();
+        if (!data.data || data.data.length === 0) return [];
+
+        // Filter articles by journalist ID
+        const journalistField = endpoint.isBlog ? 'journalist' : 'author';
+        const filtered = data.data.filter((article: any) => 
+          article[journalistField]?.id === journalistId
+        );
+
+        // Transform to unified format
+        return filtered.map((article: any) => ({
+          id: article.id,
+          title: article.title,
+          subtitle: article.subtitle || '',
+          slug: article.slug,
+          excerpt: article.excerpt || article.subtitle || '',
+          imageUrl: getImageUrl(
+            endpoint.isBlog ? article.coverImage?.url : article.image?.url, 
+            endpoint.isBlog ? '/default-blog.jpg' : '/default-news.jpg'
+          ),
+          category: endpoint.category,
+          categoryColor: endpoint.color,
+          publishedAt: article.publishedAt || article.createdAt,
+          timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
+          isBlog: endpoint.isBlog,
+          // For blog articles, use journalist slug in URL
+          // For sports articles, use /article/slug
+          linkHref: endpoint.isBlog 
+            ? `/blog/${journalistSlug}/${article.slug}`
+            : `/article/${article.slug}`,
+        }));
+      } catch (error) {
+        console.warn(`Failed to fetch ${endpoint.url}:`, error);
+        return [];
+      }
+    });
+
+    const results = await Promise.all(fetchPromises);
+    const allArticles = results.flat();
+
+    // Sort by published date (newest first)
+    allArticles.sort((a, b) => {
+      const dateA = new Date(a.publishedAt || 0);
+      const dateB = new Date(b.publishedAt || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    return allArticles;
+  } catch (error) {
+    console.error('Error fetching all articles by journalist:', error);
+    return [];
   }
 }
 

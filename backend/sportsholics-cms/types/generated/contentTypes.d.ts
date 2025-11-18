@@ -480,18 +480,15 @@ export interface ApiBasketballArticleBasketballArticle
     draftAndPublish: true;
   };
   attributes: {
-    author: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'Sports Holics'>;
+    author: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::journalist.journalist'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -499,6 +496,7 @@ export interface ApiBasketballArticleBasketballArticle
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -612,18 +610,15 @@ export interface ApiFootballArticleFootballArticle
     draftAndPublish: true;
   };
   attributes: {
-    author: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'Sports Holics'>;
+    author: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::journalist.journalist'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -631,6 +626,7 @@ export interface ApiFootballArticleFootballArticle
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -653,18 +649,15 @@ export interface ApiFormula1ArticleFormula1Article
     draftAndPublish: true;
   };
   attributes: {
-    author: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'Sports Holics'>;
+    author: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::journalist.journalist'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -672,6 +665,7 @@ export interface ApiFormula1ArticleFormula1Article
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -727,6 +721,72 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiHomepageConfigurationHomepageConfiguration
+  extends Struct.SingleTypeSchema {
+  collectionName: 'homepage_configuration';
+  info: {
+    description: 'Configure which articles appear in carousel (max 6 total) and main news (max 8 total) sections';
+    displayName: 'Homepage Configuration';
+    pluralName: 'homepage-configurations';
+    singularName: 'homepage-configuration';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: true;
+    };
+  };
+  attributes: {
+    carouselBasketball: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::basketball-article.basketball-article'
+    >;
+    carouselFootball: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::football-article.football-article'
+    >;
+    carouselFormula1: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::formula1-article.formula1-article'
+    >;
+    carouselNews: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::news-article.news-article'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::homepage-configuration.homepage-configuration'
+    > &
+      Schema.Attribute.Private;
+    mainNewsBasketball: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::basketball-article.basketball-article'
+    >;
+    mainNewsFootball: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::football-article.football-article'
+    >;
+    mainNewsFormula1: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::formula1-article.formula1-article'
+    >;
+    mainNewsNews: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::news-article.news-article'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
   collectionName: 'journalists';
   info: {
@@ -740,6 +800,10 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
   };
   attributes: {
     avatar: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    basketballArticles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::basketball-article.basketball-article'
+    >;
     bio: Schema.Attribute.Text;
     blogArticles: Schema.Attribute.Relation<
       'oneToMany',
@@ -749,6 +813,14 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email;
+    footballArticles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::football-article.football-article'
+    >;
+    formula1Articles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::formula1-article.formula1-article'
+    >;
     instagram: Schema.Attribute.String;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -758,6 +830,10 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    newsArticles: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::news-article.news-article'
+    >;
     priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'>;
@@ -782,18 +858,15 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    author: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'Sports Holics'>;
+    author: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::journalist.journalist'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.RichText & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
-    isCarousel: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    isHomeSportSection: Schema.Attribute.Boolean &
-      Schema.Attribute.DefaultTo<false>;
-    isMainNews: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -801,6 +874,7 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -1327,6 +1401,7 @@ declare module '@strapi/strapi' {
       'api::football-article.football-article': ApiFootballArticleFootballArticle;
       'api::formula1-article.formula1-article': ApiFormula1ArticleFormula1Article;
       'api::hero-section.hero-section': ApiHeroSectionHeroSection;
+      'api::homepage-configuration.homepage-configuration': ApiHomepageConfigurationHomepageConfiguration;
       'api::journalist.journalist': ApiJournalistJournalist;
       'api::news-article.news-article': ApiNewsArticleNewsArticle;
       'plugin::content-releases.release': PluginContentReleasesRelease;

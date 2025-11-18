@@ -52,7 +52,7 @@ export default function HeroSection({
             <span className="bg-red-600 px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide shadow-md hover:bg-red-700 transition-colors cursor-pointer">
               {categoryEmoji} {categoryLabel}
             </span>
-            <span className="text-gray-300 text-xs font-medium">
+            <span className="text-gray-300 text-xs font-medium" suppressHydrationWarning>
               • {timeAgo}
             </span>
           </div>

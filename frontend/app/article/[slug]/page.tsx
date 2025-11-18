@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
-import { fetchArticleBySlug } from "@/lib/sports-api";
+import { fetchArticleBySlug, getImageUrl, STRAPI_URL } from "@/lib/sports-api";
 import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 import { richtextToHtml } from "@/lib/richtext-utils";
 
@@ -13,6 +14,64 @@ interface ArticlePageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await fetchArticleBySlug(slug);
+  
+  if (!article) {
+    return {
+      title: 'Article Not Found',
+    };
+  }
+
+  // Use SEO data if available, otherwise fall back to article data
+  const title = article.seo?.metaTitle || article.title;
+  const description = article.seo?.metaDescription || article.subtitle || article.title;
+  const imageUrl = article.seo?.metaImage?.url 
+    ? getImageUrl(article.seo.metaImage.url, '/no_back.png')
+    : article.imageUrl;
+  
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const articleUrl = `${siteUrl}/article/${slug}`;
+  const canonicalUrl = article.seo?.canonicalURL || articleUrl;
+
+  return {
+    title,
+    description,
+    keywords: article.seo?.keywords,
+    robots: article.seo?.metaRobots || 'index, follow',
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: articleUrl,
+      siteName: 'Sports Holics',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: 'el_GR',
+      type: 'article',
+      publishedTime: article.timeAgo,
+      authors: [article.author],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+      creator: '@sportsholics',
+    },
+  };
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {

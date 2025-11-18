@@ -1,0 +1,60 @@
+{
+  "kind": "singleType",
+  "collectionName": "homepage_configuration",
+  "info": {
+    "singularName": "homepage-configuration",
+    "pluralName": "homepage-configurations",
+    "displayName": "Homepage Configuration",
+    "description": "Configure which articles appear in carousel (max 6 total) and main news (max 8 total) sections"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": true
+    }
+  },
+  "attributes": {
+    "carouselFootball": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::football-article.football-article"
+    },
+    "carouselBasketball": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::basketball-article.basketball-article"
+    },
+    "carouselFormula1": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::formula1-article.formula1-article"
+    },
+    "carouselNews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::news-article.news-article"
+    },
+    "mainNewsFootball": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::football-article.football-article"
+    },
+    "mainNewsBasketball": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::basketball-article.basketball-article"
+    },
+    "mainNewsFormula1": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::formula1-article.formula1-article"
+    },
+    "mainNewsNews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::news-article.news-article"
+    }
+  }
+}

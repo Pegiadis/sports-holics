@@ -23,6 +23,8 @@ import {
 
 // Force dynamic rendering for real-time CMS updates
 export const dynamic = 'force-dynamic';
+export const revalidate = 0; // Disable caching to prevent hydration mismatches
+export const fetchCache = 'force-no-store'; // Ensure no caching at all
 
 export default async function Home() {
   // Capture a single timestamp for all time calculations to ensure SSR/client consistency
@@ -63,13 +65,13 @@ export default async function Home() {
         {/* Hot News Carousel */}
         {carouselArticles.length > 0 && (
           <>
-            <SectionTitle title="Σημαντικά Νέα" icon="/flames-icon.png" />
+            <SectionTitle title="Σημαντικά Νέα" icon="/news-2.png" />
             <NewsCarousel articles={carouselArticles} />
           </>
         )}
 
         {/* Main Content Grid */}
-        <SectionTitle title="Περισσότερα Νέα" icon="/flames-icon.png" />
+        <SectionTitle title="Τρέχουσες Ειδήσεις" icon="/trending.png" />
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
           {/* Main News Section */}
           <div className="lg:col-span-3">
@@ -99,18 +101,13 @@ export default async function Home() {
           <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
         </div>
 
-        {/* Journalists Section */}
-        {journalists.length > 0 && (
-          <JournalistsSection journalists={journalists} />
-        )}
-
         {/* Section Divider */}
         <SectionDivider variant="sporty" />
 
         {/* News Section */}
         {newsArticles.length > 0 && (
           <section className="mb-12">
-            <SectionTitle title="Ειδήσεις" icon="📰" variant="large" />
+            <SectionTitle title="Ειδήσεις" icon="/news-press.png" variant="large" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {newsArticles.slice(0, 3).map((news, index) => (
                 <NewsCard key={index} {...news} />
@@ -132,7 +129,7 @@ export default async function Home() {
         {/* Football Section */}
         {footballArticles.length > 0 && (
           <section className="mb-12">
-            <SectionTitle title="Ποδόσφαιρο" icon="/soccer_ball2.svg" variant="large" />
+            <SectionTitle title="Ποδόσφαιρο" icon="/football.png" variant="large" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {footballArticles.slice(0, 3).map((news, index) => (
                 <NewsCard key={index} {...news} />
@@ -154,7 +151,7 @@ export default async function Home() {
         {/* Basketball Section */}
         {basketballArticles.length > 0 && (
           <section className="mb-12">
-            <SectionTitle title="Μπάσκετ" icon="🏀" variant="large" />
+            <SectionTitle title="Μπάσκετ" icon="/basketball.png" variant="large" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {basketballArticles.slice(0, 3).map((news, index) => (
                 <NewsCard key={index} {...news} />
@@ -176,7 +173,7 @@ export default async function Home() {
         {/* Formula 1 Section */}
         {formula1Articles.length > 0 && (
           <section className="mb-12">
-            <SectionTitle title="Formula 1" icon="/race.png" variant="large" />
+            <SectionTitle title="Formula 1" icon="/apex.png" variant="large" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {formula1Articles.slice(0, 3).map((news, index) => (
                 <NewsCard key={index} {...news} />
@@ -190,6 +187,14 @@ export default async function Home() {
               </div>
             )}
           </section>
+        )}
+
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
+
+        {/* Journalists Section */}
+        {journalists.length > 0 && (
+          <JournalistsSection journalists={journalists} />
         )}
       </main>
 

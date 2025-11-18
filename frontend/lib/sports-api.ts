@@ -8,6 +8,20 @@ const rawStrapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost
 export const STRAPI_URL = rawStrapiUrl.endsWith('/') ? rawStrapiUrl.slice(0, -1) : rawStrapiUrl;
 
 /**
+ * SEO metadata structure
+ */
+export interface SeoData {
+  metaTitle?: string;
+  metaDescription?: string;
+  metaImage?: {
+    url: string;
+  } | null;
+  keywords?: string;
+  metaRobots?: string;
+  canonicalURL?: string;
+}
+
+/**
  * Base Strapi article structure (common fields across all sports)
  */
 export interface BaseStrapiArticle {
@@ -16,7 +30,14 @@ export interface BaseStrapiArticle {
   title: string;
   subtitle?: string;
   description: string;
-  author: string;
+  author: {
+    id: number;
+    name: string;
+    slug: string;
+    avatar?: {
+      url: string;
+    } | null;
+  } | null;
   slug: string;
   createdAt: string;
   updatedAt: string;
@@ -26,6 +47,7 @@ export interface BaseStrapiArticle {
     name: string;
     alternativeText: string | null;
   } | null;
+  seo?: SeoData | null;
 }
 
 /**
@@ -37,11 +59,15 @@ export interface BaseArticle {
   subtitle?: string;
   description: string;
   author: string;
+  authorName?: string;
+  authorSlug?: string;
+  authorAvatarUrl?: string;
   imageUrl: string;
   category: string;
   categoryColor: string;
   timeAgo: string;
   slug: string;
+  seo?: SeoData | null;
 }
 
 /**
@@ -140,12 +166,16 @@ export function transformArticle<T extends BaseStrapiArticle>(
     title: article.title,
     subtitle: article.subtitle,
     description: article.description,
-    author: article.author,
+    author: article.author?.name || 'Sports Holics',
+    authorName: article.author?.name,
+    authorSlug: article.author?.slug,
+    authorAvatarUrl: article.author?.avatar?.url ? getImageUrl(article.author.avatar.url, '/default-avatar.jpg') : undefined,
     imageUrl: getImageUrl(article.image?.url, config.fallbackImage),
     category: config.category,
     categoryColor: config.categoryColor,
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
     slug: article.slug,
+    seo: article.seo,
   };
 }
 
@@ -189,8 +219,12 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('pagination[page]', String(page));
     params.append('pagination[pageSize]', String(pageSize));
     
-    // Always populate image and sort by date (newest first)
-    params.append('populate', 'image');
+    // Always populate image, SEO, author (journalist), and sort by date (newest first)
+    params.append('populate[0]', 'image');
+    params.append('populate[1]', 'seo');
+    params.append('populate[2]', 'seo.metaImage');
+    params.append('populate[3]', 'author');
+    params.append('populate[4]', 'author.avatar');
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -276,7 +310,11 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
     try {
       const params = new URLSearchParams();
       params.append('filters[slug][$eq]', slug);
-      params.append('populate', 'image');
+      params.append('populate[0]', 'image');
+      params.append('populate[1]', 'seo');
+      params.append('populate[2]', 'seo.metaImage');
+      params.append('populate[3]', 'author');
+      params.append('populate[4]', 'author.avatar');
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,

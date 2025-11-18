@@ -25,7 +25,14 @@ interface StrapiArticle {
   title?: string;
   subtitle?: string;
   description?: string;
-  author?: string;
+  author?: {
+    id: number;
+    name: string;
+    slug: string;
+    avatar?: {
+      url: string;
+    } | null;
+  } | null;
   slug?: string;
   createdAt: string;
   publishedAt?: string;
@@ -70,9 +77,10 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     subtitle: article.subtitle,
     description: article.description || "",
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt, referenceTime),
-    author: article.author || "Unknown",
+    author: article.author?.name || "Sports Holics",
     imageUrl: getImageUrl(article.image?.url, '/no_back.png'),
     slug: article.slug,
+    date: article.publishedAt || article.createdAt, // Add date for sorting
   };
 }
 
@@ -100,7 +108,9 @@ async function fetchArticlesFromEndpoint(
       params.append('pagination[limit]', String(options.limit));
     }
     
-    params.append('populate', 'image');
+    params.append('populate[0]', 'image');
+    params.append('populate[1]', 'author');
+    params.append('populate[2]', 'author.avatar');
     params.append('sort', 'createdAt:desc');
 
     const response = await fetch(
@@ -133,14 +143,77 @@ async function fetchArticlesFromEndpoint(
 }
 
 /**
- * Fetch carousel articles from all sports (Hot News)
+ * Fetch carousel articles from homepage configuration
+ * Falls back to old method if configuration is not set
  */
 export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArticle[]> {
   const now = referenceTime || new Date();
+  
+  try {
+    // Try to fetch from homepage configuration
+    const params = new URLSearchParams();
+    params.append('populate[carouselFootball][populate]', 'image');
+    params.append('populate[carouselBasketball][populate]', 'image');
+    params.append('populate[carouselFormula1][populate]', 'image');
+    params.append('populate[carouselNews][populate]', 'image');
+    
+    const response = await fetch(
+      `${STRAPI_URL}/api/homepage-configuration?${params.toString()}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.data) {
+        const articles: NewsArticle[] = [];
+        
+        // Add football articles
+        if (data.data.carouselFootball && Array.isArray(data.data.carouselFootball)) {
+          data.data.carouselFootball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', now));
+          });
+        }
+        
+        // Add basketball articles
+        if (data.data.carouselBasketball && Array.isArray(data.data.carouselBasketball)) {
+          data.data.carouselBasketball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', now));
+          });
+        }
+        
+        // Add formula1 articles
+        if (data.data.carouselFormula1 && Array.isArray(data.data.carouselFormula1)) {
+          data.data.carouselFormula1.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'FORMULA 1', 'bg-red-100 text-red-800', now));
+          });
+        }
+        
+        // Add news articles
+        if (data.data.carouselNews && Array.isArray(data.data.carouselNews)) {
+          data.data.carouselNews.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'NEWS', 'bg-purple-100 text-purple-800', now));
+          });
+        }
+        
+        if (articles.length > 0) {
+          return articles.slice(0, 10);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to fetch carousel from homepage configuration, using fallback:', error);
+  }
+
+  // Fallback: fetch latest articles (since old flags don't exist anymore)
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isCarousel: true, limit: 2 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isCarousel: true, limit: 2 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isCarousel: true, limit: 2 }, now),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 2 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 2 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 2 }, now),
   ]);
 
   return [...football, ...basketball, ...formula1].slice(0, 6);
@@ -148,31 +221,101 @@ export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArtic
 
 /**
  * Fetch latest news from all sports (truly latest by date - no filter)
- * Returns 10 items for carousel
+ * Returns 10 items sorted by publication date (newest first)
  */
 export async function fetchLatestNews(referenceTime?: Date): Promise<NewsArticle[]> {
   const now = referenceTime || new Date();
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }, now),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 10 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 10 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 10 }, now),
   ]);
 
-  // Combine all, sort by date (newest first), take 10
+  // Combine all articles
   const allArticles = [...football, ...basketball, ...formula1];
-  return allArticles.slice(0, 10);
+  
+  // Sort by date (newest first) - using publishedAt or createdAt
+  const sortedArticles = allArticles.sort((a, b) => {
+    const dateA = new Date(a.date || 0);
+    const dateB = new Date(b.date || 0);
+    return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
+  });
+  
+  return sortedArticles.slice(0, 10);
 }
 
 /**
- * Fetch main news from all sports (flagged as main news)
- * Returns up to 8 most recent articles with isMainNews flag
+ * Fetch main news from homepage configuration
+ * Falls back to old method if configuration is not set
  */
 export async function fetchMainNews(referenceTime?: Date): Promise<NewsArticle[]> {
   const now = referenceTime || new Date();
+  
+  try {
+    // Try to fetch from homepage configuration
+    const params = new URLSearchParams();
+    params.append('populate[mainNewsFootball][populate]', 'image');
+    params.append('populate[mainNewsBasketball][populate]', 'image');
+    params.append('populate[mainNewsFormula1][populate]', 'image');
+    params.append('populate[mainNewsNews][populate]', 'image');
+    
+    const response = await fetch(
+      `${STRAPI_URL}/api/homepage-configuration?${params.toString()}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(5000),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.data) {
+        const articles: NewsArticle[] = [];
+        
+        // Add football articles
+        if (data.data.mainNewsFootball && Array.isArray(data.data.mainNewsFootball)) {
+          data.data.mainNewsFootball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', now));
+          });
+        }
+        
+        // Add basketball articles
+        if (data.data.mainNewsBasketball && Array.isArray(data.data.mainNewsBasketball)) {
+          data.data.mainNewsBasketball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', now));
+          });
+        }
+        
+        // Add formula1 articles
+        if (data.data.mainNewsFormula1 && Array.isArray(data.data.mainNewsFormula1)) {
+          data.data.mainNewsFormula1.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'FORMULA 1', 'bg-red-100 text-red-800', now));
+          });
+        }
+        
+        // Add news articles
+        if (data.data.mainNewsNews && Array.isArray(data.data.mainNewsNews)) {
+          data.data.mainNewsNews.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'NEWS', 'bg-purple-100 text-purple-800', now));
+          });
+        }
+        
+        if (articles.length > 0) {
+          return articles.slice(0, 10);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to fetch main news from homepage configuration, using fallback:', error);
+  }
+
+  // Fallback: fetch latest articles (since old flags don't exist anymore)
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 4 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 3 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 3 }, now),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }, now),
   ]);
 
   return [...football, ...basketball, ...formula1].slice(0, 8);
@@ -187,7 +330,7 @@ export async function fetchHomepageFootball(referenceTime?: Date): Promise<NewsA
     'football-articles',
     'ΠΟΔΟΣΦΑΙΡΟ',
     'bg-green-100 text-green-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }
@@ -201,7 +344,7 @@ export async function fetchHomepageBasketball(referenceTime?: Date): Promise<New
     'basketball-articles',
     'ΜΠΑΣΚΕΤ',
     'bg-orange-100 text-orange-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }
@@ -215,7 +358,7 @@ export async function fetchHomepageFormula1(referenceTime?: Date): Promise<NewsA
     'formula1-articles',
     'FORMULA 1',
     'bg-red-100 text-red-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }
@@ -229,7 +372,7 @@ export async function fetchHomepageNews(referenceTime?: Date): Promise<NewsArtic
     'news-articles',
     'NEWS',
     'bg-purple-100 text-purple-800',
-    { isHomeSportSection: true, limit: 9 },
+    { limit: 9 },
     now
   );
 }

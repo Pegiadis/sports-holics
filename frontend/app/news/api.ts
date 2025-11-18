@@ -21,7 +21,14 @@ interface StrapiArticle {
   title?: string;
   subtitle?: string;
   description?: string;
-  author?: string;
+  author?: {
+    id: number;
+    name: string;
+    slug: string;
+    avatar?: {
+      url: string;
+    } | null;
+  } | null;
   slug?: string;
   createdAt: string;
   publishedAt?: string;
@@ -50,7 +57,9 @@ export async function fetchNewsArticles(page?: number, pageSize: number = 10): P
 export async function fetchNewsArticlesWithPagination(page: number = 1, pageSize: number = 10): Promise<PaginatedNewsResponse> {
   try {
     const params = new URLSearchParams();
-    params.append('populate', 'image');
+    params.append('populate[0]', 'image');
+    params.append('populate[1]', 'author');
+    params.append('populate[2]', 'author.avatar');
     params.append('sort', 'createdAt:desc');
     params.append('pagination[page]', String(page));
     params.append('pagination[pageSize]', String(pageSize));
@@ -115,7 +124,7 @@ export async function fetchNewsArticlesWithPagination(page: number = 1, pageSize
         title: item.title || 'Untitled',
         subtitle: item.subtitle,
         description: item.description || '',
-        author: item.author || 'Sports Holics',
+        author: item.author?.name || 'Sports Holics',
         image: getImageUrl(item.image?.url, '/default-news.jpg'),
         slug: item.slug || '',
         date: item.publishedAt || item.createdAt,
