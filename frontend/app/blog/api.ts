@@ -81,12 +81,8 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
 
     const journalist = data.data[0];
 
-    // Count all article types
-    const totalArticles = (journalist.blogArticles?.length || 0) +
-                          (journalist.footballArticles?.length || 0) +
-                          (journalist.basketballArticles?.length || 0) +
-                          (journalist.formula1Articles?.length || 0) +
-                          (journalist.newsArticles?.length || 0);
+    // Blog articles count from relation (sports articles are counted via fetchAllArticlesByJournalist)
+    const blogArticleCount = journalist.blogArticles?.length || 0;
 
     return {
       id: journalist.id,
@@ -98,7 +94,7 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
       specialty: journalist.specialty || '',
       twitter: journalist.twitter || '',
       instagram: journalist.instagram || '',
-      articleCount: totalArticles,
+      articleCount: blogArticleCount, // Will be updated with actual count from page
     };
   } catch (error) {
     console.error('Error fetching journalist:', error);

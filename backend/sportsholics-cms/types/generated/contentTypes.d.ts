@@ -814,10 +814,6 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
   };
   attributes: {
     avatar: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
-    basketballArticles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::basketball-article.basketball-article'
-    >;
     bio: Schema.Attribute.Text;
     blogArticles: Schema.Attribute.Relation<
       'oneToMany',
@@ -827,14 +823,6 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email;
-    footballArticles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::football-article.football-article'
-    >;
-    formula1Articles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::formula1-article.formula1-article'
-    >;
     instagram: Schema.Attribute.String;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -844,10 +832,6 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    newsArticles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::news-article.news-article'
-    >;
     priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'>;

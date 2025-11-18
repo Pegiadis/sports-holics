@@ -27,8 +27,7 @@
     "author": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::journalist.journalist",
-      "inversedBy": "footballArticles"
+      "target": "api::journalist.journalist"
     },
     "image": {
       "type": "media",

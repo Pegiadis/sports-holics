@@ -89,7 +89,7 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
 
             {/* Stats */}
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">{journalist.articleCount}</div>
+              <div className="text-4xl font-bold text-primary mb-2">{articles.length}</div>
               <div className="text-gray-600 text-sm">Άρθρα</div>
             </div>
           </div>
