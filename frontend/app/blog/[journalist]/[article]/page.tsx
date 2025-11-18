@@ -67,11 +67,6 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               className="object-cover"
               priority
             />
-            {article.isFeatured && (
-              <div className="absolute top-6 right-6 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                ⭐ Featured
-              </div>
-            )}
           </div>
 
           {/* Article Content */}
@@ -131,30 +126,11 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               dangerouslySetInnerHTML={{ __html: richtextToHtml(article.content) }}
             />
 
-            {/* Tags */}
-            {article.tags && article.tags.length > 0 && (
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                  Tags
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {article.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors cursor-pointer"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Share Section */}
             <ShareButtons 
               url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/blog/${article.journalist.slug}/${article.slug}`}
               title={article.title}
-              description={article.subtitle || article.excerpt}
+              description={article.subtitle}
             />
           </div>
         </article>

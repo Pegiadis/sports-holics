@@ -409,12 +409,9 @@ export interface BlogArticleData {
   subtitle?: string;
   slug: string;
   content: string;
-  excerpt?: string;
   coverImageUrl: string;
   category?: string;
-  tags?: string[];
   readTime?: number;
-  isFeatured: boolean;
   publishedAt: string;
   timeAgo: string;
   journalist: {

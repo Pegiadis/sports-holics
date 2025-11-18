@@ -28,11 +28,6 @@
       "type": "richtext",
       "required": true
     },
-    "excerpt": {
-      "type": "text",
-      "required": false,
-      "maxLength": 300
-    },
     "coverImage": {
       "type": "media",
       "multiple": false,
@@ -50,18 +45,10 @@
       "enum": ["Ποδόσφαιρο", "Μπάσκετ", "Formula 1", "Γενικά", "Ανάλυση", "Συνεντεύξεις"],
       "required": false
     },
-    "tags": {
-      "type": "json",
-      "required": false
-    },
     "readTime": {
       "type": "integer",
       "required": false,
       "default": 5
-    },
-    "isFeatured": {
-      "type": "boolean",
-      "default": false
     }
   }
 }

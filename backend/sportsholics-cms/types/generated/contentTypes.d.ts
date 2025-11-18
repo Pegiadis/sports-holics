@@ -533,11 +533,6 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    excerpt: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 300;
-      }>;
-    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     journalist: Schema.Attribute.Relation<
       'manyToOne',
       'api::journalist.journalist'
@@ -552,7 +547,6 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
     readTime: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<5>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
-    tags: Schema.Attribute.JSON;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

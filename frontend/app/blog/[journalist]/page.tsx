@@ -134,13 +134,6 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
                         {article.title}
                       </h3>
 
-                      {/* Excerpt */}
-                      {article.excerpt && (
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
-                          {article.excerpt}
-                        </p>
-                      )}
-
                       {/* Footer */}
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <span className="text-xs text-gray-500">{article.timeAgo}</span>
