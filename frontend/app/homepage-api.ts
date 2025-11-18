@@ -302,23 +302,15 @@ export async function fetchMainNews(referenceTime?: Date): Promise<NewsArticle[]
           });
         }
         
-        if (articles.length > 0) {
-          return articles.slice(0, 10);
-        }
+        return articles.slice(0, 10);
       }
     }
   } catch (error) {
-    console.warn('Failed to fetch main news from homepage configuration, using fallback:', error);
+    console.warn('Failed to fetch main news from homepage configuration:', error);
   }
 
-  // Fallback: fetch latest articles (since old flags don't exist anymore)
-  const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }, now),
-  ]);
-
-  return [...football, ...basketball, ...formula1].slice(0, 8);
+  // Return empty array - main news should only come from homepage-configuration
+  return [];
 }
 
 /**
