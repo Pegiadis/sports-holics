@@ -1,20 +1,7 @@
 import { NewsArticle } from "@/types";
+import { getImageUrl, getTimeAgo } from "@/lib/sports-api";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
-
-// Helper to construct image URL properly
-// Handles both relative paths and absolute URLs from Strapi
-function getImageUrl(imageUrl: string | undefined, fallback: string): string {
-  if (!imageUrl) return fallback;
-  
-  // If it's already a full URL, return it as is
-  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    return imageUrl;
-  }
-  
-  // Otherwise, prepend the Strapi URL for relative paths
-  return `${STRAPI_URL}${imageUrl}`;
-}
 
 interface StrapiArticle {
   id: number;
@@ -92,47 +79,19 @@ export async function fetchNewsArticlesWithPagination(page: number = 1, pageSize
       };
     }
 
-    const articles = data.data.map((item: StrapiArticle) => {
-      const getTimeAgo = (dateString: string): string => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-        const intervals = {
-          year: 31536000,
-          month: 2592000,
-          week: 604800,
-          day: 86400,
-          hour: 3600,
-          minute: 60,
-        };
-
-        if (seconds < intervals.minute) return "just now";
-
-        for (const [unit, secondsInUnit] of Object.entries(intervals)) {
-          const interval = Math.floor(seconds / secondsInUnit);
-          if (interval >= 1) {
-            return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
-          }
-        }
-
-        return "just now";
-      };
-
-      return {
-        id: item.id,
-        title: item.title || 'Untitled',
-        subtitle: item.subtitle,
-        description: item.description || '',
-        author: item.author?.name || 'Sports Holics',
-        image: getImageUrl(item.image?.url, '/default-news.jpg'),
-        slug: item.slug || '',
-        date: item.publishedAt || item.createdAt,
-        timeAgo: getTimeAgo(item.createdAt),
-        category: 'NEWS',
-        categoryColor: 'bg-purple-100 text-purple-800',
-      };
-    });
+    const articles = data.data.map((item: StrapiArticle) => ({
+      id: item.id,
+      title: item.title || 'Untitled',
+      subtitle: item.subtitle,
+      description: item.description || '',
+      author: item.author?.name || 'Sports Holics',
+      image: getImageUrl(item.image?.url, '/default-news.jpg'),
+      slug: item.slug || '',
+      date: item.publishedAt || item.createdAt,
+      timeAgo: getTimeAgo(item.createdAt),
+      category: 'NEWS',
+      categoryColor: 'bg-purple-100 text-purple-800',
+    }));
 
     const pagination: PaginationMeta = data.meta?.pagination || {
       page: 1,
@@ -143,7 +102,7 @@ export async function fetchNewsArticlesWithPagination(page: number = 1, pageSize
 
     return { articles, pagination };
   } catch (error) {
-    console.error('Error fetching news articles:', error);
+    console.warn('Error fetching news articles:', error);
     return {
       articles: [],
       pagination: { page: 1, pageSize, pageCount: 0, total: 0 }

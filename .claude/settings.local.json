@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
-      "Bash(npm test)"
+      "Bash(npm test)",
+      "Bash(npm run build:*)",
+      "Bash(powershell -Command \"Start-Process ''C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe''\")",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 20; docker start 72c8b6f01278165d9825cd994b1f5084e632bacaf733cad48e31e938bd1669cf\")",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

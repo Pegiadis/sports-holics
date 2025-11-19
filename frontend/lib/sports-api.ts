@@ -111,33 +111,33 @@ export interface PaginatedResponse<T> {
 
 /**
  * Calculate time ago from a date string
+ * @param dateString - The date to calculate from
+ * @param referenceTime - Optional reference time (defaults to now)
  */
-export function getTimeAgo(dateString: string): string {
+export function getTimeAgo(dateString: string, referenceTime?: Date): string {
   const date = new Date(dateString);
-  const now = new Date();
+  const now = referenceTime || new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   const intervals = {
-    year: 31536000,
-    month: 2592000,
-    week: 604800,
-    day: 86400,
-    hour: 3600,
-    minute: 60,
+    χρόνο: 31536000,
+    μήνα: 2592000,
+    εβδομάδα: 604800,
+    μέρα: 86400,
+    ώρα: 3600,
+    λεπτό: 60,
   };
 
-  if (seconds < intervals.minute) {
-    return "just now";
-  }
+  if (seconds < 60) return "μόλις τώρα";
 
   for (const [unit, secondsInUnit] of Object.entries(intervals)) {
     const interval = Math.floor(seconds / secondsInUnit);
     if (interval >= 1) {
-      return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
+      return `πριν ${interval} ${unit}${interval > 1 && !unit.endsWith('α') ? 'ες' : ''}`;
     }
   }
 
-  return "just now";
+  return "μόλις τώρα";
 }
 
 /**
@@ -344,4 +344,45 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
   // Article not found in any sport
   return null;
 }
+
+/**
+ * Create sport-specific API functions from a config
+ * Factory function to reduce boilerplate in sport API files
+ */
+export function createSportApi(config: SportConfig) {
+  return {
+    fetchArticles: (options: FetchOptions = {}): Promise<BaseArticle[]> =>
+      fetchSportArticles(config, options),
+    fetchArticlesWithPagination: (options: FetchOptions = {}): Promise<PaginatedResponse<BaseArticle>> =>
+      fetchSportArticlesWithPagination(config, options),
+    config,
+  };
+}
+
+// Pre-configured sport APIs
+export const FOOTBALL_CONFIG: SportConfig = {
+  endpoint: 'football-articles',
+  category: 'ΠΟΔΟΣΦΑΙΡΟ',
+  categoryColor: 'bg-green-100 text-green-800',
+  fallbackImage: '/football.png',
+};
+
+export const BASKETBALL_CONFIG: SportConfig = {
+  endpoint: 'basketball-articles',
+  category: 'ΜΠΑΣΚΕΤ',
+  categoryColor: 'bg-orange-100 text-orange-800',
+  fallbackImage: '/basketball.png',
+};
+
+export const FORMULA1_CONFIG: SportConfig = {
+  endpoint: 'formula1-articles',
+  category: 'FORMULA 1',
+  categoryColor: 'bg-red-100 text-red-800',
+  fallbackImage: '/formula1.png',
+};
+
+// Create sport APIs
+export const footballApi = createSportApi(FOOTBALL_CONFIG);
+export const basketballApi = createSportApi(BASKETBALL_CONFIG);
+export const formula1Api = createSportApi(FORMULA1_CONFIG);
 

@@ -3,50 +3,50 @@
  */
 
 import { BlogArticleData, JournalistData } from "../homepage-api";
+import { getImageUrl, getTimeAgo } from "@/lib/sports-api";
 
 // Remove trailing slash from STRAPI_URL to prevent double slashes in API calls
 const rawStrapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 const STRAPI_URL = rawStrapiUrl.endsWith('/') ? rawStrapiUrl.slice(0, -1) : rawStrapiUrl;
 
-// Helper to construct image URL properly
-// Handles both relative paths and absolute URLs from Strapi
-function getImageUrl(imageUrl: string | undefined, fallback: string): string {
-  if (!imageUrl) return fallback;
-  
-  // If it's already a full URL, return it as is
-  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    return imageUrl;
-  }
-  
-  // Otherwise, prepend the Strapi URL for relative paths
-  return `${STRAPI_URL}${imageUrl}`;
+// Strapi response types
+interface StrapiBlogArticle {
+  id: number;
+  title: string;
+  subtitle?: string;
+  slug: string;
+  content?: string;
+  excerpt?: string;
+  coverImage?: { url?: string };
+  image?: { url?: string };
+  category?: string;
+  readTime?: number;
+  publishedAt?: string;
+  createdAt: string;
+  journalist?: {
+    id: number;
+    name?: string;
+    slug?: string;
+    avatar?: { url?: string };
+  };
 }
 
-// Helper to calculate time ago
-function getTimeAgo(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  const intervals = {
-    χρόνο: 31536000,
-    μήνα: 2592000,
-    εβδομάδα: 604800,
-    μέρα: 86400,
-    ώρα: 3600,
-    λεπτό: 60,
+interface StrapiSportArticle {
+  id: number;
+  title: string;
+  subtitle?: string;
+  slug: string;
+  excerpt?: string;
+  publishedAt?: string;
+  createdAt: string;
+  image?: { url?: string };
+  coverImage?: { url?: string };
+  author?: {
+    id: number;
+    name?: string;
+    slug?: string;
+    avatar?: { url?: string };
   };
-
-  if (seconds < 60) return "μόλις τώρα";
-
-  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
-    const interval = Math.floor(seconds / secondsInUnit);
-    if (interval >= 1) {
-      return `πριν ${interval} ${unit}${interval > 1 && !unit.endsWith('α') ? 'ες' : ''}`;
-    }
-  }
-
-  return "μόλις τώρα";
 }
 
 /**
@@ -97,7 +97,7 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
       articleCount: blogArticleCount, // Will be updated with actual count from page
     };
   } catch (error) {
-    console.error('Error fetching journalist:', error);
+    console.warn('Error fetching journalist:', error);
     return null;
   }
 }
@@ -166,11 +166,11 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
     }
 
     // Filter articles by journalist ID on client side
-    const journalistArticles = data.data.filter((article: any) => 
+    const journalistArticles = data.data.filter((article: StrapiBlogArticle) =>
       article.journalist?.id === journalistId
     );
 
-    return journalistArticles.map((article: any) => ({
+    return journalistArticles.map((article: StrapiBlogArticle) => ({
       id: article.id,
       title: article.title,
       subtitle: article.subtitle || '',
@@ -189,7 +189,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
       },
     }));
   } catch (error) {
-    console.error('Error fetching blog articles:', error);
+    console.warn('Error fetching blog articles:', error);
     return [];
   }
 }
@@ -252,7 +252,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
       },
     };
   } catch (error) {
-    console.error('Error fetching blog article:', error);
+    console.warn('Error fetching blog article:', error);
     return null;
   }
 }
@@ -315,12 +315,15 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
 
         // Filter articles by journalist ID
         const journalistField = endpoint.isBlog ? 'journalist' : 'author';
-        const filtered = data.data.filter((article: any) => 
-          article[journalistField]?.id === journalistId
-        );
+        const filtered = data.data.filter((article: StrapiBlogArticle | StrapiSportArticle) => {
+          const authorField = endpoint.isBlog
+            ? (article as StrapiBlogArticle).journalist
+            : (article as StrapiSportArticle).author;
+          return authorField?.id === journalistId;
+        });
 
         // Transform to unified format
-        return filtered.map((article: any) => ({
+        return filtered.map((article: StrapiBlogArticle | StrapiSportArticle) => ({
           id: article.id,
           title: article.title,
           subtitle: article.subtitle || '',
@@ -359,7 +362,7 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
 
     return allArticles;
   } catch (error) {
-    console.error('Error fetching all articles by journalist:', error);
+    console.warn('Error fetching all articles by journalist:', error);
     return [];
   }
 }
