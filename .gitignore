@@ -120,6 +120,10 @@ backend/sportsholics-cms/types/generated/
 # Strapi API tokens (sensitive)
 backend/sportsholics-cms/scripts/*.token
 
+# Demo images for seeding (large binary files)
+backend/sportsholics-cms/public/demo-images/*
+!backend/sportsholics-cms/public/demo-images/README.md
+
 ############################
 # Databases
 ############################
