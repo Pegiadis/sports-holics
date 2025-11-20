@@ -32,6 +32,15 @@ try {
 const AVAILABLE_IMAGES = [
   '216-scaled-1.jpg',
   'BG-football-1600x1000-1170x600-1.jpeg',
+  'Ferrari_F1.jpg',
+  'wp14783249.jpg',
+  'formula.png',
+  'apex.png',
+  'basketball.png',
+  'football.png',
+  'images.jpeg',
+  'news-2.png',
+  'racing-car.png',
 ];
 
 // Get random image path
@@ -266,10 +275,20 @@ function randomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-// Strapi v5 uses Markdown for richtext fields, not JSON
-// Just return the plain text and Strapi will handle it
+// Strapi v5 Blocks format for richtext fields
+// Returns JSON array of block objects
 function toRichText(text) {
-  return text;
+  // Split text into paragraphs and convert to blocks format
+  const paragraphs = text.split('\n').filter(p => p.trim());
+  return paragraphs.map(paragraph => ({
+    type: 'paragraph',
+    children: [
+      {
+        type: 'text',
+        text: paragraph.trim()
+      }
+    ]
+  }));
 }
 
 // Main seeding function
@@ -307,16 +326,21 @@ async function seedAllData() {
   for (let i = 0; i < 15; i++) {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
-    
+
+    // Use random journalist as author
+    const randomJournalist = createdJournalists.length > 0
+      ? randomItem(createdJournalists)
+      : null;
+
     const article = {
       title: greekTitles.football[i],
       subtitle: randomItem(greekSubtitles),
       description: toRichText(randomItem(greekDescriptions)),
-      author: 'Sports Holics',
+      ...(randomJournalist && { author: randomJournalist.id }),
       slug: `football-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
-    
+
     const result = await apiCall('football-articles', article);
     if (result && result.data) {
       console.log(`✅ Football ${i + 1}/15: ${article.title.substring(0, 50)}...`);
@@ -328,16 +352,21 @@ async function seedAllData() {
   for (let i = 0; i < 15; i++) {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
-    
+
+    // Use random journalist as author
+    const randomJournalist = createdJournalists.length > 0
+      ? randomItem(createdJournalists)
+      : null;
+
     const article = {
       title: greekTitles.basketball[i],
       subtitle: randomItem(greekSubtitles),
       description: toRichText(randomItem(greekDescriptions)),
-      author: 'Sports Holics',
+      ...(randomJournalist && { author: randomJournalist.id }),
       slug: `basketball-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
-    
+
     const result = await apiCall('basketball-articles', article);
     if (result && result.data) {
       console.log(`✅ Basketball ${i + 1}/15: ${article.title.substring(0, 50)}...`);
@@ -349,16 +378,21 @@ async function seedAllData() {
   for (let i = 0; i < 15; i++) {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
-    
+
+    // Use random journalist as author
+    const randomJournalist = createdJournalists.length > 0
+      ? randomItem(createdJournalists)
+      : null;
+
     const article = {
       title: greekTitles.formula1[i],
       subtitle: randomItem(greekSubtitles),
       description: toRichText(randomItem(greekDescriptions)),
-      author: 'Sports Holics',
+      ...(randomJournalist && { author: randomJournalist.id }),
       slug: `formula1-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
-    
+
     const result = await apiCall('formula1-articles', article);
     if (result && result.data) {
       console.log(`✅ Formula1 ${i + 1}/15: ${article.title.substring(0, 50)}...`);
@@ -370,16 +404,21 @@ async function seedAllData() {
   for (let i = 0; i < 15; i++) {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
-    
+
+    // Use random journalist as author
+    const randomJournalist = createdJournalists.length > 0
+      ? randomItem(createdJournalists)
+      : null;
+
     const article = {
       title: greekTitles.news[i],
       subtitle: randomItem(greekSubtitles),
       description: toRichText(randomItem(greekDescriptions)),
-      author: 'Sports Holics',
+      ...(randomJournalist && { author: randomJournalist.id }),
       slug: `news-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
-    
+
     const result = await apiCall('news-articles', article);
     if (result && result.data) {
       console.log(`✅ News ${i + 1}/15: ${article.title.substring(0, 50)}...`);
@@ -408,11 +447,8 @@ async function seedAllData() {
           slug: `${journalist.slug}-blog-${i + 1}`,
           subtitle: randomItem(greekSubtitles),
           content: toRichText(randomItem(greekDescriptions)),
-          excerpt: randomItem(greekSubtitles),
           category: randomItem(['Ποδόσφαιρο', 'Μπάσκετ', 'Formula 1', 'Ανάλυση']),
-          tags: ['analysis', 'opinion', 'exclusive'],
           readTime: Math.floor(Math.random() * 10) + 3,
-          isFeatured: i === 0,
           journalist: journalist.id,
           ...(imageId && { coverImage: imageId })
         };
@@ -425,6 +461,122 @@ async function seedAllData() {
     }
   }
 
+  // 7. Create Breaking News Items
+  console.log('\n🚨 Creating Breaking News Items...\n');
+  const breakingNewsItems = [
+    { text: 'BREAKING: Ο Παναθηναϊκός κατακτά το πρωτάθλημα!', priority: 10 },
+    { text: 'Αποκλειστικό: Μεταγραφική βόμβα στην Ελλάδα', priority: 9 },
+    { text: 'Champions League: Ιστορική πρόκριση για τον ΠΑΟΚ', priority: 8 },
+    { text: 'Formula 1: Ο Φερστάπεν κερδίζει το GP του Μονακό', priority: 7 },
+    { text: 'NBA: Γιάννης Αντετοκούνμπο MVP της σεζόν', priority: 6 },
+  ];
+
+  const createdBreakingNews = [];
+  for (const item of breakingNewsItems) {
+    const result = await apiCall('breaking-news-items', {
+      ...item,
+      isActive: true
+    });
+    if (result && result.data) {
+      createdBreakingNews.push(result.data);
+      console.log(`✅ Breaking News: ${item.text.substring(0, 50)}...`);
+    }
+  }
+
+  // Store created article IDs for later use
+  const createdFootballIds = [];
+  const createdBasketballIds = [];
+  const createdFormula1Ids = [];
+  const createdNewsIds = [];
+
+  // Fetch created articles to get their IDs
+  console.log('\n📋 Fetching created article IDs...\n');
+  try {
+    const endpoints = [
+      { name: 'football-articles', array: createdFootballIds },
+      { name: 'basketball-articles', array: createdBasketballIds },
+      { name: 'formula1-articles', array: createdFormula1Ids },
+      { name: 'news-articles', array: createdNewsIds }
+    ];
+
+    for (const { name, array } of endpoints) {
+      const response = await fetch(`${STRAPI_URL}/api/${name}?pagination[pageSize]=100`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${ADMIN_JWT}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data) {
+          data.data.forEach(article => array.push(article.documentId || article.id));
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Could not fetch article IDs:', error.message);
+  }
+
+  // 8. Create Hero Section
+  console.log('\n🦸 Creating Hero Section...\n');
+  if (createdFootballIds.length > 0) {
+    const heroImageId = await uploadImage(getRandomImage());
+
+    const heroSection = {
+      title: 'Ο Παναθηναϊκός',
+      titleHighlight: 'Νικητής του Ντέρμπι',
+      description: 'Σε έναν συναρπαστικό αγώνα γεμάτο συγκινήσεις, ο Παναθηναϊκός πήρε τη μεγάλη νίκη με 2-1 επί του Ολυμπιακού στο ΟΑΚΑ',
+      categoryLabel: 'ΠΟΔΟΣΦΑΙΡΟ',
+      categoryEmoji: '⚽',
+      timeAgo: 'πριν 2 ώρες',
+      buttonText: 'Διαβάστε περισσότερα →',
+      linkedFootballArticle: createdFootballIds[0],
+      isActive: true,
+      ...(heroImageId && { backgroundImage: heroImageId })
+    };
+
+    const heroResult = await apiCall('hero-sections', heroSection);
+    if (heroResult && heroResult.data) {
+      console.log('✅ Created Hero Section');
+    }
+  }
+
+  // 9. Create Homepage Configuration
+  console.log('\n🏠 Creating Homepage Configuration...\n');
+
+  const homepageConfig = {
+    // Carousel articles (max 6 total, 2 from each sport + news)
+    ...(createdFootballIds.length >= 2 && { carouselFootball: createdFootballIds.slice(0, 2) }),
+    ...(createdBasketballIds.length >= 2 && { carouselBasketball: createdBasketballIds.slice(0, 2) }),
+    ...(createdFormula1Ids.length >= 2 && { carouselFormula1: createdFormula1Ids.slice(0, 2) }),
+
+    // Main news articles (max 8 total, 2 from each)
+    ...(createdFootballIds.length >= 4 && { mainNewsFootball: createdFootballIds.slice(2, 4) }),
+    ...(createdBasketballIds.length >= 4 && { mainNewsBasketball: createdBasketballIds.slice(2, 4) }),
+    ...(createdFormula1Ids.length >= 4 && { mainNewsFormula1: createdFormula1Ids.slice(2, 4) }),
+    ...(createdNewsIds.length >= 2 && { mainNewsNews: createdNewsIds.slice(0, 2) })
+  };
+
+  try {
+    // Try PUT to update (singleType)
+    const response = await fetch(`${STRAPI_URL}/api/homepage-configuration`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ADMIN_JWT}`
+      },
+      body: JSON.stringify({ data: homepageConfig })
+    });
+
+    if (response.ok) {
+      console.log('✅ Created/Updated Homepage Configuration');
+    } else {
+      console.warn('Failed to create homepage configuration:', response.status);
+    }
+  } catch (error) {
+    console.warn('Error creating homepage configuration:', error.message);
+  }
+
   console.log('\n═══════════════════════════════════════');
   console.log('\n✅ SEEDING COMPLETE!\n');
   console.log('📊 Summary:');
@@ -434,9 +586,11 @@ async function seedAllData() {
   console.log('   - 15 Formula 1 Articles');
   console.log('   - 15 News Articles');
   console.log(`   - ${createdJournalists.length * 3} Blog Articles`);
-  console.log(`\n📝 Total: ${60 + createdJournalists.length + (createdJournalists.length * 3)} entries created\n`);
-  console.log('⚠️  IMPORTANT: All articles are in DRAFT status!');
-  console.log('   Go to Strapi admin and PUBLISH them to see on the website.\n');
+  console.log(`   - ${createdBreakingNews.length} Breaking News Items`);
+  console.log('   - 1 Hero Section');
+  console.log('   - 1 Homepage Configuration');
+  console.log(`\n📝 Total: ${60 + createdJournalists.length + (createdJournalists.length * 3) + createdBreakingNews.length + 2} entries created\n`);
+  console.log('✅ All entries have been created and are ready to use!\n');
 }
 
 // Run the seeding

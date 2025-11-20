@@ -326,13 +326,6 @@ ENCRYPTION_KEY=
 - **Problem**: Using `async`/`await` in Client Components
 - **Solution**: Move data fetching to Server Components or use `useEffect` with state
 
-## Custom Admin Components
-
-### TipTap Editor
-- **Location**: `backend/sportsholics-cms/src/admin/components/TipTapEditor/`
-- **Purpose**: Rich text editor for Strapi admin panel
-- **Config**: Registered in `backend/sportsholics-cms/src/admin/vite.config.ts`
-
 ## Import Alias
 
 Use `@/` for all imports from `frontend/`:

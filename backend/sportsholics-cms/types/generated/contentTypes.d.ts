@@ -487,7 +487,7 @@ export interface ApiBasketballArticleBasketballArticle
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -528,16 +528,11 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
         '\u03A3\u03C5\u03BD\u03B5\u03BD\u03C4\u03B5\u03CD\u03BE\u03B5\u03B9\u03C2',
       ]
     >;
-    content: Schema.Attribute.RichText & Schema.Attribute.Required;
+    content: Schema.Attribute.Blocks & Schema.Attribute.Required;
     coverImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    excerpt: Schema.Attribute.Text &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 300;
-      }>;
-    isFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     journalist: Schema.Attribute.Relation<
       'manyToOne',
       'api::journalist.journalist'
@@ -550,9 +545,9 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     readTime: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<5>;
+    seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
-    tags: Schema.Attribute.JSON;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -617,7 +612,7 @@ export interface ApiFootballArticleFootballArticle
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -656,7 +651,7 @@ export interface ApiFormula1ArticleFormula1Article
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -689,7 +684,6 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
   attributes: {
     backgroundImage: Schema.Attribute.Media<'images'> &
       Schema.Attribute.Required;
-    buttonLink: Schema.Attribute.String;
     buttonText: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'\u0394\u03B9\u03B1\u03B2\u03AC\u03C3\u03C4\u03B5 \u03C0\u03B5\u03C1\u03B9\u03C3\u03C3\u03CC\u03C4\u03B5\u03C1\u03B1 \u2192'>;
@@ -703,13 +697,28 @@ export interface ApiHeroSectionHeroSection extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.Text & Schema.Attribute.Required;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    linkedBasketballArticle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::basketball-article.basketball-article'
+    >;
+    linkedFootballArticle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::football-article.football-article'
+    >;
+    linkedFormula1Article: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::formula1-article.formula1-article'
+    >;
+    linkedNewsArticle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::news-article.news-article'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::hero-section.hero-section'
     > &
       Schema.Attribute.Private;
-    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     timeAgo: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'5 \u03BB\u03B5\u03C0\u03C4\u03AC \u03C0\u03C1\u03B9\u03BD'>;
@@ -800,10 +809,6 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
   };
   attributes: {
     avatar: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
-    basketballArticles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::basketball-article.basketball-article'
-    >;
     bio: Schema.Attribute.Text;
     blogArticles: Schema.Attribute.Relation<
       'oneToMany',
@@ -813,14 +818,6 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email;
-    footballArticles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::football-article.football-article'
-    >;
-    formula1Articles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::formula1-article.formula1-article'
-    >;
     instagram: Schema.Attribute.String;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -830,10 +827,6 @@ export interface ApiJournalistJournalist extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    newsArticles: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::news-article.news-article'
-    >;
     priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'>;
@@ -865,7 +858,7 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<

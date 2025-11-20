@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
@@ -8,6 +9,26 @@ import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
 // Force dynamic rendering for real-time CMS updates
 export const dynamic = 'force-dynamic';
+
+// Metadata for SEO
+export const metadata: Metadata = {
+  title: 'Ειδήσεις - Γενικά αθλητικά νέα | Sports Holics',
+  description: 'Όλες οι γενικές αθλητικές ειδήσεις από την Ελλάδα και τον κόσμο. Αποκλειστικά ρεπορτάζ, συνεντεύξεις και αναλύσεις.',
+  keywords: 'αθλητικά νέα, ειδήσεις, Ελλάδα, διεθνή αθλητικά, αποκλειστικά',
+  openGraph: {
+    title: 'Ειδήσεις - Sports Holics',
+    description: 'Όλες οι γενικές αθλητικές ειδήσεις',
+    type: 'website',
+    locale: 'el_GR',
+    siteName: 'Sports Holics',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ειδήσεις - Sports Holics',
+    description: 'Όλες οι γενικές αθλητικές ειδήσεις',
+    creator: '@sportsholics',
+  },
+};
 
 export default async function NewsPage({
   searchParams,

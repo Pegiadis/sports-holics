@@ -25,13 +25,8 @@
       "targetField": "title"
     },
     "content": {
-      "type": "richtext",
+      "type": "blocks",
       "required": true
-    },
-    "excerpt": {
-      "type": "text",
-      "required": false,
-      "maxLength": 300
     },
     "coverImage": {
       "type": "media",
@@ -50,18 +45,15 @@
       "enum": ["Ποδόσφαιρο", "Μπάσκετ", "Formula 1", "Γενικά", "Ανάλυση", "Συνεντεύξεις"],
       "required": false
     },
-    "tags": {
-      "type": "json",
-      "required": false
-    },
     "readTime": {
       "type": "integer",
       "required": false,
       "default": 5
     },
-    "isFeatured": {
-      "type": "boolean",
-      "default": false
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
     }
   }
 }

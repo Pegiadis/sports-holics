@@ -1,17 +1,77 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButtons from "@/components/ShareButtons";
 import { fetchBlogArticleBySlug, fetchBlogArticlesByJournalist } from "../../api";
 import { richtextToHtml } from "@/lib/richtext-utils";
+import { getImageUrl } from "@/lib/sports-api";
 
 interface BlogArticlePageProps {
   params: Promise<{
     journalist: string;
     article: string;
   }>;
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: BlogArticlePageProps): Promise<Metadata> {
+  const { journalist: journalistSlug, article: articleSlug } = await params;
+  const article = await fetchBlogArticleBySlug(articleSlug);
+
+  if (!article) {
+    return {
+      title: 'Blog Article Not Found',
+    };
+  }
+
+  // Use SEO data if available, otherwise fall back to article data
+  const title = article.seo?.metaTitle || article.title;
+  const description = article.seo?.metaDescription || article.subtitle || article.title;
+  const imageUrl = article.seo?.metaImage?.url
+    ? getImageUrl(article.seo.metaImage.url, '/default-blog.jpg')
+    : article.coverImageUrl;
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const articleUrl = `${siteUrl}/blog/${journalistSlug}/${articleSlug}`;
+  const canonicalUrl = article.seo?.canonicalURL || articleUrl;
+
+  return {
+    title,
+    description,
+    keywords: article.seo?.keywords,
+    robots: article.seo?.metaRobots || 'index, follow',
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: articleUrl,
+      siteName: 'Sports Holics',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: 'el_GR',
+      type: 'article',
+      publishedTime: article.publishedAt,
+      authors: [article.journalist.name],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+      creator: '@sportsholics',
+    },
+  };
 }
 
 export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
@@ -67,11 +127,6 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               className="object-cover"
               priority
             />
-            {article.isFeatured && (
-              <div className="absolute top-6 right-6 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                ⭐ Featured
-              </div>
-            )}
           </div>
 
           {/* Article Content */}
@@ -131,30 +186,11 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               dangerouslySetInnerHTML={{ __html: richtextToHtml(article.content) }}
             />
 
-            {/* Tags */}
-            {article.tags && article.tags.length > 0 && (
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                  Tags
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {article.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors cursor-pointer"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Share Section */}
             <ShareButtons 
               url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/blog/${article.journalist.slug}/${article.slug}`}
               title={article.title}
-              description={article.subtitle || article.excerpt}
+              description={article.subtitle}
             />
           </div>
         </article>

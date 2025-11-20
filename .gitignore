@@ -114,6 +114,12 @@ backend/sportsholics-cms/.cache/
 backend/sportsholics-cms/public/uploads/*
 !backend/sportsholics-cms/public/uploads/.gitkeep
 
+# Strapi generated types
+backend/sportsholics-cms/types/generated/
+
+# Strapi API tokens (sensitive)
+backend/sportsholics-cms/scripts/*.token
+
 ############################
 # Databases
 ############################

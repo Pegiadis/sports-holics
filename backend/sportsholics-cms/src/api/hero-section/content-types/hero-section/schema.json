@@ -44,9 +44,25 @@
       "required": true,
       "default": "Διαβάστε περισσότερα →"
     },
-    "buttonLink": {
-      "type": "string",
-      "required": false
+    "linkedFootballArticle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::football-article.football-article"
+    },
+    "linkedBasketballArticle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::basketball-article.basketball-article"
+    },
+    "linkedFormula1Article": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::formula1-article.formula1-article"
+    },
+    "linkedNewsArticle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::news-article.news-article"
     },
     "backgroundImage": {
       "type": "media",
@@ -57,10 +73,6 @@
     "isActive": {
       "type": "boolean",
       "default": false
-    },
-    "priority": {
-      "type": "integer",
-      "default": 0
     }
   }
 }

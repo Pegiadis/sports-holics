@@ -34,6 +34,11 @@
     "canonicalURL": {
       "type": "string",
       "required": false
+    },
+    "metaSocial": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.meta-social"
     }
   }
 }

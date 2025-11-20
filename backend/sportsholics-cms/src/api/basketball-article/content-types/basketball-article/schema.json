@@ -21,14 +21,13 @@
       "required": false
     },
     "description": {
-      "type": "richtext",
+      "type": "blocks",
       "required": true
     },
     "author": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::journalist.journalist",
-      "inversedBy": "basketballArticles"
+      "target": "api::journalist.journalist"
     },
     "image": {
       "type": "media",

@@ -89,7 +89,7 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
 
             {/* Stats */}
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">{journalist.articleCount}</div>
+              <div className="text-4xl font-bold text-primary mb-2">{articles.length}</div>
               <div className="text-gray-600 text-sm">Άρθρα</div>
             </div>
           </div>
@@ -133,13 +133,6 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
                       <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-2">
                         {article.title}
                       </h3>
-
-                      {/* Excerpt */}
-                      {article.excerpt && (
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
-                          {article.excerpt}
-                        </p>
-                      )}
 
                       {/* Footer */}
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">

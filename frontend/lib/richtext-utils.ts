@@ -1,78 +1,118 @@
 /**
  * Utilities for rendering Strapi richtext content
- * 
- * Strapi richtext fields can return content in blocks format (array of content blocks)
- * or as a markdown string. This utility handles both cases.
+ *
+ * Strapi v5 Blocks fields return JSON content that needs to be converted to HTML.
+ * This utility handles both Blocks format and legacy markdown strings.
  */
 
 import { marked } from 'marked';
 
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+
+// Text node with formatting
+interface TextNode {
+  type: 'text';
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  code?: boolean;
+}
+
+// Link node
+interface LinkNode {
+  type: 'link';
+  url: string;
+  children: TextNode[];
+}
+
+// Child can be text or link
+type InlineNode = TextNode | LinkNode;
+
+// Block types for Strapi v5 Blocks
 export interface RichtextBlock {
-  type: string;
-  children?: Array<{
-    type: string;
-    text?: string;
-    bold?: boolean;
-    italic?: boolean;
-    underline?: boolean;
-    strikethrough?: boolean;
-    code?: boolean;
-    url?: string;
-  }>;
-  level?: number;
-  format?: string;
-  url?: string;
+  type: 'paragraph' | 'heading' | 'list' | 'quote' | 'code' | 'image';
+  children?: InlineNode[] | RichtextBlock[];
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  format?: 'ordered' | 'unordered';
   image?: {
     url?: string;
     alternativeText?: string;
+    width?: number;
+    height?: number;
   };
+}
+
+/**
+ * Render inline text with formatting
+ */
+function renderInlineNode(node: InlineNode): string {
+  if (node.type === 'text') {
+    let text = node.text;
+    // Escape HTML special characters
+    text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    if (node.bold) text = `<strong>${text}</strong>`;
+    if (node.italic) text = `<em>${text}</em>`;
+    if (node.underline) text = `<u>${text}</u>`;
+    if (node.strikethrough) text = `<s>${text}</s>`;
+    if (node.code) text = `<code>${text}</code>`;
+    return text;
+  }
+
+  if (node.type === 'link') {
+    const linkText = node.children?.map(child => renderInlineNode(child)).join('') || node.url;
+    return `<a href="${node.url}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+  }
+
+  return '';
 }
 
 /**
  * Render a single richtext block to HTML
  */
 function renderBlock(block: RichtextBlock): string {
+  // Handle image blocks
   if (block.type === 'image' && block.image) {
-    const imageUrl = block.image.url || '';
+    let imageUrl = block.image.url || '';
+    // Prepend STRAPI_URL if it's a relative path
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      imageUrl = `${STRAPI_URL}${imageUrl}`;
+    }
     const alt = block.image.alternativeText || '';
-    return `<img src="${imageUrl}" alt="${alt}" />`;
+    return `<figure><img src="${imageUrl}" alt="${alt}" loading="lazy" /></figure>`;
   }
 
-  if (!block.children) return '';
+  if (!block.children || block.children.length === 0) return '';
 
-  const content = block.children.map(child => {
-    if (child.type === 'text' && child.text) {
-      let text = child.text;
-      if (child.bold) text = `<strong>${text}</strong>`;
-      if (child.italic) text = `<em>${text}</em>`;
-      if (child.underline) text = `<u>${text}</u>`;
-      if (child.strikethrough) text = `<s>${text}</s>`;
-      if (child.code) text = `<code>${text}</code>`;
-      return text;
-    }
-    if (child.type === 'link' && child.url) {
-      return `<a href="${child.url}">${child.text || child.url}</a>`;
-    }
-    return child.text || '';
-  }).join('');
+  // Handle list blocks (children are list-item blocks)
+  if (block.type === 'list') {
+    const tag = block.format === 'ordered' ? 'ol' : 'ul';
+    const items = (block.children as RichtextBlock[]).map(item => {
+      if ('children' in item && Array.isArray(item.children)) {
+        const itemContent = (item.children as InlineNode[]).map(renderInlineNode).join('');
+        return `<li>${itemContent}</li>`;
+      }
+      return '';
+    }).join('');
+    return `<${tag}>${items}</${tag}>`;
+  }
+
+  // Handle inline content (paragraphs, headings, quotes, code)
+  const content = (block.children as InlineNode[]).map(renderInlineNode).join('');
 
   switch (block.type) {
     case 'paragraph':
       return `<p>${content}</p>`;
     case 'heading':
-      const level = block.level || 1;
+      const level = block.level || 2;
       return `<h${level}>${content}</h${level}>`;
-    case 'list':
-      const tag = block.format === 'ordered' ? 'ol' : 'ul';
-      return `<${tag}>${content}</${tag}>`;
-    case 'list-item':
-      return `<li>${content}</li>`;
     case 'quote':
       return `<blockquote>${content}</blockquote>`;
     case 'code':
       return `<pre><code>${content}</code></pre>`;
     default:
-      return content;
+      return content ? `<p>${content}</p>` : '';
   }
 }
 
