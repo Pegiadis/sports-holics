@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BaseArticle } from "@/lib/sports-api";
+import { richtextToPlainText } from "@/lib/richtext-utils";
 
 interface ArticleCardProps {
   article: BaseArticle;
@@ -52,7 +53,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
             {/* Description */}
             <p className="text-gray-600 text-base mb-4 line-clamp-2">
-              {article.description}
+              {richtextToPlainText(article.description)}
             </p>
 
             {/* Meta Info */}

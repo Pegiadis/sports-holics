@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import BreakingNews from "@/components/BreakingNews";
 import HeroSection from "@/components/HeroSection";
@@ -25,6 +26,27 @@ import {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0; // Disable caching to prevent hydration mismatches
 export const fetchCache = 'force-no-store'; // Ensure no caching at all
+
+// Metadata for SEO
+export const metadata: Metadata = {
+  title: 'Sports Holics - Τελευταία Αθλητικά Νέα',
+  description: 'Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις. Ποδόσφαιρο, Μπάσκετ, Formula 1 και πολλά άλλα.',
+  keywords: 'αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Formula 1, Ελλάδα, διεθνή αθλητικά, σκορ, αναλύσεις',
+  openGraph: {
+    title: 'Sports Holics - Τελευταία Αθλητικά Νέα',
+    description: 'Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    type: 'website',
+    locale: 'el_GR',
+    siteName: 'Sports Holics',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sports Holics - Τελευταία Αθλητικά Νέα',
+    description: 'Ο απόλυτος προορισμός σας για αθλητικά νέα',
+    creator: '@sportsholics',
+  },
+};
 
 export default async function Home() {
   // Capture a single timestamp for all time calculations to ensure SSR/client consistency

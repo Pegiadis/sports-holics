@@ -1,17 +1,77 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButtons from "@/components/ShareButtons";
 import { fetchBlogArticleBySlug, fetchBlogArticlesByJournalist } from "../../api";
 import { richtextToHtml } from "@/lib/richtext-utils";
+import { getImageUrl } from "@/lib/sports-api";
 
 interface BlogArticlePageProps {
   params: Promise<{
     journalist: string;
     article: string;
   }>;
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: BlogArticlePageProps): Promise<Metadata> {
+  const { journalist: journalistSlug, article: articleSlug } = await params;
+  const article = await fetchBlogArticleBySlug(articleSlug);
+
+  if (!article) {
+    return {
+      title: 'Blog Article Not Found',
+    };
+  }
+
+  // Use SEO data if available, otherwise fall back to article data
+  const title = article.seo?.metaTitle || article.title;
+  const description = article.seo?.metaDescription || article.subtitle || article.title;
+  const imageUrl = article.seo?.metaImage?.url
+    ? getImageUrl(article.seo.metaImage.url, '/default-blog.jpg')
+    : article.coverImageUrl;
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const articleUrl = `${siteUrl}/blog/${journalistSlug}/${articleSlug}`;
+  const canonicalUrl = article.seo?.canonicalURL || articleUrl;
+
+  return {
+    title,
+    description,
+    keywords: article.seo?.keywords,
+    robots: article.seo?.metaRobots || 'index, follow',
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: articleUrl,
+      siteName: 'Sports Holics',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: 'el_GR',
+      type: 'article',
+      publishedTime: article.publishedAt,
+      authors: [article.journalist.name],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
+      creator: '@sportsholics',
+    },
+  };
 }
 
 export default async function BlogArticlePage({ params }: BlogArticlePageProps) {

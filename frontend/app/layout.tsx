@@ -15,8 +15,36 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sports Holics - Τελευταία Αθλητικά Νέα",
   description: "Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις",
+  keywords: "αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Formula 1, Ελλάδα",
   icons: {
     icon: '/soccer_ball2.svg', // Sports icon - perfect for a sports site!
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  openGraph: {
+    title: "Sports Holics - Τελευταία Αθλητικά Νέα",
+    description: "Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις",
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    siteName: 'Sports Holics',
+    locale: 'el_GR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Sports Holics - Τελευταία Αθλητικά Νέα",
+    description: "Ο απόλυτος προορισμός σας για αθλητικά νέα",
+    creator: '@sportsholics',
+    site: '@sportsholics',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 

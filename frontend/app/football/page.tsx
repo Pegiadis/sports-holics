@@ -1,9 +1,30 @@
+import type { Metadata } from "next";
 import SportPageTemplate from "@/components/SportPageTemplate";
 import { fetchFootballArticlesWithPagination } from "./api";
 import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
 // Force dynamic rendering for real-time CMS updates
 export const dynamic = 'force-dynamic';
+
+// Metadata for SEO
+export const metadata: Metadata = {
+  title: 'Ποδόσφαιρο - Όλα τα νέα και οι ειδήσεις | Sports Holics',
+  description: 'Ενημερωθείτε για όλα τα νέα του ποδοσφαίρου. Μεταγραφές, αγώνες, αναλύσεις και αποτελέσματα από την Ελλάδα και το εξωτερικό.',
+  keywords: 'ποδόσφαιρο, αθλητικά νέα, μεταγραφές, Super League, Champions League, Εθνική Ελλάδας',
+  openGraph: {
+    title: 'Ποδόσφαιρο - Sports Holics',
+    description: 'Ενημερωθείτε για όλα τα νέα του ποδοσφαίρου',
+    type: 'website',
+    locale: 'el_GR',
+    siteName: 'Sports Holics',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ποδόσφαιρο - Sports Holics',
+    description: 'Ενημερωθείτε για όλα τα νέα του ποδοσφαίρου',
+    creator: '@sportsholics',
+  },
+};
 
 export default async function FootballPage({
   searchParams,

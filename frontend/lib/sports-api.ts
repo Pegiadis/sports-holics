@@ -223,8 +223,10 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('populate[0]', 'image');
     params.append('populate[1]', 'seo');
     params.append('populate[2]', 'seo.metaImage');
-    params.append('populate[3]', 'author');
-    params.append('populate[4]', 'author.avatar');
+    params.append('populate[3]', 'seo.metaSocial');
+    params.append('populate[4]', 'seo.metaSocial.image');
+    params.append('populate[5]', 'author');
+    params.append('populate[6]', 'author.avatar');
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -313,8 +315,10 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
       params.append('populate[0]', 'image');
       params.append('populate[1]', 'seo');
       params.append('populate[2]', 'seo.metaImage');
-      params.append('populate[3]', 'author');
-      params.append('populate[4]', 'author.avatar');
+      params.append('populate[3]', 'seo.metaSocial');
+      params.append('populate[4]', 'seo.metaSocial.image');
+      params.append('populate[5]', 'author');
+      params.append('populate[6]', 'author.avatar');
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,

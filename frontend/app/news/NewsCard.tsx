@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { NewsArticle } from "@/types";
+import { richtextToPlainText } from "@/lib/richtext-utils";
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -46,14 +47,9 @@ export default function NewsCard({ article }: NewsCardProps) {
           )}
 
           {/* Description Preview */}
-          <div 
-            className="text-gray-700 line-clamp-3 prose prose-sm"
-            dangerouslySetInnerHTML={{ 
-              __html: typeof article.description === 'string' 
-                ? article.description.substring(0, 200) 
-                : '' 
-            }}
-          />
+          <p className="text-gray-700 line-clamp-3">
+            {richtextToPlainText(article.description).substring(0, 200)}
+          </p>
         </div>
 
         {/* Footer */}

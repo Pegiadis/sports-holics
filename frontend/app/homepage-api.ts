@@ -353,5 +353,15 @@ export interface BlogArticleData {
     slug: string;
     avatarUrl: string;
   };
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaImage?: {
+      url: string;
+    } | null;
+    keywords?: string;
+    metaRobots?: string;
+    canonicalURL?: string;
+  } | null;
 }
 

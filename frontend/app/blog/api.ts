@@ -203,6 +203,10 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
     params.append('filters[slug][$eq]', slug);
     params.append('populate[coverImage]', 'true');
     params.append('populate[journalist][populate][0]', 'avatar');
+    params.append('populate[seo]', 'true');
+    params.append('populate[seo][populate][0]', 'metaImage');
+    params.append('populate[seo][populate][1]', 'metaSocial');
+    params.append('populate[seo][populate][2]', 'metaSocial.image');
 
     const response = await fetch(
       `${STRAPI_URL}/api/blog-articles?${params.toString()}`,
@@ -250,6 +254,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
         slug: article.journalist?.slug || 'unknown',
         avatarUrl: getImageUrl(article.journalist?.avatar?.url, '/default-avatar.jpg'),
       },
+      seo: article.seo || null,
     };
   } catch (error) {
     console.warn('Error fetching blog article:', error);
