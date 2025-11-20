@@ -487,7 +487,7 @@ export interface ApiBasketballArticleBasketballArticle
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -528,7 +528,7 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
         '\u03A3\u03C5\u03BD\u03B5\u03BD\u03C4\u03B5\u03CD\u03BE\u03B5\u03B9\u03C2',
       ]
     >;
-    content: Schema.Attribute.RichText & Schema.Attribute.Required;
+    content: Schema.Attribute.Blocks & Schema.Attribute.Required;
     coverImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -611,7 +611,7 @@ export interface ApiFootballArticleFootballArticle
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -650,7 +650,7 @@ export interface ApiFormula1ArticleFormula1Article
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -857,7 +857,7 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.RichText & Schema.Attribute.Required;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
     image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<

@@ -266,10 +266,20 @@ function randomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-// Strapi v5 uses Markdown for richtext fields, not JSON
-// Just return the plain text and Strapi will handle it
+// Strapi v5 Blocks format for richtext fields
+// Returns JSON array of block objects
 function toRichText(text) {
-  return text;
+  // Split text into paragraphs and convert to blocks format
+  const paragraphs = text.split('\n').filter(p => p.trim());
+  return paragraphs.map(paragraph => ({
+    type: 'paragraph',
+    children: [
+      {
+        type: 'text',
+        text: paragraph.trim()
+      }
+    ]
+  }));
 }
 
 // Main seeding function
@@ -408,11 +418,8 @@ async function seedAllData() {
           slug: `${journalist.slug}-blog-${i + 1}`,
           subtitle: randomItem(greekSubtitles),
           content: toRichText(randomItem(greekDescriptions)),
-          excerpt: randomItem(greekSubtitles),
           category: randomItem(['Ποδόσφαιρο', 'Μπάσκετ', 'Formula 1', 'Ανάλυση']),
-          tags: ['analysis', 'opinion', 'exclusive'],
           readTime: Math.floor(Math.random() * 10) + 3,
-          isFeatured: i === 0,
           journalist: journalist.id,
           ...(imageId && { coverImage: imageId })
         };
