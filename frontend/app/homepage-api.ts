@@ -176,17 +176,11 @@ export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArtic
       }
     }
   } catch (error) {
-    console.warn('Failed to fetch carousel from homepage configuration, using fallback:', error);
+    console.warn('Failed to fetch carousel from homepage configuration:', error);
   }
 
-  // Fallback: fetch latest articles (since old flags don't exist anymore)
-  const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 2 }, now),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 2 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 2 }, now),
-  ]);
-
-  return [...football, ...basketball, ...formula1].slice(0, 6);
+  // Return empty array if no carousel configuration is set
+  return [];
 }
 
 /**
