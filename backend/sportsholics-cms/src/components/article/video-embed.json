@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_article_video_embeds",
+  "info": {
+    "displayName": "Video Embed",
+    "icon": "play-circle",
+    "description": "YouTube video embed"
+  },
+  "options": {},
+  "attributes": {
+    "videoUrl": {
+      "type": "string",
+      "required": true,
+      "regex": "^(https?:\\/\\/)?(www\\.)?(youtube\\.com\\/watch\\?v=|youtu\\.be\\/).+$"
+    },
+    "caption": {
+      "type": "string",
+      "required": false
+    }
+  }
+}

@@ -6,7 +6,19 @@
       "Bash(npm run build:*)",
       "Bash(powershell -Command \"Start-Process ''C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe''\")",
       "Bash(powershell -Command \"Start-Sleep -Seconds 20; docker start 72c8b6f01278165d9825cd994b1f5084e632bacaf733cad48e31e938bd1669cf\")",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.strapi.io)",
+      "WebFetch(domain:strapi.io)",
+      "WebFetch(domain:market.strapi.io)",
+      "Bash(for file in formula1-article/content-types/formula1-article/schema.json news-article/content-types/news-article/schema.json blog-article/content-types/blog-article/schema.json)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(then sed -i 's/\"\"description\"\": {/\"\"content\"\": {/g; s/\"\"type\"\": \"\"blocks\"\",/\"\"type\"\": \"\"dynamiczone\"\",\\n      \"\"components\"\": [\"\"article.text-block\"\", \"\"article.video-embed\"\"],/g' \"$file\")",
+      "Bash(echo:*)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(node scripts/cleanup-all-data.js:*)",
+      "Bash(node scripts/seed-all-data.js:*)"
     ],
     "deny": [],
     "ask": []

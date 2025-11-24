@@ -39,6 +39,10 @@ npm run create-admin # Create admin user (requires setup)
 node scripts/seed-all-data.js       # Seed test data (69 entries)
 node scripts/cleanup-all-data.js    # Delete all data (with confirmation)
 node scripts/cleanup-selective.js   # Interactive cleanup
+
+# YouTube video embedding
+node scripts/add-video-to-article.js  # Helper to add videos to articles
+node scripts/test-video-embedding.js  # Create test article with videos
 ```
 
 ### Landing Page (Vite)
@@ -222,6 +226,70 @@ import Image from 'next/image';
 import { getImageUrl } from '@/lib/sports-api';
 const imageUrl = getImageUrl(article.image?.url, '/football.png');
 ```
+
+## Video Embedding (YouTube)
+
+### Overview
+Sports-Holics supports YouTube video embedding in article content using custom video blocks in the Strapi Blocks editor.
+
+### Features
+- **Responsive 16:9 embeds** - Videos maintain aspect ratio on all devices
+- **Lazy loading** - Videos load when user scrolls to them (performance optimization)
+- **Privacy-enhanced** - Uses `youtube-nocookie.com` domain
+- **Multiple videos per article** - Add as many videos as needed inline with content
+- **Supported URL formats** - All YouTube URL types (youtube.com/watch, youtu.be, embed URLs)
+
+### Frontend Implementation
+Video blocks are automatically rendered by `richtext-utils.ts`:
+```typescript
+// Video block structure
+{
+  type: 'video',
+  provider: 'youtube',
+  url: 'https://www.youtube.com/watch?v=VIDEO_ID',
+  videoId: 'VIDEO_ID'
+}
+```
+
+### For Editors: Adding Videos to Articles
+
+**Method 1: JSON Editor (Recommended)**
+1. Open article in Strapi admin
+2. Switch to JSON view in Blocks editor
+3. Add video block anywhere in the blocks array:
+```json
+{
+  "type": "video",
+  "provider": "youtube",
+  "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "videoId": "dQw4w9WgXcQ"
+}
+```
+4. Save and publish
+
+**Method 2: Helper Script**
+```bash
+cd backend/sportsholics-cms
+node scripts/add-video-to-article.js
+# Follow prompts to add video to existing article
+```
+
+**Method 3: Test Article**
+```bash
+cd backend/sportsholics-cms
+node scripts/test-video-embedding.js
+# Creates test article with multiple video examples
+```
+
+### Supported YouTube URL Formats
+All these work:
+- `https://www.youtube.com/watch?v=VIDEO_ID`
+- `https://youtu.be/VIDEO_ID`
+- `https://www.youtube.com/embed/VIDEO_ID`
+- `https://www.youtube.com/v/VIDEO_ID`
+
+### Documentation
+See `backend/sportsholics-cms/VIDEO_EMBEDDING_GUIDE.md` for complete editor guide.
 
 ## Testing
 

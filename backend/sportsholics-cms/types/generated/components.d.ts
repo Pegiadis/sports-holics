@@ -1,5 +1,30 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface ArticleTextBlock extends Struct.ComponentSchema {
+  collectionName: 'components_article_text_blocks';
+  info: {
+    description: 'Rich text content block with Blocks editor';
+    displayName: 'Text Block';
+    icon: 'align-left';
+  };
+  attributes: {
+    content: Schema.Attribute.Blocks & Schema.Attribute.Required;
+  };
+}
+
+export interface ArticleVideoEmbed extends Struct.ComponentSchema {
+  collectionName: 'components_article_video_embeds';
+  info: {
+    description: 'YouTube video embed';
+    displayName: 'Video Embed';
+    icon: 'play-circle';
+  };
+  attributes: {
+    caption: Schema.Attribute.String;
+    videoUrl: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedMetaSocial extends Struct.ComponentSchema {
   collectionName: 'components_shared_meta_socials';
   info: {
@@ -50,6 +75,8 @@ export interface SharedSeo extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'article.text-block': ArticleTextBlock;
+      'article.video-embed': ArticleVideoEmbed;
       'shared.meta-social': SharedMetaSocial;
       'shared.seo': SharedSeo;
     }

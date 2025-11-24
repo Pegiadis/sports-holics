@@ -20,8 +20,9 @@
       "type": "string",
       "required": false
     },
-    "description": {
-      "type": "blocks",
+    "content": {
+      "type": "dynamiczone",
+      "components": ["article.text-block", "article.video-embed"],
       "required": true
     },
     "author": {

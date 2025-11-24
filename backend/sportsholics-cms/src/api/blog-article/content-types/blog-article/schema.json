@@ -25,7 +25,8 @@
       "targetField": "title"
     },
     "content": {
-      "type": "blocks",
+      "type": "dynamiczone",
+      "components": ["article.text-block", "article.video-embed"],
       "required": true
     },
     "coverImage": {

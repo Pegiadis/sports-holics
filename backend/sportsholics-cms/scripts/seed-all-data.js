@@ -291,6 +291,44 @@ function toRichText(text) {
   }));
 }
 
+// Sample YouTube video URLs for testing
+const sampleYouTubeVideos = [
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+  'https://www.youtube.com/watch?v=9bZkp7q19f0',
+  'https://youtu.be/yPYZpwSpKmA',
+  'https://www.youtube.com/watch?v=ZtYQ3oss3gk',
+];
+
+// Convert text to Dynamic Zone format (Text Blocks + optional Video Embeds)
+// Returns array of components for Dynamic Zone
+function toDynamicZone(text, includeVideo = false) {
+  const components = [];
+
+  // Add text block with rich text content
+  components.push({
+    __component: 'article.text-block',
+    content: toRichText(text)
+  });
+
+  // Randomly add a video embed (30% chance if includeVideo is true)
+  if (includeVideo && Math.random() < 0.3) {
+    components.push({
+      __component: 'article.video-embed',
+      videoUrl: randomItem(sampleYouTubeVideos),
+      caption: 'Δείτε τα highlights'
+    });
+
+    // Add another text block after video
+    components.push({
+      __component: 'article.text-block',
+      content: toRichText('Απίστευτη εμφάνιση από την ομάδα! Συνεχίζει την καλή της πορεία στο πρωτάθλημα.')
+    });
+  }
+
+  return components;
+}
+
 // Main seeding function
 async function seedAllData() {
   console.log('🌱 Starting Complete Data Seeding...\n');
@@ -327,16 +365,16 @@ async function seedAllData() {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
 
-    // Use random journalist as author
-    const randomJournalist = createdJournalists.length > 0
-      ? randomItem(createdJournalists)
+    // Assign journalist evenly (cycle through all journalists)
+    const journalist = createdJournalists.length > 0
+      ? createdJournalists[i % createdJournalists.length]
       : null;
 
     const article = {
       title: greekTitles.football[i],
       subtitle: randomItem(greekSubtitles),
-      description: toRichText(randomItem(greekDescriptions)),
-      ...(randomJournalist && { author: randomJournalist.id }),
+      content: toDynamicZone(randomItem(greekDescriptions), true),  // Dynamic Zone with optional video
+      ...(journalist && { author: journalist.id }),
       slug: `football-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
@@ -353,16 +391,16 @@ async function seedAllData() {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
 
-    // Use random journalist as author
-    const randomJournalist = createdJournalists.length > 0
-      ? randomItem(createdJournalists)
+    // Assign journalist evenly (cycle through all journalists)
+    const journalist = createdJournalists.length > 0
+      ? createdJournalists[i % createdJournalists.length]
       : null;
 
     const article = {
       title: greekTitles.basketball[i],
       subtitle: randomItem(greekSubtitles),
-      description: toRichText(randomItem(greekDescriptions)),
-      ...(randomJournalist && { author: randomJournalist.id }),
+      content: toDynamicZone(randomItem(greekDescriptions), true),  // Dynamic Zone with optional video
+      ...(journalist && { author: journalist.id }),
       slug: `basketball-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
@@ -379,16 +417,16 @@ async function seedAllData() {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
 
-    // Use random journalist as author
-    const randomJournalist = createdJournalists.length > 0
-      ? randomItem(createdJournalists)
+    // Assign journalist evenly (cycle through all journalists)
+    const journalist = createdJournalists.length > 0
+      ? createdJournalists[i % createdJournalists.length]
       : null;
 
     const article = {
       title: greekTitles.formula1[i],
       subtitle: randomItem(greekSubtitles),
-      description: toRichText(randomItem(greekDescriptions)),
-      ...(randomJournalist && { author: randomJournalist.id }),
+      content: toDynamicZone(randomItem(greekDescriptions), true),  // Dynamic Zone with optional video
+      ...(journalist && { author: journalist.id }),
       slug: `formula1-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
@@ -405,16 +443,16 @@ async function seedAllData() {
     // Upload random image
     const imageId = await uploadImage(getRandomImage());
 
-    // Use random journalist as author
-    const randomJournalist = createdJournalists.length > 0
-      ? randomItem(createdJournalists)
+    // Assign journalist evenly (cycle through all journalists)
+    const journalist = createdJournalists.length > 0
+      ? createdJournalists[i % createdJournalists.length]
       : null;
 
     const article = {
       title: greekTitles.news[i],
       subtitle: randomItem(greekSubtitles),
-      description: toRichText(randomItem(greekDescriptions)),
-      ...(randomJournalist && { author: randomJournalist.id }),
+      content: toDynamicZone(randomItem(greekDescriptions), true),  // Dynamic Zone with optional video
+      ...(journalist && { author: journalist.id }),
       slug: `news-article-${i + 1}`,
       ...(imageId && { image: imageId })
     };
@@ -441,12 +479,12 @@ async function seedAllData() {
       for (let i = 0; i < 3; i++) {
         // Upload random image
         const imageId = await uploadImage(getRandomImage());
-        
+
         const blogArticle = {
           title: `${blogTitles[i]} - ${journalist.name}`,
           slug: `${journalist.slug}-blog-${i + 1}`,
           subtitle: randomItem(greekSubtitles),
-          content: toRichText(randomItem(greekDescriptions)),
+          content: toDynamicZone(randomItem(greekDescriptions), true),  // Dynamic Zone with optional video
           category: randomItem(['Ποδόσφαιρο', 'Μπάσκετ', 'Formula 1', 'Ανάλυση']),
           readTime: Math.floor(Math.random() * 10) + 3,
           journalist: journalist.id,

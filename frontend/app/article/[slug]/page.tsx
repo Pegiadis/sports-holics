@@ -8,7 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
 import { fetchArticleBySlug, getImageUrl, STRAPI_URL } from "@/lib/sports-api";
 import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
-import { richtextToHtml } from "@/lib/richtext-utils";
+import { renderDynamicZone } from "@/lib/richtext-utils";
 
 interface ArticlePageProps {
   params: Promise<{
@@ -173,7 +173,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                <span className="font-medium">{article.author}</span>
+                {article.authorSlug ? (
+                  <Link
+                    href={`/blog/${article.authorSlug}`}
+                    className="font-medium text-gray-600 hover:text-blue-600 hover:underline transition-colors duration-200"
+                  >
+                    {article.author}
+                  </Link>
+                ) : (
+                  <span className="font-medium">{article.author}</span>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <svg
@@ -194,9 +203,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
 
             {/* Article Body */}
-            <div 
+            <div
               className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: richtextToHtml(article.description) }}
+              dangerouslySetInnerHTML={{ __html: renderDynamicZone(article.content) }}
             />
 
             {/* Share Section */}

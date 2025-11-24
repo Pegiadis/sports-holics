@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_article_text_blocks",
+  "info": {
+    "displayName": "Text Block",
+    "icon": "align-left",
+    "description": "Rich text content block with Blocks editor"
+  },
+  "options": {},
+  "attributes": {
+    "content": {
+      "type": "blocks",
+      "required": true
+    }
+  }
+}

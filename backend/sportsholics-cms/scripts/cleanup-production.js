@@ -18,7 +18,7 @@ const path = require('path');
 const readline = require('readline');
 
 // Production Strapi URL - UPDATE THIS!
-const STRAPI_URL = process.env.PRODUCTION_STRAPI_URL || 'https://your-production-strapi-url.com';
+const STRAPI_URL = process.env.PRODUCTION_STRAPI_URL || 'https://clever-garden-138bbdfa99.strapiapp.com';
 
 // Read production token from file
 let ADMIN_JWT = '';

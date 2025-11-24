@@ -18,7 +18,7 @@ const path = require('path');
 const FormData = require('form-data');
 
 // Production Strapi URL - UPDATE THIS!
-const STRAPI_URL = process.env.PRODUCTION_STRAPI_URL || 'https://your-production-strapi-url.com';
+const STRAPI_URL = process.env.PRODUCTION_STRAPI_URL || 'https://clever-garden-138bbdfa99.strapiapp.com';
 
 // Read production token from file
 let ADMIN_JWT = '';
@@ -32,20 +32,9 @@ try {
   process.exit(1);
 }
 
-// Available demo images (place these in public/demo-images/)
-const AVAILABLE_IMAGES = [
-  '216-scaled-1.jpg',
-  'BG-football-1600x1000-1170x600-1.jpeg',
-  'Ferrari_F1.jpg',
-  'wp14783249.jpg',
-  'formula.png',
-  'apex.png',
-  'basketball.png',
-  'football.png',
-  'images.jpeg',
-  'news-2.png',
-  'racing-car.png',
-];
+// Available demo images (already uploaded to Strapi)
+// Note: We'll skip image upload since images already exist in production
+const AVAILABLE_IMAGES = [];
 
 // Greek sample data
 const greekTitles = {
@@ -141,17 +130,18 @@ function randomItem(array) {
 }
 
 function toRichText(text) {
-  return [
-    {
-      type: 'paragraph',
-      children: [
-        {
-          type: 'text',
-          text: text
-        }
-      ]
-    }
-  ];
+  // Strapi v5 blocks format
+  // Split text into paragraphs and convert to blocks
+  const paragraphs = text.split('\n').filter(p => p.trim());
+  return paragraphs.map(paragraph => ({
+    type: 'paragraph',
+    children: [
+      {
+        type: 'text',
+        text: paragraph.trim()
+      }
+    ]
+  }));
 }
 
 async function uploadImage(imageName) {
@@ -188,6 +178,32 @@ async function uploadImage(imageName) {
   }
 }
 
+async function fetchExistingJournalists() {
+  try {
+    const response = await fetch(`${STRAPI_URL}/api/journalists`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${ADMIN_JWT}`
+      }
+    });
+
+    if (!response.ok) {
+      console.warn(`   ⚠️  Failed to fetch journalists: ${response.status}`);
+      return [];
+    }
+
+    const result = await response.json();
+    return (result.data || []).map(j => ({
+      id: j.id || j.documentId,
+      name: j.name,
+      slug: j.slug
+    }));
+  } catch (error) {
+    console.error(`   ❌ Error fetching journalists:`, error.message);
+    return [];
+  }
+}
+
 async function createEntry(endpoint, data, displayName) {
   try {
     const response = await fetch(`${STRAPI_URL}/api/${endpoint}`, {
@@ -202,7 +218,6 @@ async function createEntry(endpoint, data, displayName) {
     if (!response.ok) {
       const errorText = await response.text();
       console.warn(`   ⚠️  Failed to create ${displayName}: ${response.status}`);
-      console.warn(`   Error: ${errorText}`);
       return null;
     }
 
@@ -242,29 +257,17 @@ async function seedProduction() {
   const createdFormula1Ids = [];
   const createdNewsIds = [];
 
-  // 1. Create Journalists
-  console.log('👥 Creating Journalists...');
-  const journalists = [
-    { name: 'Γιώργος Παπαδόπουλος', slug: 'giorgos-papadopoulos', bio: 'Αθλητικός δημοσιογράφος με 15 χρόνια εμπειρίας' },
-    { name: 'Μαρία Κωνσταντίνου', slug: 'maria-konstantinou', bio: 'Ειδικός σε θέματα ποδοσφαίρου και μπάσκετ' },
-    { name: 'Δημήτρης Νικολάου', slug: 'dimitris-nikolaou', bio: 'Ανταποκριτής Formula 1 και μηχανοκίνητου αθλητισμού' }
-  ];
-
-  for (const journalist of journalists) {
-    const avatarId = await uploadImage(randomItem(AVAILABLE_IMAGES));
-    const data = {
-      name: journalist.name,
-      slug: journalist.slug,
-      bio: journalist.bio,
-      ...(avatarId && { avatar: avatarId })
-    };
-
-    const journalistId = await createEntry('journalists', data, journalist.name);
-    if (journalistId) {
-      createdJournalists.push({ id: journalistId, ...journalist });
-    }
+  // 1. Fetch Existing Journalists (or create if needed)
+  console.log('👥 Fetching Journalists...');
+  const existingJournalists = await fetchExistingJournalists();
+  
+  if (existingJournalists.length > 0) {
+    console.log(`   ✅ Found ${existingJournalists.length} existing journalists`);
+    createdJournalists.push(...existingJournalists);
+  } else {
+    console.log('   ⚠️  No journalists found. Articles will be created without authors.');
   }
-  console.log(`   ✅ Created ${createdJournalists.length}/3 journalists\n`);
+  console.log('');
 
   // 2-5. Create Articles for each sport
   const articleTypes = [
@@ -278,7 +281,6 @@ async function seedProduction() {
     console.log(`⚽ Creating ${articleType.name} Articles...`);
 
     for (let i = 0; i < 15; i++) {
-      const imageId = await uploadImage(randomItem(AVAILABLE_IMAGES));
       const randomJournalist = createdJournalists.length > 0 ? randomItem(createdJournalists) : null;
 
       const article = {
@@ -287,7 +289,6 @@ async function seedProduction() {
         description: toRichText(randomItem(greekDescriptions)),
         ...(randomJournalist && { author: randomJournalist.id }),
         slug: `${articleType.name.toLowerCase().replace(' ', '-')}-article-${i + 1}`,
-        ...(imageId && { image: imageId }),
         publishedAt: new Date().toISOString()
       };
 
@@ -302,11 +303,14 @@ async function seedProduction() {
 
   // 6. Create Blog Articles
   console.log('📝 Creating Blog Articles...');
+  let blogCount = 0;
   for (let i = 0; i < 9; i++) {
-    const coverImageId = await uploadImage(randomItem(AVAILABLE_IMAGES));
     const randomJournalist = createdJournalists.length > 0 ? randomItem(createdJournalists) : null;
 
-    if (!randomJournalist) continue;
+    if (!randomJournalist) {
+      console.log('   ⚠️  Skipping blog articles (no journalists available)');
+      break;
+    }
 
     const blogArticle = {
       title: `Blog: ${randomItem(greekTitles.football)}`,
@@ -316,13 +320,13 @@ async function seedProduction() {
       slug: `blog-article-${i + 1}`,
       category: randomItem(['Ποδόσφαιρο', 'Μπάσκετ', 'Formula 1', 'Γενικά']),
       readTime: Math.floor(Math.random() * 10) + 3,
-      ...(coverImageId && { coverImage: coverImageId }),
       publishedAt: new Date().toISOString()
     };
 
-    await createEntry('blog-articles', blogArticle, `Blog Article ${i + 1}`);
+    const blogId = await createEntry('blog-articles', blogArticle, `Blog Article ${i + 1}`);
+    if (blogId) blogCount++;
   }
-  console.log('   ✅ Created blog articles\n');
+  console.log(`   ✅ Created ${blogCount} blog articles\n`);
 
   // 7. Create Breaking News
   console.log('📰 Creating Breaking News...');
@@ -342,8 +346,6 @@ async function seedProduction() {
   // 8. Create Hero Section
   console.log('🎯 Creating Hero Section...');
   if (createdFootballIds.length > 0) {
-    const heroImageId = await uploadImage(randomItem(AVAILABLE_IMAGES));
-
     const heroSection = {
       title: 'Ο Παναθηναϊκός',
       titleHighlight: 'Νικητής του Ντέρμπι',
@@ -353,12 +355,13 @@ async function seedProduction() {
       timeAgo: 'πριν 2 ώρες',
       buttonText: 'Διαβάστε περισσότερα →',
       linkedFootballArticle: createdFootballIds[0],
-      isActive: true,
-      ...(heroImageId && { backgroundImage: heroImageId })
+      isActive: true
     };
 
     await createEntry('hero-sections', heroSection, 'Hero Section');
     console.log('   ✅ Created hero section\n');
+  } else {
+    console.log('   ⚠️  Skipping hero section (no football articles created)\n');
   }
 
   // 9. Create Homepage Configuration

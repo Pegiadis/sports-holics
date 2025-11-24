@@ -122,10 +122,18 @@ export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArtic
   try {
     // Try to fetch from homepage configuration
     const params = new URLSearchParams();
-    params.append('populate[carouselFootball][populate]', 'image');
-    params.append('populate[carouselBasketball][populate]', 'image');
-    params.append('populate[carouselFormula1][populate]', 'image');
-    params.append('populate[carouselNews][populate]', 'image');
+    params.append('populate[carouselFootball][populate][0]', 'image');
+    params.append('populate[carouselFootball][populate][1]', 'author');
+    params.append('populate[carouselFootball][populate][2]', 'author.avatar');
+    params.append('populate[carouselBasketball][populate][0]', 'image');
+    params.append('populate[carouselBasketball][populate][1]', 'author');
+    params.append('populate[carouselBasketball][populate][2]', 'author.avatar');
+    params.append('populate[carouselFormula1][populate][0]', 'image');
+    params.append('populate[carouselFormula1][populate][1]', 'author');
+    params.append('populate[carouselFormula1][populate][2]', 'author.avatar');
+    params.append('populate[carouselNews][populate][0]', 'image');
+    params.append('populate[carouselNews][populate][1]', 'author');
+    params.append('populate[carouselNews][populate][2]', 'author.avatar');
     
     const response = await fetch(
       `${STRAPI_URL}/api/homepage-configuration?${params.toString()}`,
@@ -218,10 +226,18 @@ export async function fetchMainNews(referenceTime?: Date): Promise<NewsArticle[]
   try {
     // Try to fetch from homepage configuration
     const params = new URLSearchParams();
-    params.append('populate[mainNewsFootball][populate]', 'image');
-    params.append('populate[mainNewsBasketball][populate]', 'image');
-    params.append('populate[mainNewsFormula1][populate]', 'image');
-    params.append('populate[mainNewsNews][populate]', 'image');
+    params.append('populate[mainNewsFootball][populate][0]', 'image');
+    params.append('populate[mainNewsFootball][populate][1]', 'author');
+    params.append('populate[mainNewsFootball][populate][2]', 'author.avatar');
+    params.append('populate[mainNewsBasketball][populate][0]', 'image');
+    params.append('populate[mainNewsBasketball][populate][1]', 'author');
+    params.append('populate[mainNewsBasketball][populate][2]', 'author.avatar');
+    params.append('populate[mainNewsFormula1][populate][0]', 'image');
+    params.append('populate[mainNewsFormula1][populate][1]', 'author');
+    params.append('populate[mainNewsFormula1][populate][2]', 'author.avatar');
+    params.append('populate[mainNewsNews][populate][0]', 'image');
+    params.append('populate[mainNewsNews][populate][1]', 'author');
+    params.append('populate[mainNewsNews][populate][2]', 'author.avatar');
     
     const response = await fetch(
       `${STRAPI_URL}/api/homepage-configuration?${params.toString()}`,

@@ -29,7 +29,7 @@ export interface BaseStrapiArticle {
   documentId: string;
   title: string;
   subtitle?: string;
-  description: string;
+  content: unknown;  // Dynamic Zone with text blocks and video embeds
   author: {
     id: number;
     name: string;
@@ -57,7 +57,7 @@ export interface BaseArticle {
   id: number;
   title: string;
   subtitle?: string;
-  description: string;
+  content: unknown;  // Dynamic Zone with text blocks and video embeds
   author: string;
   authorName?: string;
   authorSlug?: string;
@@ -119,21 +119,23 @@ export function getTimeAgo(dateString: string, referenceTime?: Date): string {
   const now = referenceTime || new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  const intervals = {
-    χρόνο: 31536000,
-    μήνα: 2592000,
-    εβδομάδα: 604800,
-    μέρα: 86400,
-    ώρα: 3600,
-    λεπτό: 60,
-  };
+  // Greek time intervals with singular and plural forms
+  const intervals: { singular: string; plural: string; seconds: number }[] = [
+    { singular: 'χρόνο', plural: 'χρόνια', seconds: 31536000 },
+    { singular: 'μήνα', plural: 'μήνες', seconds: 2592000 },
+    { singular: 'εβδομάδα', plural: 'εβδομάδες', seconds: 604800 },
+    { singular: 'μέρα', plural: 'μέρες', seconds: 86400 },
+    { singular: 'ώρα', plural: 'ώρες', seconds: 3600 },
+    { singular: 'λεπτό', plural: 'λεπτά', seconds: 60 },
+  ];
 
   if (seconds < 60) return "μόλις τώρα";
 
-  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
-    const interval = Math.floor(seconds / secondsInUnit);
-    if (interval >= 1) {
-      return `πριν ${interval} ${unit}${interval > 1 && !unit.endsWith('α') ? 'ες' : ''}`;
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.seconds);
+    if (count >= 1) {
+      const unit = count === 1 ? interval.singular : interval.plural;
+      return `πριν ${count} ${unit}`;
     }
   }
 
@@ -165,7 +167,7 @@ export function transformArticle<T extends BaseStrapiArticle>(
     id: article.id,
     title: article.title,
     subtitle: article.subtitle,
-    description: article.description,
+    content: article.content,
     author: article.author?.name || 'Sports Holics',
     authorName: article.author?.name,
     authorSlug: article.author?.slug,
@@ -219,7 +221,7 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('pagination[page]', String(page));
     params.append('pagination[pageSize]', String(pageSize));
     
-    // Always populate image, SEO, author (journalist), and sort by date (newest first)
+    // Always populate image, SEO, author (journalist), dynamic zone content, and sort by date (newest first)
     params.append('populate[0]', 'image');
     params.append('populate[1]', 'seo');
     params.append('populate[2]', 'seo.metaImage');
@@ -227,6 +229,7 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('populate[4]', 'seo.metaSocial.image');
     params.append('populate[5]', 'author');
     params.append('populate[6]', 'author.avatar');
+    params.append('populate[7]', 'content');  // Populate dynamic zone
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -319,6 +322,7 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
       params.append('populate[4]', 'seo.metaSocial.image');
       params.append('populate[5]', 'author');
       params.append('populate[6]', 'author.avatar');
+      params.append('populate[7]', 'content');  // Populate dynamic zone
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,

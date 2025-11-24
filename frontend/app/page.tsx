@@ -126,28 +126,6 @@ export default async function Home() {
         {/* Section Divider */}
         <SectionDivider variant="sporty" />
 
-        {/* News Section */}
-        {newsArticles.length > 0 && (
-          <section className="mb-12">
-            <SectionTitle title="Ειδήσεις" icon="/news-press.png" variant="large" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {newsArticles.slice(0, 3).map((news, index) => (
-                <NewsCard key={index} {...news} />
-              ))}
-            </div>
-            {newsArticles.length > 3 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-                {newsArticles.slice(3, 6).map((news, index) => (
-                  <NewsCard key={index} {...news} size="small" />
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* Section Divider */}
-        <SectionDivider variant="sporty" />
-
         {/* Football Section */}
         {footballArticles.length > 0 && (
           <section className="mb-12">
@@ -204,6 +182,28 @@ export default async function Home() {
             {formula1Articles.length > 3 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
                 {formula1Articles.slice(3, 6).map((news, index) => (
+                  <NewsCard key={index} {...news} size="small" />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Section Divider */}
+        <SectionDivider variant="sporty" />
+
+        {/* News Section */}
+        {newsArticles.length > 0 && (
+          <section className="mb-12">
+            <SectionTitle title="Ειδήσεις" icon="/news-press.png" variant="large" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {newsArticles.slice(0, 3).map((news, index) => (
+                <NewsCard key={index} {...news} />
+              ))}
+            </div>
+            {newsArticles.length > 3 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
+                {newsArticles.slice(3, 6).map((news, index) => (
                   <NewsCard key={index} {...news} size="small" />
                 ))}
               </div>
