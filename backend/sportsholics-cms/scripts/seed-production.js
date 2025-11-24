@@ -124,6 +124,15 @@ const greekDescriptions = [
   'Με εξαιρετικές ατομικές επιδόσεις και ομαδικό παιχνίδι, η ομάδα κατάφερε να ξεπεράσει όλα τα εμπόδια και να φτάσει στην κορυφή.',
 ];
 
+// Sample YouTube videos for video embedding
+const sampleYouTubeVideos = [
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+  'https://www.youtube.com/watch?v=9bZkp7q19f0',
+  'https://youtu.be/yPYZpwSpKmA',
+  'https://www.youtube.com/watch?v=ZtYQ3oss3gk',
+];
+
 // Helper functions
 function randomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -142,6 +151,34 @@ function toRichText(text) {
       }
     ]
   }));
+}
+
+// Convert text to Dynamic Zone format with optional video
+function toDynamicZone(text, includeVideo = false) {
+  const components = [];
+
+  // Add text block with rich text content
+  components.push({
+    __component: 'article.text-block',
+    content: toRichText(text)
+  });
+
+  // Randomly add a video embed (30% chance if includeVideo is true)
+  if (includeVideo && Math.random() < 0.3) {
+    components.push({
+      __component: 'article.video-embed',
+      videoUrl: randomItem(sampleYouTubeVideos),
+      caption: 'Δείτε τα highlights'
+    });
+
+    // Add another text block after video
+    components.push({
+      __component: 'article.text-block',
+      content: toRichText('Απίστευτη εμφάνιση από την ομάδα! Συνεχίζει την καλή της πορεία στο πρωτάθλημα.')
+    });
+  }
+
+  return components;
 }
 
 async function uploadImage(imageName) {
@@ -281,13 +318,16 @@ async function seedProduction() {
     console.log(`⚽ Creating ${articleType.name} Articles...`);
 
     for (let i = 0; i < 15; i++) {
-      const randomJournalist = createdJournalists.length > 0 ? randomItem(createdJournalists) : null;
+      // Assign journalist evenly (cycle through all journalists)
+      const journalist = createdJournalists.length > 0
+        ? createdJournalists[i % createdJournalists.length]
+        : null;
 
       const article = {
         title: articleType.titles[i],
         subtitle: randomItem(greekSubtitles),
-        description: toRichText(randomItem(greekDescriptions)),
-        ...(randomJournalist && { author: randomJournalist.id }),
+        content: toDynamicZone(randomItem(greekDescriptions), true),  // Dynamic Zone with optional video
+        ...(journalist && { author: journalist.id }),
         slug: `${articleType.name.toLowerCase().replace(' ', '-')}-article-${i + 1}`,
         publishedAt: new Date().toISOString()
       };
@@ -304,29 +344,30 @@ async function seedProduction() {
   // 6. Create Blog Articles
   console.log('📝 Creating Blog Articles...');
   let blogCount = 0;
-  for (let i = 0; i < 9; i++) {
-    const randomJournalist = createdJournalists.length > 0 ? randomItem(createdJournalists) : null;
 
-    if (!randomJournalist) {
-      console.log('   ⚠️  Skipping blog articles (no journalists available)');
-      break;
+  if (createdJournalists.length === 0) {
+    console.log('   ⚠️  Skipping blog articles (no journalists available)\n');
+  } else {
+    for (let i = 0; i < 9; i++) {
+      // Assign journalist evenly (cycle through all journalists)
+      const journalist = createdJournalists[i % createdJournalists.length];
+
+      const blogArticle = {
+        title: `Blog: ${randomItem(greekTitles.football)}`,
+        subtitle: randomItem(greekSubtitles),
+        content: toDynamicZone(randomItem(greekDescriptions) + ' ' + randomItem(greekDescriptions), true),  // Dynamic Zone with optional video
+        journalist: journalist.id,
+        slug: `blog-article-${i + 1}`,
+        category: randomItem(['Ποδόσφαιρο', 'Μπάσκετ', 'Formula 1', 'Γενικά']),
+        readTime: Math.floor(Math.random() * 10) + 3,
+        publishedAt: new Date().toISOString()
+      };
+
+      const blogId = await createEntry('blog-articles', blogArticle, `Blog Article ${i + 1}`);
+      if (blogId) blogCount++;
     }
-
-    const blogArticle = {
-      title: `Blog: ${randomItem(greekTitles.football)}`,
-      subtitle: randomItem(greekSubtitles),
-      content: toRichText(randomItem(greekDescriptions) + ' ' + randomItem(greekDescriptions)),
-      journalist: randomJournalist.id,
-      slug: `blog-article-${i + 1}`,
-      category: randomItem(['Ποδόσφαιρο', 'Μπάσκετ', 'Formula 1', 'Γενικά']),
-      readTime: Math.floor(Math.random() * 10) + 3,
-      publishedAt: new Date().toISOString()
-    };
-
-    const blogId = await createEntry('blog-articles', blogArticle, `Blog Article ${i + 1}`);
-    if (blogId) blogCount++;
+    console.log(`   ✅ Created ${blogCount} blog articles\n`);
   }
-  console.log(`   ✅ Created ${blogCount} blog articles\n`);
 
   // 7. Create Breaking News
   console.log('📰 Creating Breaking News...');
