@@ -53,7 +53,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
             {/* Description */}
             <p className="text-gray-600 text-base mb-4 line-clamp-2">
-              {richtextToPlainText(article.description)}
+              {richtextToPlainText(article.content)}
             </p>
 
             {/* Meta Info */}

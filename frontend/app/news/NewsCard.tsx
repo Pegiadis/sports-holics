@@ -48,7 +48,7 @@ export default function NewsCard({ article }: NewsCardProps) {
 
           {/* Description Preview */}
           <p className="text-gray-700 line-clamp-3">
-            {richtextToPlainText(article.description).substring(0, 200)}
+            {article.description.substring(0, 200)}
           </p>
         </div>
 

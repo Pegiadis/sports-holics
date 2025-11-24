@@ -4,6 +4,7 @@
 
 import { NewsArticle } from "@/types";
 import { getImageUrl, getTimeAgo } from "@/lib/sports-api";
+import { richtextToPlainText } from "@/lib/richtext-utils";
 
 // Re-export from focused API modules for backwards compatibility
 export type { BreakingNewsItem } from "@/lib/breaking-news-api";
@@ -19,7 +20,7 @@ interface StrapiArticle {
   id: number;
   title?: string;
   subtitle?: string;
-  description?: string;
+  content?: unknown;  // Dynamic Zone with text blocks and video embeds
   author?: {
     id: number;
     name: string;
@@ -45,7 +46,7 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     categoryColor,
     title: article.title || "Untitled",
     subtitle: article.subtitle,
-    description: article.description || "",
+    description: article.content ? richtextToPlainText(article.content) : "",
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt, referenceTime),
     author: article.author?.name || "Sports Holics",
     imageUrl: getImageUrl(article.image?.url, '/no_back.png'),
