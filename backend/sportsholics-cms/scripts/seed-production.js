@@ -133,6 +133,46 @@ const sampleYouTubeVideos = [
   'https://www.youtube.com/watch?v=ZtYQ3oss3gk',
 ];
 
+// Journalists data
+const journalists = [
+  {
+    name: 'Γιώργος Παπαδόπουλος',
+    slug: 'giorgos-papadopoulos',
+    title: 'Αθλητικός Δημοσιογράφος',
+    bio: 'Έμπειρος αθλητικός δημοσιογράφος με 15 χρόνια κάλυψης ποδοσφαίρου και μπάσκετ. Ειδικός στην τακτική ανάλυση και τις μεταγραφές.',
+    specialty: 'Ποδόσφαιρο & Μπάσκετ',
+    twitter: '@gpapadopoulos',
+    instagram: '@gpapadopoulos_sports',
+    email: 'g.papadopoulos@sportsholics.gr',
+    isActive: true,
+    priority: 10
+  },
+  {
+    name: 'Μαρία Αντωνίου',
+    slug: 'maria-antoniou',
+    title: 'Ειδική Formula 1',
+    bio: 'Ρεπόρτερ Formula 1 με διεθνή εμπειρία. Έχει καλύψει πάνω από 100 Grand Prix και έχει πάρει αποκλειστικές συνεντεύξεις από τους κορυφαίους οδηγούς.',
+    specialty: 'Formula 1',
+    twitter: '@mantoniou_f1',
+    instagram: '@maria_f1_reporter',
+    email: 'm.antoniou@sportsholics.gr',
+    isActive: true,
+    priority: 9
+  },
+  {
+    name: 'Νίκος Καραγιάννης',
+    slug: 'nikos-karagiannis',
+    title: 'Αναλυτής & Σχολιαστής',
+    bio: 'Πρώην επαγγελματίας αθλητής που στράφηκε στη δημοσιογραφία. Γνωστός για τις εμπεριστατωμένες αναλύσεις και τις προβλέψεις του.',
+    specialty: 'Τακτική Ανάλυση',
+    twitter: '@nkaragiannis',
+    instagram: '@nikos_sports_analyst',
+    email: 'n.karagiannis@sportsholics.gr',
+    isActive: true,
+    priority: 8
+  }
+];
+
 // Helper functions
 function randomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -215,32 +255,6 @@ async function uploadImage(imageName) {
   }
 }
 
-async function fetchExistingJournalists() {
-  try {
-    const response = await fetch(`${STRAPI_URL}/api/journalists`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${ADMIN_JWT}`
-      }
-    });
-
-    if (!response.ok) {
-      console.warn(`   ⚠️  Failed to fetch journalists: ${response.status}`);
-      return [];
-    }
-
-    const result = await response.json();
-    return (result.data || []).map(j => ({
-      id: j.id || j.documentId,
-      name: j.name,
-      slug: j.slug
-    }));
-  } catch (error) {
-    console.error(`   ❌ Error fetching journalists:`, error.message);
-    return [];
-  }
-}
-
 async function createEntry(endpoint, data, displayName) {
   try {
     const response = await fetch(`${STRAPI_URL}/api/${endpoint}`, {
@@ -274,11 +288,11 @@ async function seedProduction() {
   console.log(`🌐 Target URL: ${STRAPI_URL}\n`);
 
   console.log('📦 This will create demo/test data in PRODUCTION:\n');
+  console.log('   - 3 Journalists');
   console.log('   - 15 Football Articles');
   console.log('   - 15 Basketball Articles');
   console.log('   - 15 Formula 1 Articles');
   console.log('   - 15 News Articles');
-  console.log('   - 3 Journalists');
   console.log('   - 9 Blog Articles');
   console.log('   - 5 Breaking News Items');
   console.log('   - 1 Hero Section');
@@ -294,17 +308,22 @@ async function seedProduction() {
   const createdFormula1Ids = [];
   const createdNewsIds = [];
 
-  // 1. Fetch Existing Journalists (or create if needed)
-  console.log('👥 Fetching Journalists...');
-  const existingJournalists = await fetchExistingJournalists();
-  
-  if (existingJournalists.length > 0) {
-    console.log(`   ✅ Found ${existingJournalists.length} existing journalists`);
-    createdJournalists.push(...existingJournalists);
-  } else {
-    console.log('   ⚠️  No journalists found. Articles will be created without authors.');
+  // 1. Create Journalists
+  console.log('👥 Creating Journalists...\n');
+
+  for (const journalist of journalists) {
+    const journalistId = await createEntry('journalists', journalist, journalist.name);
+    if (journalistId) {
+      createdJournalists.push({
+        id: journalistId,
+        name: journalist.name,
+        slug: journalist.slug
+      });
+      console.log(`   ✅ Created: ${journalist.name} (ID: ${journalistId})`);
+    }
   }
-  console.log('');
+
+  console.log(`\n   ✅ Created ${createdJournalists.length} journalists\n`);
 
   // 2-5. Create Articles for each sport
   const articleTypes = [
