@@ -227,10 +227,8 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('populate[seo][populate][1]', 'metaSocial');
     params.append('populate[seo][populate][2]', 'metaSocial.image');
     params.append('populate[author][populate]', 'avatar');
-    // Populate dynamic zone with nested image in image-embed component
-    params.append('populate[content][on][article.text-block][populate]', '*');
-    params.append('populate[content][on][article.video-embed][populate]', '*');
-    params.append('populate[content][on][article.image-embed][populate]', 'image');
+    // Populate dynamic zone - use deep populate to get all nested fields including media
+    params.append('populate[content][populate]', '*');
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -322,10 +320,8 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
       params.append('populate[seo][populate][1]', 'metaSocial');
       params.append('populate[seo][populate][2]', 'metaSocial.image');
       params.append('populate[author][populate]', 'avatar');
-      // Populate dynamic zone with nested image in image-embed component
-      params.append('populate[content][on][article.text-block][populate]', '*');
-      params.append('populate[content][on][article.video-embed][populate]', '*');
-      params.append('populate[content][on][article.image-embed][populate]', 'image');
+      // Populate dynamic zone - use deep populate to get all nested fields including media
+      params.append('populate[content][populate]', '*');
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,
