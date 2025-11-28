@@ -1,5 +1,19 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface ArticleImageEmbed extends Struct.ComponentSchema {
+  collectionName: 'components_article_image_embeds';
+  info: {
+    description: 'Embed an image within article content';
+    displayName: 'Image Embed';
+    icon: 'picture';
+  };
+  attributes: {
+    altText: Schema.Attribute.String;
+    caption: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+  };
+}
+
 export interface ArticleTextBlock extends Struct.ComponentSchema {
   collectionName: 'components_article_text_blocks';
   info: {
@@ -75,6 +89,7 @@ export interface SharedSeo extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'article.image-embed': ArticleImageEmbed;
       'article.text-block': ArticleTextBlock;
       'article.video-embed': ArticleVideoEmbed;
       'shared.meta-social': SharedMetaSocial;

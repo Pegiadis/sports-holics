@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_article_image_embeds",
+  "info": {
+    "displayName": "Image Embed",
+    "icon": "picture",
+    "description": "Embed an image within article content"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "caption": {
+      "type": "string",
+      "required": false
+    },
+    "altText": {
+      "type": "string",
+      "required": false
+    }
+  }
+}
+

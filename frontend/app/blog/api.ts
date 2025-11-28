@@ -207,6 +207,8 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
     params.append('populate[seo][populate][0]', 'metaImage');
     params.append('populate[seo][populate][1]', 'metaSocial');
     params.append('populate[seo][populate][2]', 'metaSocial.image');
+    // Populate dynamic zone - use deep populate to get all nested fields including media
+    params.append('populate[content][populate]', '*');
 
     const response = await fetch(
       `${STRAPI_URL}/api/blog-articles?${params.toString()}`,

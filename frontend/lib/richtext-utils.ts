@@ -257,11 +257,24 @@ export interface VideoEmbedComponent {
   caption?: string;
 }
 
-export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent;
+export interface ImageEmbedComponent {
+  __component: 'article.image-embed';
+  id: number;
+  image: {
+    url: string;
+    alternativeText?: string | null;
+    width?: number;
+    height?: number;
+  };
+  caption?: string;
+  altText?: string;
+}
+
+export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent | ImageEmbedComponent;
 
 /**
- * Render Dynamic Zone components (Text Blocks + Video Embeds)
- * Used for article content that can mix text and videos
+ * Render Dynamic Zone components (Text Blocks, Video Embeds, Image Embeds)
+ * Used for article content that can mix text, videos, and images
  */
 export function renderDynamicZone(components: unknown): string {
   if (!Array.isArray(components)) {
@@ -290,7 +303,7 @@ export function renderDynamicZone(components: unknown): string {
         }
 
         // Render video embed with optional caption
-        const caption = comp.caption
+        const videoCaption = comp.caption
           ? `<figcaption class="text-center text-gray-600 mt-2 text-sm">${comp.caption}</figcaption>`
           : '';
 
@@ -306,8 +319,38 @@ export function renderDynamicZone(components: unknown): string {
                 loading="lazy"
               ></iframe>
             </div>
-            ${caption}
+            ${videoCaption}
           </div>
+        `;
+
+      case 'article.image-embed':
+        const imgComp = comp as ImageEmbedComponent;
+        if (!imgComp.image?.url) {
+          console.warn('Image embed missing image URL');
+          return '';
+        }
+
+        // Handle relative URLs from Strapi
+        let imageUrl = imgComp.image.url;
+        if (!imageUrl.startsWith('http')) {
+          imageUrl = `${STRAPI_URL}${imageUrl}`;
+        }
+
+        const altAttribute = imgComp.altText || imgComp.image.alternativeText || '';
+        const imageCaption = imgComp.caption
+          ? `<figcaption class="text-center text-gray-600 mt-3 text-sm italic">${imgComp.caption}</figcaption>`
+          : '';
+
+        return `
+          <figure class="image-embed-wrapper my-8">
+            <img 
+              src="${imageUrl}" 
+              alt="${altAttribute}"
+              loading="lazy"
+              class="w-full h-auto rounded-lg shadow-md"
+            />
+            ${imageCaption}
+          </figure>
         `;
 
       default:

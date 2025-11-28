@@ -26,7 +26,7 @@
     },
     "content": {
       "type": "dynamiczone",
-      "components": ["article.text-block", "article.video-embed"],
+      "components": ["article.text-block", "article.video-embed", "article.image-embed"],
       "required": true
     },
     "coverImage": {
