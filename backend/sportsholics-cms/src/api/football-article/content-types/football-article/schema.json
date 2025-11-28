@@ -20,14 +20,15 @@
       "type": "string",
       "required": false
     },
-    "description": {
-      "type": "richtext",
+    "content": {
+      "type": "dynamiczone",
+      "components": ["article.text-block", "article.video-embed"],
       "required": true
     },
     "author": {
-      "type": "string",
-      "required": true,
-      "default": "Sports Holics"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::journalist.journalist"
     },
     "image": {
       "type": "media",
@@ -39,17 +40,10 @@
       "type": "uid",
       "targetField": "title"
     },
-    "isCarousel": {
-      "type": "boolean",
-      "default": false
-    },
-    "isMainNews": {
-      "type": "boolean",
-      "default": false
-    },
-    "isHomeSportSection": {
-      "type": "boolean",
-      "default": false
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
     }
   }
 }

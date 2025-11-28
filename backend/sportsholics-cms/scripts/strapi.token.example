@@ -1,0 +1,9 @@
+YOUR_STRAPI_API_TOKEN_HERE
+
+# Instructions:
+# 1. Create API token in Strapi admin: Settings → API Tokens → Create
+# 2. Copy this file to: strapi.token (remove .example)
+# 3. Replace YOUR_STRAPI_API_TOKEN_HERE with your actual token
+# 4. Run: node scripts/seed-all-data.js
+#
+# Note: strapi.token is gitignored and will not be committed

@@ -1,0 +1,69 @@
+{
+  "kind": "collectionType",
+  "collectionName": "journalists",
+  "info": {
+    "singularName": "journalist",
+    "pluralName": "journalists",
+    "displayName": "Journalist",
+    "description": "Sports journalists and content creators"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "title": {
+      "type": "string",
+      "required": false
+    },
+    "bio": {
+      "type": "text",
+      "required": false
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "specialty": {
+      "type": "string",
+      "required": false
+    },
+    "twitter": {
+      "type": "string",
+      "required": false
+    },
+    "instagram": {
+      "type": "string",
+      "required": false
+    },
+    "email": {
+      "type": "email",
+      "required": false
+    },
+    "blogArticles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-article.blog-article",
+      "mappedBy": "journalist"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "priority": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
+

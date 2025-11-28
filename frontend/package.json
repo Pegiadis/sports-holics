@@ -12,6 +12,9 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "form-data": "^4.0.4",
+    "lucide-react": "^0.553.0",
+    "marked": "^16.4.1",
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"

@@ -1,58 +1,53 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Sidebar from "@/components/Sidebar";
-import Formula1Card from "./Formula1Card";
-import { fetchFormula1Articles } from "./api";
-import { fetchLatestNews } from "../homepage-api";
+import type { Metadata } from "next";
+import SportPageTemplate from "@/components/SportPageTemplate";
+import { fetchFormula1ArticlesWithPagination } from "./api";
+import { fetchLatestNews, fetchCarouselNews } from "../homepage-api";
 
-export default async function Formula1Page() {
-  // Fetch articles from Strapi
-  const [articles, latestNews] = await Promise.all([
-    fetchFormula1Articles(),
-    fetchLatestNews()
+// Force dynamic rendering for real-time CMS updates
+export const dynamic = 'force-dynamic';
+
+// Metadata for SEO
+export const metadata: Metadata = {
+  title: 'Formula 1 - Όλα τα νέα και οι ειδήσεις | Sports Holics',
+  description: 'Ενημερωθείτε για όλα τα νέα της Formula 1. Grand Prix, οδηγοί, ομάδες, αναλύσεις και αποτελέσματα από το παγκόσμιο πρωτάθλημα.',
+  keywords: 'Formula 1, F1, Grand Prix, Φερστάπεν, Χάμιλτον, Μερσεντές, Red Bull, Ferrari',
+  openGraph: {
+    title: 'Formula 1 - Sports Holics',
+    description: 'Ενημερωθείτε για όλα τα νέα της Formula 1',
+    type: 'website',
+    locale: 'el_GR',
+    siteName: 'Sports Holics',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Formula 1 - Sports Holics',
+    description: 'Ενημερωθείτε για όλα τα νέα της Formula 1',
+    creator: '@sportsholics',
+  },
+};
+
+export default async function Formula1Page({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = Number(searchParams.page) || 1;
+
+  const [{ articles, pagination }, latestNews, hotNews] = await Promise.all([
+    fetchFormula1ArticlesWithPagination({ page: currentPage, limit: 10 }),
+    fetchLatestNews(),
+    fetchCarouselNews()
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Page Title */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-4xl">🏎️</span>
-            <h1 className="text-4xl font-bold text-gray-900">Formula 1</h1>
-          </div>
-          <p className="text-gray-600">Όλα τα νέα και οι ειδήσεις για τη Formula 1</p>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Articles List - Main Column */}
-          <div className="lg:col-span-3">
-            <div className="space-y-6">
-              {articles.map((article) => (
-                <Formula1Card key={article.id} article={article} />
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {articles.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">
-                  Δεν υπάρχουν διαθέσιμα άρθρα αυτή τη στιγμή.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <Sidebar latestNews={latestNews} />
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+    <SportPageTemplate
+      emoji="🏎️"
+      title="Formula 1"
+      description="Όλα τα νέα και οι ειδήσεις για τη Formula 1"
+      articles={articles}
+      pagination={pagination}
+      latestNews={latestNews}
+      hotNews={hotNews}
+    />
   );
 }
-

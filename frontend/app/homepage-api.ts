@@ -3,6 +3,16 @@
  */
 
 import { NewsArticle } from "@/types";
+import { getImageUrl, getTimeAgo } from "@/lib/sports-api";
+import { richtextToPlainText } from "@/lib/richtext-utils";
+
+// Re-export from focused API modules for backwards compatibility
+export type { BreakingNewsItem } from "@/lib/breaking-news-api";
+export { fetchBreakingNews } from "@/lib/breaking-news-api";
+export type { JournalistData } from "@/lib/journalist-api";
+export { fetchJournalists } from "@/lib/journalist-api";
+export type { HeroSectionData } from "@/lib/hero-api";
+export { fetchHeroSection } from "@/lib/hero-api";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
@@ -10,8 +20,15 @@ interface StrapiArticle {
   id: number;
   title?: string;
   subtitle?: string;
-  description?: string;
-  author?: string;
+  content?: unknown;  // Dynamic Zone with text blocks and video embeds
+  author?: {
+    id: number;
+    name: string;
+    slug: string;
+    avatar?: {
+      url: string;
+    } | null;
+  } | null;
   slug?: string;
   createdAt: string;
   publishedAt?: string;
@@ -21,51 +38,20 @@ interface StrapiArticle {
 }
 
 // Helper to transform articles to NewsArticle format
-function transformToNewsArticle(article: StrapiArticle, category: string, categoryColor: string): NewsArticle {
-  const getTimeAgo = (dateString: string): string => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    const intervals = {
-      year: 31536000,
-      month: 2592000,
-      week: 604800,
-      day: 86400,
-      hour: 3600,
-      minute: 60,
-    };
-
-    if (seconds < intervals.minute) return "just now";
-
-    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
-      const interval = Math.floor(seconds / secondsInUnit);
-      if (interval >= 1) {
-        return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
-      }
-    }
-
-    return "just now";
-  };
-
-  const getImageUrl = (imageUrl: string | undefined): string => {
-    if (!imageUrl) return '/no_back.png';
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-      return imageUrl;
-    }
-    return `${STRAPI_URL}${imageUrl}`;
-  };
+function transformToNewsArticle(article: StrapiArticle, category: string, categoryColor: string, now?: Date): NewsArticle {
+  const referenceTime = now || new Date();
 
   return {
     category,
     categoryColor,
     title: article.title || "Untitled",
     subtitle: article.subtitle,
-    description: article.description || "",
-    timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
-    author: article.author || "Unknown",
-    imageUrl: getImageUrl(article.image?.url),
+    description: article.content ? richtextToPlainText(article.content) : "",
+    timeAgo: getTimeAgo(article.publishedAt || article.createdAt, referenceTime),
+    author: article.author?.name || "Sports Holics",
+    imageUrl: getImageUrl(article.image?.url, '/no_back.png'),
     slug: article.slug,
+    date: article.publishedAt || article.createdAt,
   };
 }
 
@@ -74,7 +60,8 @@ async function fetchArticlesFromEndpoint(
   endpoint: string,
   category: string,
   categoryColor: string,
-  options: { isCarousel?: boolean; isMainNews?: boolean; isHomeSportSection?: boolean; limit?: number } = {}
+  options: { isCarousel?: boolean; isMainNews?: boolean; isHomeSportSection?: boolean; limit?: number } = {},
+  referenceTime?: Date
 ): Promise<NewsArticle[]> {
   try {
     const params = new URLSearchParams();
@@ -92,14 +79,16 @@ async function fetchArticlesFromEndpoint(
       params.append('pagination[limit]', String(options.limit));
     }
     
-    params.append('populate', 'image');
+    params.append('populate[0]', 'image');
+    params.append('populate[1]', 'author');
+    params.append('populate[2]', 'author.avatar');
     params.append('sort', 'createdAt:desc');
 
     const response = await fetch(
       `${STRAPI_URL}/api/${endpoint}?${params.toString()}`,
       {
         headers: { 'Content-Type': 'application/json' },
-        next: { revalidate: 60 },
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000),
       }
     );
@@ -108,9 +97,12 @@ async function fetchArticlesFromEndpoint(
 
     const data = await response.json();
     
+    // Use the same reference time for all articles to ensure consistency
+    const now = referenceTime || new Date();
+    
     if (data.data && Array.isArray(data.data)) {
       return data.data.map((article: StrapiArticle) => 
-        transformToNewsArticle(article, category, categoryColor)
+        transformToNewsArticle(article, category, categoryColor, now)
       );
     }
 
@@ -122,81 +114,271 @@ async function fetchArticlesFromEndpoint(
 }
 
 /**
- * Fetch carousel articles from all sports (Hot News)
+ * Fetch carousel articles from homepage configuration
+ * Falls back to old method if configuration is not set
  */
-export async function fetchCarouselNews(): Promise<NewsArticle[]> {
-  const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isCarousel: true, limit: 2 }),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isCarousel: true, limit: 2 }),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isCarousel: true, limit: 2 }),
-  ]);
+export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
+  
+  try {
+    // Try to fetch from homepage configuration
+    const params = new URLSearchParams();
+    params.append('populate[carouselFootball][populate][0]', 'image');
+    params.append('populate[carouselFootball][populate][1]', 'author');
+    params.append('populate[carouselFootball][populate][2]', 'author.avatar');
+    params.append('populate[carouselBasketball][populate][0]', 'image');
+    params.append('populate[carouselBasketball][populate][1]', 'author');
+    params.append('populate[carouselBasketball][populate][2]', 'author.avatar');
+    params.append('populate[carouselFormula1][populate][0]', 'image');
+    params.append('populate[carouselFormula1][populate][1]', 'author');
+    params.append('populate[carouselFormula1][populate][2]', 'author.avatar');
+    params.append('populate[carouselNews][populate][0]', 'image');
+    params.append('populate[carouselNews][populate][1]', 'author');
+    params.append('populate[carouselNews][populate][2]', 'author.avatar');
+    
+    const response = await fetch(
+      `${STRAPI_URL}/api/homepage-configuration?${params.toString()}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(5000),
+      }
+    );
 
-  return [...football, ...basketball, ...formula1].slice(0, 6);
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.data) {
+        const articles: NewsArticle[] = [];
+        
+        // Add football articles
+        if (data.data.carouselFootball && Array.isArray(data.data.carouselFootball)) {
+          data.data.carouselFootball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', now));
+          });
+        }
+        
+        // Add basketball articles
+        if (data.data.carouselBasketball && Array.isArray(data.data.carouselBasketball)) {
+          data.data.carouselBasketball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', now));
+          });
+        }
+        
+        // Add formula1 articles
+        if (data.data.carouselFormula1 && Array.isArray(data.data.carouselFormula1)) {
+          data.data.carouselFormula1.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'FORMULA 1', 'bg-red-100 text-red-800', now));
+          });
+        }
+        
+        // Add news articles
+        if (data.data.carouselNews && Array.isArray(data.data.carouselNews)) {
+          data.data.carouselNews.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'NEWS', 'bg-purple-100 text-purple-800', now));
+          });
+        }
+        
+        if (articles.length > 0) {
+          return articles.slice(0, 10);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to fetch carousel from homepage configuration:', error);
+  }
+
+  // Return empty array if no carousel configuration is set
+  return [];
 }
 
 /**
  * Fetch latest news from all sports (truly latest by date - no filter)
- * Returns 10 items for carousel
+ * Returns 10 items sorted by publication date (newest first)
  */
-export async function fetchLatestNews(): Promise<NewsArticle[]> {
+export async function fetchLatestNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 4 }),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 3 }),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 3 }),
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 10 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 10 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 10 }, now),
   ]);
 
-  // Combine all, sort by date (newest first), take 10
+  // Combine all articles
   const allArticles = [...football, ...basketball, ...formula1];
-  return allArticles.slice(0, 10);
+  
+  // Sort by date (newest first) - using publishedAt or createdAt
+  const sortedArticles = allArticles.sort((a, b) => {
+    const dateA = new Date(a.date || 0);
+    const dateB = new Date(b.date || 0);
+    return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
+  });
+  
+  return sortedArticles.slice(0, 10);
 }
 
 /**
- * Fetch main news from all sports (flagged as main news)
- * Returns up to 8 most recent articles with isMainNews flag
+ * Fetch main news from homepage configuration
+ * Falls back to old method if configuration is not set
  */
-export async function fetchMainNews(): Promise<NewsArticle[]> {
-  const [football, basketball, formula1] = await Promise.all([
-    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { isMainNews: true, limit: 4 }),
-    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { isMainNews: true, limit: 3 }),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { isMainNews: true, limit: 3 }),
-  ]);
+export async function fetchMainNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
+  
+  try {
+    // Try to fetch from homepage configuration
+    const params = new URLSearchParams();
+    params.append('populate[mainNewsFootball][populate][0]', 'image');
+    params.append('populate[mainNewsFootball][populate][1]', 'author');
+    params.append('populate[mainNewsFootball][populate][2]', 'author.avatar');
+    params.append('populate[mainNewsBasketball][populate][0]', 'image');
+    params.append('populate[mainNewsBasketball][populate][1]', 'author');
+    params.append('populate[mainNewsBasketball][populate][2]', 'author.avatar');
+    params.append('populate[mainNewsFormula1][populate][0]', 'image');
+    params.append('populate[mainNewsFormula1][populate][1]', 'author');
+    params.append('populate[mainNewsFormula1][populate][2]', 'author.avatar');
+    params.append('populate[mainNewsNews][populate][0]', 'image');
+    params.append('populate[mainNewsNews][populate][1]', 'author');
+    params.append('populate[mainNewsNews][populate][2]', 'author.avatar');
+    
+    const response = await fetch(
+      `${STRAPI_URL}/api/homepage-configuration?${params.toString()}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(5000),
+      }
+    );
 
-  return [...football, ...basketball, ...formula1].slice(0, 8);
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.data) {
+        const articles: NewsArticle[] = [];
+        
+        // Add football articles
+        if (data.data.mainNewsFootball && Array.isArray(data.data.mainNewsFootball)) {
+          data.data.mainNewsFootball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', now));
+          });
+        }
+        
+        // Add basketball articles
+        if (data.data.mainNewsBasketball && Array.isArray(data.data.mainNewsBasketball)) {
+          data.data.mainNewsBasketball.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', now));
+          });
+        }
+        
+        // Add formula1 articles
+        if (data.data.mainNewsFormula1 && Array.isArray(data.data.mainNewsFormula1)) {
+          data.data.mainNewsFormula1.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'FORMULA 1', 'bg-red-100 text-red-800', now));
+          });
+        }
+        
+        // Add news articles
+        if (data.data.mainNewsNews && Array.isArray(data.data.mainNewsNews)) {
+          data.data.mainNewsNews.forEach((article: StrapiArticle) => {
+            articles.push(transformToNewsArticle(article, 'NEWS', 'bg-purple-100 text-purple-800', now));
+          });
+        }
+        
+        return articles.slice(0, 10);
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to fetch main news from homepage configuration:', error);
+  }
+
+  // Return empty array - main news should only come from homepage-configuration
+  return [];
 }
 
 /**
  * Fetch homepage football section articles
  */
-export async function fetchHomepageFootball(): Promise<NewsArticle[]> {
+export async function fetchHomepageFootball(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'football-articles',
     'ΠΟΔΟΣΦΑΙΡΟ',
     'bg-green-100 text-green-800',
-    { isHomeSportSection: true, limit: 9 }
+    { limit: 9 },
+    now
   );
 }
 
 /**
  * Fetch homepage basketball section articles
  */
-export async function fetchHomepageBasketball(): Promise<NewsArticle[]> {
+export async function fetchHomepageBasketball(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'basketball-articles',
     'ΜΠΑΣΚΕΤ',
     'bg-orange-100 text-orange-800',
-    { isHomeSportSection: true, limit: 9 }
+    { limit: 9 },
+    now
   );
 }
 
 /**
  * Fetch homepage formula1 section articles
  */
-export async function fetchHomepageFormula1(): Promise<NewsArticle[]> {
+export async function fetchHomepageFormula1(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'formula1-articles',
     'FORMULA 1',
     'bg-red-100 text-red-800',
-    { isHomeSportSection: true, limit: 9 }
+    { limit: 9 },
+    now
   );
+}
+
+/**
+ * Fetch news articles for the homepage News section
+ */
+export async function fetchHomepageNews(referenceTime?: Date): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
+  return fetchArticlesFromEndpoint(
+    'news-articles',
+    'NEWS',
+    'bg-purple-100 text-purple-800',
+    { limit: 9 },
+    now
+  );
+}
+
+/**
+ * Blog Article Data Interface
+ */
+export interface BlogArticleData {
+  id: number;
+  title: string;
+  subtitle?: string;
+  slug: string;
+  content: string;
+  coverImageUrl: string;
+  category?: string;
+  readTime?: number;
+  publishedAt: string;
+  timeAgo: string;
+  journalist: {
+    id: number;
+    name: string;
+    slug: string;
+    avatarUrl: string;
+  };
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaImage?: {
+      url: string;
+    } | null;
+    keywords?: string;
+    metaRobots?: string;
+    canonicalURL?: string;
+  } | null;
 }
 

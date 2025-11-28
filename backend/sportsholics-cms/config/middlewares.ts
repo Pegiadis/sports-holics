@@ -34,9 +34,6 @@ export default ({ env }) => [
         'http://localhost:3000',     // Local development
         'http://localhost:1337',     // Local Strapi admin
         'https://*.vercel.app',       // Vercel deployments
-        // Add your production domain here:
-        // 'https://yourdomain.com',
-        // 'https://www.yourdomain.com',
       ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],

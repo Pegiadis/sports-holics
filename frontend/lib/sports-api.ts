@@ -8,6 +8,20 @@ const rawStrapiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost
 export const STRAPI_URL = rawStrapiUrl.endsWith('/') ? rawStrapiUrl.slice(0, -1) : rawStrapiUrl;
 
 /**
+ * SEO metadata structure
+ */
+export interface SeoData {
+  metaTitle?: string;
+  metaDescription?: string;
+  metaImage?: {
+    url: string;
+  } | null;
+  keywords?: string;
+  metaRobots?: string;
+  canonicalURL?: string;
+}
+
+/**
  * Base Strapi article structure (common fields across all sports)
  */
 export interface BaseStrapiArticle {
@@ -15,8 +29,15 @@ export interface BaseStrapiArticle {
   documentId: string;
   title: string;
   subtitle?: string;
-  description: string;
-  author: string;
+  content: unknown;  // Dynamic Zone with text blocks and video embeds
+  author: {
+    id: number;
+    name: string;
+    slug: string;
+    avatar?: {
+      url: string;
+    } | null;
+  } | null;
   slug: string;
   createdAt: string;
   updatedAt: string;
@@ -26,6 +47,7 @@ export interface BaseStrapiArticle {
     name: string;
     alternativeText: string | null;
   } | null;
+  seo?: SeoData | null;
 }
 
 /**
@@ -35,13 +57,17 @@ export interface BaseArticle {
   id: number;
   title: string;
   subtitle?: string;
-  description: string;
+  content: unknown;  // Dynamic Zone with text blocks and video embeds
   author: string;
+  authorName?: string;
+  authorSlug?: string;
+  authorAvatarUrl?: string;
   imageUrl: string;
   category: string;
   categoryColor: string;
   timeAgo: string;
   slug: string;
+  seo?: SeoData | null;
 }
 
 /**
@@ -62,37 +88,58 @@ export interface FetchOptions {
   isMainNews?: boolean;
   isHomeSportSection?: boolean;
   limit?: number;
+  page?: number;
+}
+
+/**
+ * Pagination metadata from Strapi
+ */
+export interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
+/**
+ * Response with pagination data
+ */
+export interface PaginatedResponse<T> {
+  articles: T[];
+  pagination: PaginationMeta;
 }
 
 /**
  * Calculate time ago from a date string
+ * @param dateString - The date to calculate from
+ * @param referenceTime - Optional reference time (defaults to now)
  */
-export function getTimeAgo(dateString: string): string {
+export function getTimeAgo(dateString: string, referenceTime?: Date): string {
   const date = new Date(dateString);
-  const now = new Date();
+  const now = referenceTime || new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  const intervals = {
-    year: 31536000,
-    month: 2592000,
-    week: 604800,
-    day: 86400,
-    hour: 3600,
-    minute: 60,
-  };
+  // Greek time intervals with singular and plural forms
+  const intervals: { singular: string; plural: string; seconds: number }[] = [
+    { singular: 'χρόνο', plural: 'χρόνια', seconds: 31536000 },
+    { singular: 'μήνα', plural: 'μήνες', seconds: 2592000 },
+    { singular: 'εβδομάδα', plural: 'εβδομάδες', seconds: 604800 },
+    { singular: 'μέρα', plural: 'μέρες', seconds: 86400 },
+    { singular: 'ώρα', plural: 'ώρες', seconds: 3600 },
+    { singular: 'λεπτό', plural: 'λεπτά', seconds: 60 },
+  ];
 
-  if (seconds < intervals.minute) {
-    return "just now";
-  }
+  if (seconds < 60) return "μόλις τώρα";
 
-  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
-    const interval = Math.floor(seconds / secondsInUnit);
-    if (interval >= 1) {
-      return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.seconds);
+    if (count >= 1) {
+      const unit = count === 1 ? interval.singular : interval.plural;
+      return `πριν ${count} ${unit}`;
     }
   }
 
-  return "just now";
+  return "μόλις τώρα";
 }
 
 /**
@@ -120,24 +167,40 @@ export function transformArticle<T extends BaseStrapiArticle>(
     id: article.id,
     title: article.title,
     subtitle: article.subtitle,
-    description: article.description,
-    author: article.author,
+    content: article.content,
+    author: article.author?.name || 'Sports Holics',
+    authorName: article.author?.name,
+    authorSlug: article.author?.slug,
+    authorAvatarUrl: article.author?.avatar?.url ? getImageUrl(article.author.avatar.url, '/default-avatar.jpg') : undefined,
     imageUrl: getImageUrl(article.image?.url, config.fallbackImage),
     category: config.category,
     categoryColor: config.categoryColor,
     timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
     slug: article.slug,
+    seo: article.seo,
   };
 }
 
 /**
- * Generic fetch function for sport articles
+ * Generic fetch function for sport articles (simple version without pagination metadata)
  * Works with any sport by passing the appropriate config
  */
 export async function fetchSportArticles<T extends BaseStrapiArticle>(
   config: SportConfig,
   options: FetchOptions = {}
 ): Promise<BaseArticle[]> {
+  const result = await fetchSportArticlesWithPagination<T>(config, options);
+  return result.articles;
+}
+
+/**
+ * Generic fetch function for sport articles with pagination metadata
+ * Works with any sport by passing the appropriate config
+ */
+export async function fetchSportArticlesWithPagination<T extends BaseStrapiArticle>(
+  config: SportConfig,
+  options: FetchOptions = {}
+): Promise<PaginatedResponse<BaseArticle>> {
   try {
     const params = new URLSearchParams();
     
@@ -153,12 +216,20 @@ export async function fetchSportArticles<T extends BaseStrapiArticle>(
     }
     
     // Add pagination
-    if (options.limit) {
-      params.append('pagination[limit]', String(options.limit));
-    }
+    const page = options.page || 1;
+    const pageSize = options.limit || 10;
+    params.append('pagination[page]', String(page));
+    params.append('pagination[pageSize]', String(pageSize));
     
-    // Always populate image and sort by date (newest first)
-    params.append('populate', 'image');
+    // Always populate image, SEO, author (journalist), dynamic zone content, and sort by date (newest first)
+    params.append('populate[0]', 'image');
+    params.append('populate[1]', 'seo');
+    params.append('populate[2]', 'seo.metaImage');
+    params.append('populate[3]', 'seo.metaSocial');
+    params.append('populate[4]', 'seo.metaSocial.image');
+    params.append('populate[5]', 'author');
+    params.append('populate[6]', 'author.avatar');
+    params.append('populate[7]', 'content');  // Populate dynamic zone
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -167,26 +238,40 @@ export async function fetchSportArticles<T extends BaseStrapiArticle>(
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
+        cache: 'no-store', // Real-time updates from CMS
         signal: AbortSignal.timeout(5000), // 5 second timeout
       }
     );
 
     if (!response.ok) {
       console.warn(`Strapi API returned ${response.status} for ${config.endpoint}`);
-      return [];
+      return {
+        articles: [],
+        pagination: { page: 1, pageSize: pageSize, pageCount: 0, total: 0 }
+      };
     }
 
     const data = await response.json();
     
-    if (data.data && Array.isArray(data.data)) {
-      return data.data.map((article: T) => transformArticle(article, config));
-    }
+    const articles = data.data && Array.isArray(data.data)
+      ? data.data.map((article: T) => transformArticle(article, config))
+      : [];
 
-    return [];
+    const pagination: PaginationMeta = data.meta?.pagination || {
+      page: 1,
+      pageSize: pageSize,
+      pageCount: Math.ceil(articles.length / pageSize),
+      total: articles.length
+    };
+
+    return { articles, pagination };
   } catch (error) {
     console.warn(`Failed to fetch ${config.endpoint}:`, error);
-    return [];
+    const pageSize = options.limit || 10;
+    return {
+      articles: [],
+      pagination: { page: 1, pageSize: pageSize, pageCount: 0, total: 0 }
+    };
   }
 }
 
@@ -212,6 +297,12 @@ export const ALL_SPORT_CONFIGS: SportConfig[] = [
     categoryColor: 'bg-red-100 text-red-800',
     fallbackImage: '/f1.png',
   },
+  {
+    endpoint: 'news-articles',
+    category: 'ΕΙΔΗΣΕΙΣ',
+    categoryColor: 'bg-blue-100 text-blue-800',
+    fallbackImage: '/default-news.jpg',
+  },
 ];
 
 /**
@@ -224,7 +315,14 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
     try {
       const params = new URLSearchParams();
       params.append('filters[slug][$eq]', slug);
-      params.append('populate', 'image');
+      params.append('populate[0]', 'image');
+      params.append('populate[1]', 'seo');
+      params.append('populate[2]', 'seo.metaImage');
+      params.append('populate[3]', 'seo.metaSocial');
+      params.append('populate[4]', 'seo.metaSocial.image');
+      params.append('populate[5]', 'author');
+      params.append('populate[6]', 'author.avatar');
+      params.append('populate[7]', 'content');  // Populate dynamic zone
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,
@@ -232,7 +330,7 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
           headers: {
             'Content-Type': 'application/json',
           },
-          next: { revalidate: 60 },
+          cache: 'no-store', // Real-time updates from CMS
           signal: AbortSignal.timeout(5000),
         }
       );
@@ -254,4 +352,45 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
   // Article not found in any sport
   return null;
 }
+
+/**
+ * Create sport-specific API functions from a config
+ * Factory function to reduce boilerplate in sport API files
+ */
+export function createSportApi(config: SportConfig) {
+  return {
+    fetchArticles: (options: FetchOptions = {}): Promise<BaseArticle[]> =>
+      fetchSportArticles(config, options),
+    fetchArticlesWithPagination: (options: FetchOptions = {}): Promise<PaginatedResponse<BaseArticle>> =>
+      fetchSportArticlesWithPagination(config, options),
+    config,
+  };
+}
+
+// Pre-configured sport APIs
+export const FOOTBALL_CONFIG: SportConfig = {
+  endpoint: 'football-articles',
+  category: 'ΠΟΔΟΣΦΑΙΡΟ',
+  categoryColor: 'bg-green-100 text-green-800',
+  fallbackImage: '/football.png',
+};
+
+export const BASKETBALL_CONFIG: SportConfig = {
+  endpoint: 'basketball-articles',
+  category: 'ΜΠΑΣΚΕΤ',
+  categoryColor: 'bg-orange-100 text-orange-800',
+  fallbackImage: '/basketball.png',
+};
+
+export const FORMULA1_CONFIG: SportConfig = {
+  endpoint: 'formula1-articles',
+  category: 'FORMULA 1',
+  categoryColor: 'bg-red-100 text-red-800',
+  fallbackImage: '/formula1.png',
+};
+
+// Create sport APIs
+export const footballApi = createSportApi(FOOTBALL_CONFIG);
+export const basketballApi = createSportApi(BASKETBALL_CONFIG);
+export const formula1Api = createSportApi(FORMULA1_CONFIG);
 

@@ -1,4 +1,5 @@
 export interface NewsArticle {
+  id?: number;
   category: string;
   categoryColor: string;
   title: string;
@@ -6,8 +7,10 @@ export interface NewsArticle {
   description: string;
   timeAgo: string;
   author: string;
-  imageUrl: string;
-  slug?: string;  // Optional for backward compatibility with mock data
+  image?: string; // For news articles from news API
+  imageUrl?: string; // For articles from sports API (backward compatibility)
+  slug?: string;
+  date?: string;
 }
 
 export interface TrendingNewsItem {
