@@ -207,6 +207,10 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
     params.append('populate[seo][populate][0]', 'metaImage');
     params.append('populate[seo][populate][1]', 'metaSocial');
     params.append('populate[seo][populate][2]', 'metaSocial.image');
+    // Populate dynamic zone with nested image in image-embed component
+    params.append('populate[content][on][article.text-block][populate]', '*');
+    params.append('populate[content][on][article.video-embed][populate]', '*');
+    params.append('populate[content][on][article.image-embed][populate]', 'image');
 
     const response = await fetch(
       `${STRAPI_URL}/api/blog-articles?${params.toString()}`,

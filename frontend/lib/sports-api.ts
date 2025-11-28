@@ -222,14 +222,15 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('pagination[pageSize]', String(pageSize));
     
     // Always populate image, SEO, author (journalist), dynamic zone content, and sort by date (newest first)
-    params.append('populate[0]', 'image');
-    params.append('populate[1]', 'seo');
-    params.append('populate[2]', 'seo.metaImage');
-    params.append('populate[3]', 'seo.metaSocial');
-    params.append('populate[4]', 'seo.metaSocial.image');
-    params.append('populate[5]', 'author');
-    params.append('populate[6]', 'author.avatar');
-    params.append('populate[7]', 'content');  // Populate dynamic zone
+    params.append('populate[image]', 'true');
+    params.append('populate[seo][populate][0]', 'metaImage');
+    params.append('populate[seo][populate][1]', 'metaSocial');
+    params.append('populate[seo][populate][2]', 'metaSocial.image');
+    params.append('populate[author][populate]', 'avatar');
+    // Populate dynamic zone with nested image in image-embed component
+    params.append('populate[content][on][article.text-block][populate]', '*');
+    params.append('populate[content][on][article.video-embed][populate]', '*');
+    params.append('populate[content][on][article.image-embed][populate]', 'image');
     params.append('sort', 'createdAt:desc');
     
     const response = await fetch(
@@ -315,14 +316,16 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
     try {
       const params = new URLSearchParams();
       params.append('filters[slug][$eq]', slug);
-      params.append('populate[0]', 'image');
-      params.append('populate[1]', 'seo');
-      params.append('populate[2]', 'seo.metaImage');
-      params.append('populate[3]', 'seo.metaSocial');
-      params.append('populate[4]', 'seo.metaSocial.image');
-      params.append('populate[5]', 'author');
-      params.append('populate[6]', 'author.avatar');
-      params.append('populate[7]', 'content');  // Populate dynamic zone
+      // Use consistent populate syntax - named fields
+      params.append('populate[image]', 'true');
+      params.append('populate[seo][populate][0]', 'metaImage');
+      params.append('populate[seo][populate][1]', 'metaSocial');
+      params.append('populate[seo][populate][2]', 'metaSocial.image');
+      params.append('populate[author][populate]', 'avatar');
+      // Populate dynamic zone with nested image in image-embed component
+      params.append('populate[content][on][article.text-block][populate]', '*');
+      params.append('populate[content][on][article.video-embed][populate]', '*');
+      params.append('populate[content][on][article.image-embed][populate]', 'image');
       
       const response = await fetch(
         `${STRAPI_URL}/api/${config.endpoint}?${params.toString()}`,
