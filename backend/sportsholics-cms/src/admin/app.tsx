@@ -1,5 +1,5 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
-
+// This is the admin panel for the Sports Holics CMS
 export default {
   config: {
     // Add custom locales if needed
