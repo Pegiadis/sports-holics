@@ -27,7 +27,7 @@ export default function HeroSection({
   backgroundImageUrl = "/216-scaled-1.jpg",
 }: HeroSectionProps) {
   return (
-    <section className="relative h-[450px] md:h-[550px] overflow-hidden group shadow-lg">
+    <section className="relative h-[500px] md:h-[650px] overflow-hidden group shadow-lg">
       {/* Background Image with subtle zoom effect on hover */}
       <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
         <Image
