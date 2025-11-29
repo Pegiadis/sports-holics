@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
+import SocialMediaScripts from "@/components/SocialMediaScripts";
 import { fetchArticleBySlug, getImageUrl, STRAPI_URL } from "@/lib/sports-api";
 import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 import { renderDynamicZone } from "@/lib/richtext-utils";
@@ -224,6 +225,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       </main>
 
       <Footer />
+      <SocialMediaScripts />
     </div>
   );
 }

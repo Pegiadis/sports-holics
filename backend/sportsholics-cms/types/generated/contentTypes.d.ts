@@ -485,7 +485,12 @@ export interface ApiBasketballArticleBasketballArticle
       'api::journalist.journalist'
     >;
     content: Schema.Attribute.DynamicZone<
-      ['article.text-block', 'article.video-embed', 'article.image-embed']
+      [
+        'article.text-block',
+        'article.video-embed',
+        'article.image-embed',
+        'article.social-media-embed',
+      ]
     > &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
@@ -532,7 +537,12 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
       ]
     >;
     content: Schema.Attribute.DynamicZone<
-      ['article.text-block', 'article.video-embed', 'article.image-embed']
+      [
+        'article.text-block',
+        'article.video-embed',
+        'article.image-embed',
+        'article.social-media-embed',
+      ]
     > &
       Schema.Attribute.Required;
     coverImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
@@ -616,7 +626,12 @@ export interface ApiFootballArticleFootballArticle
       'api::journalist.journalist'
     >;
     content: Schema.Attribute.DynamicZone<
-      ['article.text-block', 'article.video-embed', 'article.image-embed']
+      [
+        'article.text-block',
+        'article.video-embed',
+        'article.image-embed',
+        'article.social-media-embed',
+      ]
     > &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
@@ -658,7 +673,12 @@ export interface ApiFormula1ArticleFormula1Article
       'api::journalist.journalist'
     >;
     content: Schema.Attribute.DynamicZone<
-      ['article.text-block', 'article.video-embed', 'article.image-embed']
+      [
+        'article.text-block',
+        'article.video-embed',
+        'article.image-embed',
+        'article.social-media-embed',
+      ]
     > &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
@@ -868,7 +888,12 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
       'api::journalist.journalist'
     >;
     content: Schema.Attribute.DynamicZone<
-      ['article.text-block', 'article.video-embed', 'article.image-embed']
+      [
+        'article.text-block',
+        'article.video-embed',
+        'article.image-embed',
+        'article.social-media-embed',
+      ]
     > &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;

@@ -6,6 +6,7 @@
  */
 
 import { marked } from 'marked';
+import DOMPurify from 'isomorphic-dompurify';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
@@ -83,6 +84,64 @@ function extractYouTubeVideoId(url: string): string {
 }
 
 /**
+ * Sanitize HTML embed code from social media platforms
+ * Allows iframes and script tags needed for embeds while preventing XSS
+ */
+function sanitizeEmbedCode(embedCode: string, platform: string): string {
+  // Configure DOMPurify to allow embed-specific tags
+  const config = {
+    ADD_TAGS: ['iframe', 'blockquote', 'script'],
+    ADD_ATTR: [
+      'allow',
+      'allowfullscreen',
+      'frameborder',
+      'scrolling',
+      'data-tweet-id',
+      'data-media-id',
+      'cite',
+      'class',
+      'async',
+      'charset',
+      'src',
+      'width',
+      'height',
+      'style',
+      'data-instgrm-permalink',
+      'data-instgrm-captioned',
+      'data-video-id',
+    ],
+  };
+
+  // Platform-specific domain whitelist for security
+  const platformDomains: Record<string, string[]> = {
+    twitter: ['twitter.com', 'x.com', 'platform.twitter.com', 'cdn.syndication.twimg.com'],
+    facebook: ['facebook.com', 'fb.com', 'www.facebook.com', 'connect.facebook.net'],
+    tiktok: ['tiktok.com', 'www.tiktok.com'],
+    instagram: ['instagram.com', 'www.instagram.com', 'platform.instagram.com'],
+  };
+
+  // Sanitize with DOMPurify
+  const sanitized = DOMPurify.sanitize(embedCode, config);
+
+  // Additional validation: check URLs against whitelist using regex
+  const allowedDomains = platformDomains[platform] || [];
+  const srcPattern = /src=["']([^"']+)["']/g;
+  const matches = sanitized.matchAll(srcPattern);
+
+  for (const match of matches) {
+    const url = match[1];
+    const isAllowed = allowedDomains.some(domain => url.includes(domain));
+    if (!isAllowed && url.startsWith('http')) {
+      console.warn(`Blocked URL from untrusted domain: ${url}`);
+      // Return empty string if any URL is from untrusted domain
+      return '';
+    }
+  }
+
+  return sanitized;
+}
+
+/**
  * Render video block (YouTube embed)
  */
 function renderVideoBlock(block: RichtextBlock): string {
@@ -111,6 +170,42 @@ function renderVideoBlock(block: RichtextBlock): string {
           loading="lazy"
         ></iframe>
       </div>
+    </div>
+  `;
+}
+
+/**
+ * Render social media embed with platform-specific container
+ */
+function renderSocialMediaEmbed(component: SocialMediaEmbedComponent): string {
+  if (!component.embedCode) {
+    console.warn('Social media embed missing embedCode');
+    return '';
+  }
+
+  // Sanitize the embed code
+  const sanitized = sanitizeEmbedCode(component.embedCode, component.platform);
+
+  if (!sanitized) {
+    console.warn('Embed code failed sanitization');
+    return '';
+  }
+
+  // Optional caption
+  const caption = component.caption
+    ? `<figcaption class="text-center text-gray-600 mt-3 text-sm italic">${component.caption}</figcaption>`
+    : '';
+
+  // Platform-specific CSS class
+  const platformClass = `social-embed-${component.platform}`;
+
+  // Render the embed
+  return `
+    <div class="social-media-embed-wrapper ${platformClass}" data-platform="${component.platform}">
+      <div class="social-media-embed-container">
+        ${sanitized}
+      </div>
+      ${caption}
     </div>
   `;
 }
@@ -270,7 +365,15 @@ export interface ImageEmbedComponent {
   altText?: string;
 }
 
-export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent | ImageEmbedComponent;
+export interface SocialMediaEmbedComponent {
+  __component: 'article.social-media-embed';
+  id: number;
+  platform: 'twitter' | 'facebook' | 'tiktok' | 'instagram';
+  embedCode: string;
+  caption?: string;
+}
+
+export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent | ImageEmbedComponent | SocialMediaEmbedComponent;
 
 /**
  * Render Dynamic Zone components (Text Blocks, Video Embeds, Image Embeds)
@@ -343,8 +446,8 @@ export function renderDynamicZone(components: unknown): string {
 
         return `
           <figure class="image-embed-wrapper my-8">
-            <img 
-              src="${imageUrl}" 
+            <img
+              src="${imageUrl}"
               alt="${altAttribute}"
               loading="lazy"
               class="w-full h-auto rounded-lg shadow-md"
@@ -352,6 +455,9 @@ export function renderDynamicZone(components: unknown): string {
             ${imageCaption}
           </figure>
         `;
+
+      case 'article.social-media-embed':
+        return renderSocialMediaEmbed(comp as SocialMediaEmbedComponent);
 
       default:
         console.warn('Unknown component type:', (component as any).__component);

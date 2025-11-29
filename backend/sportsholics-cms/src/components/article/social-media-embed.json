@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_article_social_media_embeds",
+  "info": {
+    "displayName": "Social Media Embed",
+    "icon": "share-alt",
+    "description": "Embed social media posts from Twitter/X, Facebook, TikTok, Instagram"
+  },
+  "options": {},
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": ["twitter", "facebook", "tiktok", "instagram"],
+      "required": true,
+      "default": "twitter"
+    },
+    "embedCode": {
+      "type": "text",
+      "required": true
+    },
+    "caption": {
+      "type": "string",
+      "required": false
+    }
+  }
+}
