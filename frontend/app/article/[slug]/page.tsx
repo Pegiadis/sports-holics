@@ -124,13 +124,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="lg:col-span-3">
             <article className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Hero Image */}
-          <div className="relative w-full h-96">
+          <div className="relative w-full h-[450px] md:h-[550px]">
             <Image
               src={article.imageUrl}
               alt={article.title}
               fill
               sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover"
+              className="object-cover object-center"
               priority
             />
           </div>
