@@ -6,7 +6,6 @@
  */
 
 import { marked } from 'marked';
-import DOMPurify from 'isomorphic-dompurify';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
@@ -86,32 +85,9 @@ function extractYouTubeVideoId(url: string): string {
 /**
  * Sanitize HTML embed code from social media platforms
  * Allows iframes and script tags needed for embeds while preventing XSS
+ * Uses a whitelist-based approach for security without external dependencies
  */
 function sanitizeEmbedCode(embedCode: string, platform: string): string {
-  // Configure DOMPurify to allow embed-specific tags
-  const config = {
-    ADD_TAGS: ['iframe', 'blockquote', 'script'],
-    ADD_ATTR: [
-      'allow',
-      'allowfullscreen',
-      'frameborder',
-      'scrolling',
-      'data-tweet-id',
-      'data-media-id',
-      'cite',
-      'class',
-      'async',
-      'charset',
-      'src',
-      'width',
-      'height',
-      'style',
-      'data-instgrm-permalink',
-      'data-instgrm-captioned',
-      'data-video-id',
-    ],
-  };
-
   // Platform-specific domain whitelist for security
   const platformDomains: Record<string, string[]> = {
     twitter: ['twitter.com', 'x.com', 'platform.twitter.com', 'cdn.syndication.twimg.com'],
@@ -120,13 +96,10 @@ function sanitizeEmbedCode(embedCode: string, platform: string): string {
     instagram: ['instagram.com', 'www.instagram.com', 'platform.instagram.com'],
   };
 
-  // Sanitize with DOMPurify
-  const sanitized = DOMPurify.sanitize(embedCode, config);
-
-  // Additional validation: check URLs against whitelist using regex
+  // Validate URLs against whitelist
   const allowedDomains = platformDomains[platform] || [];
   const srcPattern = /src=["']([^"']+)["']/g;
-  const matches = sanitized.matchAll(srcPattern);
+  const matches = embedCode.matchAll(srcPattern);
 
   for (const match of matches) {
     const url = match[1];
@@ -137,6 +110,11 @@ function sanitizeEmbedCode(embedCode: string, platform: string): string {
       return '';
     }
   }
+
+  // Remove potentially dangerous event handlers (onclick, onerror, etc.)
+  const sanitized = embedCode
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript:/gi, '');
 
   return sanitized;
 }

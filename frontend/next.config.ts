@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
     // Optional: also ignore TypeScript errors during build
     // ignoreBuildErrors: true,
   },
-  serverExternalPackages: ['isomorphic-dompurify', 'jsdom'],
   images: {
     remotePatterns: [
       {

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
 import SocialMediaScripts from "@/components/SocialMediaScripts";
+import ArticleContent from "@/components/ArticleContent";
 import { fetchArticleBySlug, getImageUrl, STRAPI_URL } from "@/lib/sports-api";
 import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 import { renderDynamicZone } from "@/lib/richtext-utils";
@@ -204,9 +205,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
 
             {/* Article Body */}
-            <div
+            <ArticleContent 
+              html={renderDynamicZone(article.content)}
               className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: renderDynamicZone(article.content) }}
             />
 
             {/* Share Section */}
