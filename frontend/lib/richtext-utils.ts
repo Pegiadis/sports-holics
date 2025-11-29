@@ -83,6 +83,43 @@ function extractYouTubeVideoId(url: string): string {
 }
 
 /**
+ * Sanitize HTML embed code from social media platforms
+ * Allows iframes and script tags needed for embeds while preventing XSS
+ * Uses a whitelist-based approach for security without external dependencies
+ */
+function sanitizeEmbedCode(embedCode: string, platform: string): string {
+  // Platform-specific domain whitelist for security
+  const platformDomains: Record<string, string[]> = {
+    twitter: ['twitter.com', 'x.com', 'platform.twitter.com', 'cdn.syndication.twimg.com'],
+    facebook: ['facebook.com', 'fb.com', 'www.facebook.com', 'connect.facebook.net'],
+    tiktok: ['tiktok.com', 'www.tiktok.com'],
+    instagram: ['instagram.com', 'www.instagram.com', 'platform.instagram.com'],
+  };
+
+  // Validate URLs against whitelist
+  const allowedDomains = platformDomains[platform] || [];
+  const srcPattern = /src=["']([^"']+)["']/g;
+  const matches = embedCode.matchAll(srcPattern);
+
+  for (const match of matches) {
+    const url = match[1];
+    const isAllowed = allowedDomains.some(domain => url.includes(domain));
+    if (!isAllowed && url.startsWith('http')) {
+      console.warn(`Blocked URL from untrusted domain: ${url}`);
+      // Return empty string if any URL is from untrusted domain
+      return '';
+    }
+  }
+
+  // Remove potentially dangerous event handlers (onclick, onerror, etc.)
+  const sanitized = embedCode
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript:/gi, '');
+
+  return sanitized;
+}
+
+/**
  * Render video block (YouTube embed)
  */
 function renderVideoBlock(block: RichtextBlock): string {
@@ -111,6 +148,42 @@ function renderVideoBlock(block: RichtextBlock): string {
           loading="lazy"
         ></iframe>
       </div>
+    </div>
+  `;
+}
+
+/**
+ * Render social media embed with platform-specific container
+ */
+function renderSocialMediaEmbed(component: SocialMediaEmbedComponent): string {
+  if (!component.embedCode) {
+    console.warn('Social media embed missing embedCode');
+    return '';
+  }
+
+  // Sanitize the embed code
+  const sanitized = sanitizeEmbedCode(component.embedCode, component.platform);
+
+  if (!sanitized) {
+    console.warn('Embed code failed sanitization');
+    return '';
+  }
+
+  // Optional caption
+  const caption = component.caption
+    ? `<figcaption class="text-center text-gray-600 mt-3 text-sm italic">${component.caption}</figcaption>`
+    : '';
+
+  // Platform-specific CSS class
+  const platformClass = `social-embed-${component.platform}`;
+
+  // Render the embed
+  return `
+    <div class="social-media-embed-wrapper ${platformClass}" data-platform="${component.platform}">
+      <div class="social-media-embed-container">
+        ${sanitized}
+      </div>
+      ${caption}
     </div>
   `;
 }
@@ -270,7 +343,15 @@ export interface ImageEmbedComponent {
   altText?: string;
 }
 
-export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent | ImageEmbedComponent;
+export interface SocialMediaEmbedComponent {
+  __component: 'article.social-media-embed';
+  id: number;
+  platform: 'twitter' | 'facebook' | 'tiktok' | 'instagram';
+  embedCode: string;
+  caption?: string;
+}
+
+export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent | ImageEmbedComponent | SocialMediaEmbedComponent;
 
 /**
  * Render Dynamic Zone components (Text Blocks, Video Embeds, Image Embeds)
@@ -343,8 +424,8 @@ export function renderDynamicZone(components: unknown): string {
 
         return `
           <figure class="image-embed-wrapper my-8">
-            <img 
-              src="${imageUrl}" 
+            <img
+              src="${imageUrl}"
               alt="${altAttribute}"
               loading="lazy"
               class="w-full h-auto rounded-lg shadow-md"
@@ -352,6 +433,9 @@ export function renderDynamicZone(components: unknown): string {
             ${imageCaption}
           </figure>
         `;
+
+      case 'article.social-media-embed':
+        return renderSocialMediaEmbed(comp as SocialMediaEmbedComponent);
 
       default:
         console.warn('Unknown component type:', (component as any).__component);

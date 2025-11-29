@@ -6,6 +6,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
+import SocialMediaScripts from "@/components/SocialMediaScripts";
+import ArticleContent from "@/components/ArticleContent";
 import { fetchArticleBySlug, getImageUrl, STRAPI_URL } from "@/lib/sports-api";
 import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 import { renderDynamicZone } from "@/lib/richtext-utils";
@@ -123,13 +125,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="lg:col-span-3">
             <article className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Hero Image */}
-          <div className="relative w-full h-96">
+          <div className="relative w-full h-[450px] md:h-[550px]">
             <Image
               src={article.imageUrl}
               alt={article.title}
               fill
               sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover"
+              className="object-cover object-center"
               priority
             />
           </div>
@@ -203,9 +205,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </div>
 
             {/* Article Body */}
-            <div
+            <ArticleContent 
+              html={renderDynamicZone(article.content)}
               className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: renderDynamicZone(article.content) }}
             />
 
             {/* Share Section */}
@@ -224,6 +226,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       </main>
 
       <Footer />
+      <SocialMediaScripts />
     </div>
   );
 }

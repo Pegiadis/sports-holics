@@ -22,7 +22,7 @@
     },
     "content": {
       "type": "dynamiczone",
-      "components": ["article.text-block", "article.video-embed", "article.image-embed"],
+      "components": ["article.text-block", "article.video-embed", "article.image-embed", "article.social-media-embed"],
       "required": true
     },
     "author": {

@@ -14,6 +14,24 @@ export interface ArticleImageEmbed extends Struct.ComponentSchema {
   };
 }
 
+export interface ArticleSocialMediaEmbed extends Struct.ComponentSchema {
+  collectionName: 'components_article_social_media_embeds';
+  info: {
+    description: 'Embed social media posts from Twitter/X, Facebook, TikTok, Instagram';
+    displayName: 'Social Media Embed';
+    icon: 'share-alt';
+  };
+  attributes: {
+    caption: Schema.Attribute.String;
+    embedCode: Schema.Attribute.Text & Schema.Attribute.Required;
+    platform: Schema.Attribute.Enumeration<
+      ['twitter', 'facebook', 'tiktok', 'instagram']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'twitter'>;
+  };
+}
+
 export interface ArticleTextBlock extends Struct.ComponentSchema {
   collectionName: 'components_article_text_blocks';
   info: {
@@ -90,6 +108,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'article.image-embed': ArticleImageEmbed;
+      'article.social-media-embed': ArticleSocialMediaEmbed;
       'article.text-block': ArticleTextBlock;
       'article.video-embed': ArticleVideoEmbed;
       'shared.meta-social': SharedMetaSocial;

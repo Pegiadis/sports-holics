@@ -118,13 +118,13 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
         {/* Article Container */}
         <article className="bg-white rounded-xl shadow-lg overflow-hidden mb-12">
           {/* Cover Image */}
-          <div className="relative w-full h-96">
+          <div className="relative w-full h-[450px] md:h-[550px]">
             <Image
               src={article.coverImageUrl}
               alt={article.title}
               fill
               sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover"
+              className="object-cover object-center"
               priority
             />
           </div>

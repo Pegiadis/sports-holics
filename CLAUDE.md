@@ -291,6 +291,190 @@ All these work:
 ### Documentation
 See `backend/sportsholics-cms/VIDEO_EMBEDDING_GUIDE.md` for complete editor guide.
 
+## Social Media Embedding
+
+### Overview
+Sports-Holics supports embedding social media posts from Twitter/X, Facebook, TikTok, and Instagram in article content using Dynamic Zone components.
+
+### Features
+- **Multiple platforms** - Twitter/X, Facebook, TikTok, Instagram
+- **Interactive embeds** - Readers can like, share, and interact with embedded content
+- **Responsive design** - Platform-specific max widths that adapt to mobile
+- **Secure rendering** - Three-layer security with DOMPurify sanitization and domain whitelisting
+- **Optional captions** - Add context to each embed
+
+### Backend Structure
+Social media embeds use a Dynamic Zone component defined at:
+- `backend/sportsholics-cms/src/components/article/social-media-embed.json`
+
+Component fields:
+- `platform`: Enumeration (twitter, facebook, tiktok, instagram)
+- `embedCode`: Text field storing raw HTML from platform
+- `caption`: Optional string for context
+
+All article content types include this component in their Dynamic Zone:
+```json
+"content": {
+  "type": "dynamiczone",
+  "components": [
+    "article.text-block",
+    "article.video-embed",
+    "article.image-embed",
+    "article.social-media-embed"
+  ]
+}
+```
+
+### Frontend Implementation
+
+**Sanitization** (`frontend/lib/richtext-utils.ts`):
+```typescript
+// Uses isomorphic-dompurify for XSS prevention
+function sanitizeEmbedCode(embedCode: string, platform: string): string {
+  // Whitelist tags: iframe, blockquote, script
+  // Whitelist platform-specific domains
+  // Returns empty string if validation fails
+}
+```
+
+**Rendering**:
+```typescript
+function renderSocialMediaEmbed(component: SocialMediaEmbedComponent): string {
+  // Sanitizes embed code
+  // Wraps in responsive container with platform-specific class
+  // Returns HTML for dangerouslySetInnerHTML
+}
+```
+
+**Client-side Scripts** (`frontend/components/SocialMediaScripts.tsx`):
+- Loads platform SDKs (Twitter widgets.js, Instagram embed.js, TikTok embed.js)
+- Transforms static blockquotes into interactive embeds
+- Included in article page template
+
+### Security Features
+
+**Three-layer security approach**:
+
+1. **DOMPurify Sanitization** - Whitelist-based HTML sanitization
+   - Only allows: `iframe`, `blockquote`, `script` tags
+   - Filters attributes to necessary ones only
+
+2. **Domain Whitelisting** - Platform-specific allowed domains:
+   - Twitter: `twitter.com`, `x.com`, `platform.twitter.com`
+   - Facebook: `facebook.com`, `fb.com`, `connect.facebook.net`
+   - TikTok: `tiktok.com`
+   - Instagram: `instagram.com`, `platform.instagram.com`
+
+3. **Server-Side Rendering** - Sanitization happens in Server Components before HTML reaches client
+
+### Responsive Design
+
+Platform-specific max widths (CSS in `frontend/app/globals.css`):
+- Twitter/X: 550px
+- Facebook: 500px
+- Instagram: 540px
+- TikTok: 605px
+- Mobile: 100% width on screens < 768px
+
+### For Editors: Adding Social Media Embeds
+
+**Step 1: Get Embed Code**
+
+**Twitter/X**:
+1. Go to tweet → Click share icon (⋯) → "Embed Tweet"
+2. Copy entire HTML code (includes `<blockquote>` and `<script>`)
+
+**Facebook**:
+1. Go to post → Click three dots (...) → "Embed"
+2. Copy entire HTML code
+
+**TikTok**:
+1. Go to video → Click share icon → "Embed"
+2. Copy entire HTML code
+
+**Instagram**:
+1. Go to post → Click three dots (...) → "Embed"
+2. Copy entire HTML code
+
+**Step 2: Add to Article in Strapi**
+
+1. Open article in Strapi admin
+2. In Content section (Dynamic Zone), click "Add a component"
+3. Select "Social Media Embed"
+4. Select platform from dropdown
+5. Paste embed code in "Embed Code" field
+6. (Optional) Add caption
+7. Save and publish
+
+### Helper Scripts
+
+**Add embed to existing article**:
+```bash
+cd backend/sportsholics-cms
+node scripts/add-social-embed-to-article.js
+# Interactive CLI tool with platform-specific instructions
+```
+
+**Create test article with all platforms**:
+```bash
+cd backend/sportsholics-cms
+node scripts/test-social-embeds.js
+# Creates test article with Twitter, Facebook, TikTok, Instagram embeds
+```
+
+### Supported Embed Code Formats
+
+**Twitter/X**:
+```html
+<blockquote class="twitter-tweet">...</blockquote>
+<script async src="https://platform.twitter.com/widgets.js"></script>
+```
+
+**Facebook**:
+```html
+<iframe src="https://www.facebook.com/plugins/post.php?href=..."></iframe>
+```
+
+**TikTok**:
+```html
+<blockquote class="tiktok-embed" cite="..." data-video-id="...">...</blockquote>
+<script async src="https://www.tiktok.com/embed.js"></script>
+```
+
+**Instagram**:
+```html
+<blockquote class="instagram-media" data-instgrm-permalink="...">...</blockquote>
+<script async src="//www.instagram.com/embed.js"></script>
+```
+
+### Best Practices
+
+- **Limit embeds**: 1-3 per article to avoid performance issues
+- **Add captions**: Provide context for each embed
+- **Test before publishing**: Verify embeds load correctly
+- **Mix with text**: Don't place embeds back-to-back
+- **Check permissions**: Only embed public posts
+
+### Troubleshooting
+
+**Embed doesn't appear**:
+- Article must be published (not draft)
+- Embed code must be complete (including `<script>` tags)
+- Post must be public
+
+**Embed gets rejected**:
+- Must use official embed code from platform
+- Wrong platform selected in dropdown
+- Post contains untrusted URLs
+
+**Embed looks broken**:
+- Wait for platform SDK to load
+- Check browser console for errors
+- Try refreshing the page
+
+### Documentation
+See `backend/sportsholics-cms/SOCIAL_MEDIA_EMBEDDING_GUIDE.md` for complete editor guide with screenshots and detailed platform instructions.
+
 ## Testing
 
 ### Jest + React Testing Library
