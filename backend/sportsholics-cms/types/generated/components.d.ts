@@ -32,6 +32,20 @@ export interface ArticleSocialMediaEmbed extends Struct.ComponentSchema {
   };
 }
 
+export interface ArticleTable extends Struct.ComponentSchema {
+  collectionName: 'components_article_tables';
+  info: {
+    description: 'Import table data from CSV/Excel file';
+    displayName: 'Table';
+    icon: 'table';
+  };
+  attributes: {
+    caption: Schema.Attribute.String;
+    tableData: Schema.Attribute.JSON & Schema.Attribute.Required;
+    title: Schema.Attribute.String;
+  };
+}
+
 export interface ArticleTextBlock extends Struct.ComponentSchema {
   collectionName: 'components_article_text_blocks';
   info: {
@@ -109,6 +123,7 @@ declare module '@strapi/strapi' {
     export interface ComponentSchemas {
       'article.image-embed': ArticleImageEmbed;
       'article.social-media-embed': ArticleSocialMediaEmbed;
+      'article.table': ArticleTable;
       'article.text-block': ArticleTextBlock;
       'article.video-embed': ArticleVideoEmbed;
       'shared.meta-social': SharedMetaSocial;

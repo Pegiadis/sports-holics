@@ -439,6 +439,119 @@ body {
   }
 }
 
+/* Article Table Styles */
+.table-wrapper {
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.table-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  padding-left: 0.25rem;
+}
+
+.table-scroll-container {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  background: #ffffff;
+}
+
+.article-table caption {
+  caption-side: bottom;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+  text-align: left;
+  background: #f9fafb;
+}
+
+.article-table th {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: #ffffff;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.875rem 1rem;
+  white-space: nowrap;
+}
+
+.article-table th:first-child {
+  border-top-left-radius: 0.5rem;
+}
+
+.article-table th:last-child {
+  border-top-right-radius: 0.5rem;
+}
+
+.article-table td {
+  padding: 0.75rem 1rem;
+  color: #374151;
+  vertical-align: top;
+}
+
+/* Bordered variant */
+.article-table.table-bordered th,
+.article-table.table-bordered td {
+  border: 1px solid #e5e7eb;
+}
+
+.article-table.table-bordered th {
+  border-color: #4b5563;
+}
+
+/* Striped variant */
+.article-table.table-striped tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.article-table.table-striped tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+/* Responsive table on mobile */
+@media (max-width: 640px) {
+  .article-table th,
+  .article-table td {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .table-title {
+    font-size: 1rem;
+  }
+}
+
+/* Prose context for tables */
+.prose .table-wrapper {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+/* Sports-themed table accent */
+.article-table thead tr {
+  position: relative;
+}
+
+.article-table thead tr::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 50%, #1e40af 100%);
+}
+
 .prose-lg {
   font-size: 1.125em;
   line-height: 1.7777778;

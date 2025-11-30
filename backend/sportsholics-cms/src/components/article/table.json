@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_article_tables",
+  "info": {
+    "displayName": "Table",
+    "icon": "table",
+    "description": "Import table data from CSV/Excel file"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": false
+    },
+    "caption": {
+      "type": "string",
+      "required": false
+    },
+    "tableData": {
+      "type": "json",
+      "required": true
+    }
+  }
+}
+

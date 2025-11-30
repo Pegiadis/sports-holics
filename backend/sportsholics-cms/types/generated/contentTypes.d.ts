@@ -490,6 +490,7 @@ export interface ApiBasketballArticleBasketballArticle
         'article.video-embed',
         'article.image-embed',
         'article.social-media-embed',
+        'article.table',
       ]
     > &
       Schema.Attribute.Required;
@@ -631,6 +632,7 @@ export interface ApiFootballArticleFootballArticle
         'article.video-embed',
         'article.image-embed',
         'article.social-media-embed',
+        'article.table',
       ]
     > &
       Schema.Attribute.Required;
@@ -678,6 +680,7 @@ export interface ApiFormula1ArticleFormula1Article
         'article.video-embed',
         'article.image-embed',
         'article.social-media-embed',
+        'article.table',
       ]
     > &
       Schema.Attribute.Required;
@@ -893,6 +896,7 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
         'article.video-embed',
         'article.image-embed',
         'article.social-media-embed',
+        'article.table',
       ]
     > &
       Schema.Attribute.Required;
