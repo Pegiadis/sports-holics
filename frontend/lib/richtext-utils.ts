@@ -30,7 +30,8 @@ interface LinkNode {
 // Child can be text or link
 type InlineNode = TextNode | LinkNode;
 
-// Video block interface
+// Video block interface (used in RichtextBlock type union)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface VideoBlock {
   type: 'video';
   provider: 'youtube';
@@ -351,7 +352,18 @@ export interface SocialMediaEmbedComponent {
   caption?: string;
 }
 
-export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent | ImageEmbedComponent | SocialMediaEmbedComponent;
+export interface TableComponent {
+  __component: 'article.table';
+  id: number;
+  title?: string;
+  caption?: string;
+  tableData: {
+    headers: string[];
+    rows: string[][];
+  };
+}
+
+export type DynamicZoneComponent = TextBlockComponent | VideoEmbedComponent | ImageEmbedComponent | SocialMediaEmbedComponent | TableComponent;
 
 /**
  * Render Dynamic Zone components (Text Blocks, Video Embeds, Image Embeds)
@@ -437,10 +449,78 @@ export function renderDynamicZone(components: unknown): string {
       case 'article.social-media-embed':
         return renderSocialMediaEmbed(comp as SocialMediaEmbedComponent);
 
+      case 'article.table':
+        return renderTableComponent(comp as TableComponent);
+
       default:
-        console.warn('Unknown component type:', (component as any).__component);
+        console.warn('Unknown component type:', (component as Record<string, unknown>).__component);
         return '';
     }
   }).join('');
+}
+
+/**
+ * Render table component
+ * 
+ * Data format from Excel/CSV import:
+ * {
+ *   headers: ["Team", "Points", "Wins"],
+ *   rows: [["Ολυμπιακός", "45", "15"], ["Παναθηναϊκός", "42", "14"], ...]
+ * }
+ */
+function renderTableComponent(component: TableComponent): string {
+  const { title, caption, tableData } = component;
+
+  // Escape HTML in cell content
+  const escapeHtml = (text: string): string => {
+    if (!text) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  };
+
+  // Handle missing or invalid data
+  if (!tableData || !tableData.headers || !tableData.rows) {
+    console.warn('Table component missing tableData');
+    return '';
+  }
+
+  // Get headers and rows
+  const headers = tableData.headers || [];
+  const rows = tableData.rows || [];
+
+  // Always use striped and bordered styles
+  const tableClasses = 'article-table table-striped table-bordered';
+
+  // Render table header
+  const headerRow = headers.length > 0
+    ? `<thead><tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>`
+    : '';
+
+  // Render table body
+  const bodyRows = rows.length > 0
+    ? `<tbody>${rows.map(row => 
+        `<tr>${(Array.isArray(row) ? row : []).map(cell => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`
+      ).join('')}</tbody>`
+    : '';
+
+  // Title and caption
+  const titleHtml = title ? `<div class="table-title">${escapeHtml(title)}</div>` : '';
+  const captionHtml = caption ? `<caption>${escapeHtml(caption)}</caption>` : '';
+
+  return `
+    <div class="table-wrapper">
+      ${titleHtml}
+      <div class="table-scroll-container">
+        <table class="${tableClasses}">
+          ${captionHtml}
+          ${headerRow}
+          ${bodyRows}
+        </table>
+      </div>
+    </div>
+  `;
 }
 
