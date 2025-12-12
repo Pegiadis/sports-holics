@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: "Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις",
   keywords: "αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Formula 1, Ελλάδα",
   icons: {
-    icon: '/soccer_ball2.svg', // Sports icon - perfect for a sports site!
+    icon: '/no_back.svg', // Sports icon - perfect for a sports site!
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {

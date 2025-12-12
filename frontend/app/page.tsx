@@ -120,10 +120,10 @@ export default async function Home() {
 
         <SectionDivider variant="sporty" />
         {carouselArticles.length > 0 && (
-          <>
+          <div className="mt-8">
             <SectionTitle title="Σημαντικά Νέα" icon="/news-2.png" />
             <NewsCarousel articles={carouselArticles} />
-          </>
+          </div>
         )}
 
         {/* Section Divider */}

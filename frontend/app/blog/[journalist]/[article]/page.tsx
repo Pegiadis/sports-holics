@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButtons from "@/components/ShareButtons";
 import { fetchBlogArticleBySlug, fetchBlogArticlesByJournalist } from "../../api";
-import { richtextToHtml } from "@/lib/richtext-utils";
+import { renderDynamicZone } from "@/lib/richtext-utils";
 import { getImageUrl } from "@/lib/sports-api";
 
 interface BlogArticlePageProps {
@@ -183,7 +183,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             {/* Article Body */}
             <div 
               className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-img:shadow-md"
-              dangerouslySetInnerHTML={{ __html: richtextToHtml(article.content) }}
+              dangerouslySetInnerHTML={{ __html: renderDynamicZone(article.content) }}
             />
 
             {/* Share Section */}
