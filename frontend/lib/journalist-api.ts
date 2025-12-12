@@ -20,14 +20,22 @@ export interface JournalistData {
 
 /**
  * Fetch active journalists
+ * @param slugs - Optional array of slugs to filter specific journalists
  */
-export async function fetchJournalists(): Promise<JournalistData[]> {
+export async function fetchJournalists(slugs?: string[]): Promise<JournalistData[]> {
   try {
     const params = new URLSearchParams();
     params.append('filters[isActive][$eq]', 'true');
     params.append('sort[0]', 'priority:desc');
     params.append('sort[1]', 'name:asc');
     params.append('populate', 'avatar');
+
+    // Add slug filter if provided
+    if (slugs && slugs.length > 0) {
+      slugs.forEach((slug, index) => {
+        params.append(`filters[slug][$in][${index}]`, slug);
+      });
+    }
 
     const response = await fetch(
       `${STRAPI_URL}/api/journalists?${params.toString()}`,

@@ -70,7 +70,7 @@ export default async function Home() {
     fetchCarouselNews(now),
     fetchMainNews(now),
     fetchLatestNews(now),
-    fetchJournalists(),
+    fetchJournalists(['aggelos-ntentas', 'giorgos-koyroy']),
     fetchHomepageNews(now),
     fetchHomepageFootball(now),
     fetchHomepageBasketball(now),
@@ -120,10 +120,10 @@ export default async function Home() {
 
         <SectionDivider variant="sporty" />
         {carouselArticles.length > 0 && (
-          <>
+          <div className="mt-8">
             <SectionTitle title="Σημαντικά Νέα" icon="/news-2.png" />
             <NewsCarousel articles={carouselArticles} />
-          </>
+          </div>
         )}
 
         {/* Section Divider */}
@@ -204,13 +204,6 @@ export default async function Home() {
                 <NewsCard key={index} {...news} />
               ))}
             </div>
-            {newsArticles.length > 3 && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 mt-8">
-                {newsArticles.slice(3, 6).map((news, index) => (
-                  <NewsCard key={index} {...news} size="small" />
-                ))}
-              </div>
-            )}
           </section>
         )}
 

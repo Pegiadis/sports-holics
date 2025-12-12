@@ -179,8 +179,8 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
       coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
       category: article.category || '',
       readTime: article.readTime || 5,
-      publishedAt: article.publishedAt || new Date().toISOString(),
-      timeAgo: getTimeAgo(article.publishedAt || new Date().toISOString()),
+      publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
+      timeAgo: getTimeAgo(article.createdAt),
       journalist: {
         id: article.journalist?.id || journalistId,
         name: article.journalist?.name || '',
@@ -207,8 +207,16 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
     params.append('populate[seo][populate][0]', 'metaImage');
     params.append('populate[seo][populate][1]', 'metaSocial');
     params.append('populate[seo][populate][2]', 'metaSocial.image');
-    // Populate dynamic zone - use deep populate to get all nested fields including media
-    params.append('populate[content][populate]', '*');
+    // Populate dynamic zone components with all nested fields including media
+    // This ensures text-block, video-embed, image-embed, social-media-embed, and table components are fully populated
+    params.append('populate[content][on][article.text-block][populate]', '*');
+    params.append('populate[content][on][article.video-embed][populate]', '*');
+    params.append('populate[content][on][article.image-embed][populate][image][fields][0]', 'url');
+    params.append('populate[content][on][article.image-embed][populate][image][fields][1]', 'alternativeText');
+    params.append('populate[content][on][article.image-embed][populate][image][fields][2]', 'width');
+    params.append('populate[content][on][article.image-embed][populate][image][fields][3]', 'height');
+    params.append('populate[content][on][article.social-media-embed][populate]', '*');
+    params.append('populate[content][on][article.table][populate]', '*');
 
     const response = await fetch(
       `${STRAPI_URL}/api/blog-articles?${params.toString()}`,
@@ -248,8 +256,8 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
       coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
       category: article.category || '',
       readTime: article.readTime || 5,
-      publishedAt: article.publishedAt || new Date().toISOString(),
-      timeAgo: getTimeAgo(article.publishedAt || new Date().toISOString()),
+      publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
+      timeAgo: getTimeAgo(article.createdAt),
       journalist: {
         id: article.journalist?.id || 0,
         name: article.journalist?.name || 'Unknown',
@@ -342,8 +350,8 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
           ),
           category: endpoint.category,
           categoryColor: endpoint.color,
-          publishedAt: article.publishedAt || article.createdAt,
-          timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
+          publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
+          timeAgo: getTimeAgo(article.createdAt),
           isBlog: endpoint.isBlog,
           // For blog articles, use journalist slug in URL
           // For sports articles, use /article/slug

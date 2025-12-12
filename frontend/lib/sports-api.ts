@@ -66,6 +66,7 @@ export interface BaseArticle {
   category: string;
   categoryColor: string;
   timeAgo: string;
+  publishedAt: string;  // ISO date string for exact publication time
   slug: string;
   seo?: SeoData | null;
 }
@@ -143,6 +144,30 @@ export function getTimeAgo(dateString: string, referenceTime?: Date): string {
 }
 
 /**
+ * Format date to Greek locale with exact time
+ * @param dateString - ISO date string
+ * @returns Formatted date string like "12 Δεκεμβρίου 2025, 14:30"
+ */
+export function formatPublishedDate(dateString: string): string {
+  const date = new Date(dateString);
+  
+  // Greek month names
+  const months = [
+    'Ιανουαρίου', 'Φεβρουαρίου', 'Μαρτίου', 'Απριλίου',
+    'Μαΐου', 'Ιουνίου', 'Ιουλίου', 'Αυγούστου',
+    'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'
+  ];
+  
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+  return `${day} ${month} ${year}, ${hours}:${minutes}`;
+}
+
+/**
  * Get full image URL from Strapi
  */
 export function getImageUrl(imageUrl: string | undefined, fallbackImage: string): string {
@@ -175,7 +200,8 @@ export function transformArticle<T extends BaseStrapiArticle>(
     imageUrl: getImageUrl(article.image?.url, config.fallbackImage),
     category: config.category,
     categoryColor: config.categoryColor,
-    timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
+    timeAgo: getTimeAgo(article.createdAt),
+    publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
     slug: article.slug,
     seo: article.seo,
   };

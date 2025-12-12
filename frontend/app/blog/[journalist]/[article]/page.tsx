@@ -6,8 +6,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShareButtons from "@/components/ShareButtons";
 import { fetchBlogArticleBySlug, fetchBlogArticlesByJournalist } from "../../api";
-import { richtextToHtml } from "@/lib/richtext-utils";
-import { getImageUrl } from "@/lib/sports-api";
+import { renderDynamicZone } from "@/lib/richtext-utils";
+import { getImageUrl, formatPublishedDate } from "@/lib/sports-api";
 
 interface BlogArticlePageProps {
   params: Promise<{
@@ -144,7 +144,13 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
                 </svg>
                 {article.readTime} λεπτά ανάγνωσης
               </span>
-              <span className="text-gray-500 text-sm">{article.timeAgo}</span>
+              <span className="text-gray-500 text-sm flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {formatPublishedDate(article.publishedAt)}
+              </span>
+              <span className="text-gray-400 text-sm">({article.timeAgo})</span>
             </div>
 
             {/* Title */}
@@ -183,7 +189,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             {/* Article Body */}
             <div 
               className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-img:shadow-md"
-              dangerouslySetInnerHTML={{ __html: richtextToHtml(article.content) }}
+              dangerouslySetInnerHTML={{ __html: renderDynamicZone(article.content) }}
             />
 
             {/* Share Section */}
