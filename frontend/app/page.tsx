@@ -85,12 +85,7 @@ export default async function Home() {
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         {/* Hot News Carousel */}
-        {carouselArticles.length > 0 && (
-          <>
-            <SectionTitle title="Σημαντικά Νέα" icon="/news-2.png" />
-            <NewsCarousel articles={carouselArticles} />
-          </>
-        )}
+
 
         {/* Main Content Grid */}
         <SectionTitle title="Τρέχουσες Ειδήσεις" icon="/trending.png" />
@@ -122,6 +117,14 @@ export default async function Home() {
           {/* Sidebar */}
           <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
         </div>
+
+        <SectionDivider variant="sporty" />
+        {carouselArticles.length > 0 && (
+          <>
+            <SectionTitle title="Σημαντικά Νέα" icon="/news-2.png" />
+            <NewsCarousel articles={carouselArticles} />
+          </>
+        )}
 
         {/* Section Divider */}
         <SectionDivider variant="sporty" />
