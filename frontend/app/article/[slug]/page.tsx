@@ -8,7 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
 import SocialMediaScripts from "@/components/SocialMediaScripts";
 import ArticleContent from "@/components/ArticleContent";
-import { fetchArticleBySlug, getImageUrl, STRAPI_URL } from "@/lib/sports-api";
+import { fetchArticleBySlug, getImageUrl, formatPublishedDate } from "@/lib/sports-api";
 import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 import { renderDynamicZone } from "@/lib/richtext-utils";
 
@@ -197,10 +197,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <span>{article.timeAgo}</span>
+                <span>{formatPublishedDate(article.publishedAt)}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-400">
+                <span>({article.timeAgo})</span>
               </div>
             </div>
 
