@@ -200,8 +200,8 @@ export function transformArticle<T extends BaseStrapiArticle>(
     imageUrl: getImageUrl(article.image?.url, config.fallbackImage),
     category: config.category,
     categoryColor: config.categoryColor,
-    timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
-    publishedAt: article.publishedAt || article.createdAt,
+    timeAgo: getTimeAgo(article.createdAt),
+    publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
     slug: article.slug,
     seo: article.seo,
   };

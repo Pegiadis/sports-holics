@@ -179,8 +179,8 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
       coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
       category: article.category || '',
       readTime: article.readTime || 5,
-      publishedAt: article.publishedAt || new Date().toISOString(),
-      timeAgo: getTimeAgo(article.publishedAt || new Date().toISOString()),
+      publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
+      timeAgo: getTimeAgo(article.createdAt),
       journalist: {
         id: article.journalist?.id || journalistId,
         name: article.journalist?.name || '',
@@ -256,8 +256,8 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
       coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
       category: article.category || '',
       readTime: article.readTime || 5,
-      publishedAt: article.publishedAt || new Date().toISOString(),
-      timeAgo: getTimeAgo(article.publishedAt || new Date().toISOString()),
+      publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
+      timeAgo: getTimeAgo(article.createdAt),
       journalist: {
         id: article.journalist?.id || 0,
         name: article.journalist?.name || 'Unknown',
@@ -350,8 +350,8 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
           ),
           category: endpoint.category,
           categoryColor: endpoint.color,
-          publishedAt: article.publishedAt || article.createdAt,
-          timeAgo: getTimeAgo(article.publishedAt || article.createdAt),
+          publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
+          timeAgo: getTimeAgo(article.createdAt),
           isBlog: endpoint.isBlog,
           // For blog articles, use journalist slug in URL
           // For sports articles, use /article/slug
