@@ -55,9 +55,9 @@ export default function NewsCarousel({ articles }: NewsCarouselProps) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Carousel Container */}
-      <div className="relative">
+      <div className="relative pb-4">
         {/* Cards Container */}
-        <div className="relative h-[380px] md:h-[420px] flex items-center justify-center overflow-hidden">
+        <div className="relative h-[420px] md:h-[480px] flex items-center justify-center overflow-visible">
           {/* Navigation Arrow - Left */}
           <button
             onClick={goToPrev}
