@@ -2,16 +2,16 @@ import { SocialIcon } from "@/types";
 
 // Footer navigation links
 export const sportsLinks = [
-  { key: 'football', label: 'Ποδόσφαιρο' },
-  { key: 'basketball', label: 'Μπάσκετ' },
-  { key: 'formula1', label: 'Formula 1' },
+  { key: 'football', label: 'Ποδόσφαιρο', href: '/football' },
+  { key: 'basketball', label: 'Μπάσκετ', href: '/basketball' },
+  { key: 'formula1', label: 'Formula 1', href: '/formula1' },
 ];
 
 export const companyLinks = [
-  { key: 'about', label: 'Σχετικά' },
-  { key: 'contact', label: 'Επικοινωνία' },
-  { key: 'privacy', label: 'Απόρρητο' },
-  { key: 'terms', label: 'Όροι Χρήσης' },
+  { key: 'about', label: 'Σχετικά', href: '#' },
+  { key: 'contact', label: 'Επικοινωνία', href: '#' },
+  { key: 'privacy', label: 'Πολιτική Απορρήτου', href: '/privacy-policy' },
+  { key: 'cookies', label: 'Διαχείριση Cookies', href: '#', action: 'manageCookies' },
 ];
 
 export const socialIcons: SocialIcon[] = [
