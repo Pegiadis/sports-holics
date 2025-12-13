@@ -168,7 +168,7 @@ export async function fetchCarouselNews(referenceTime?: Date): Promise<NewsArtic
         // Add formula1 articles
         if (data.data.carouselFormula1 && Array.isArray(data.data.carouselFormula1)) {
           data.data.carouselFormula1.forEach((article: StrapiArticle) => {
-            articles.push(transformToNewsArticle(article, 'FORMULA 1', 'bg-red-100 text-red-800', now));
+            articles.push(transformToNewsArticle(article, 'AUTO MOTO', 'bg-red-100 text-red-800', now));
           });
         }
         
@@ -201,7 +201,7 @@ export async function fetchLatestNews(referenceTime?: Date): Promise<NewsArticle
   const [football, basketball, formula1] = await Promise.all([
     fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 10 }, now),
     fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 10 }, now),
-    fetchArticlesFromEndpoint('formula1-articles', 'FORMULA 1', 'bg-red-100 text-red-800', { limit: 10 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'AUTO MOTO', 'bg-red-100 text-red-800', { limit: 10 }, now),
   ]);
 
   // Combine all articles
@@ -272,7 +272,7 @@ export async function fetchMainNews(referenceTime?: Date): Promise<NewsArticle[]
         // Add formula1 articles
         if (data.data.mainNewsFormula1 && Array.isArray(data.data.mainNewsFormula1)) {
           data.data.mainNewsFormula1.forEach((article: StrapiArticle) => {
-            articles.push(transformToNewsArticle(article, 'FORMULA 1', 'bg-red-100 text-red-800', now));
+            articles.push(transformToNewsArticle(article, 'AUTO MOTO', 'bg-red-100 text-red-800', now));
           });
         }
         
@@ -329,7 +329,7 @@ export async function fetchHomepageFormula1(referenceTime?: Date): Promise<NewsA
   const now = referenceTime || new Date();
   return fetchArticlesFromEndpoint(
     'formula1-articles',
-    'FORMULA 1',
+    'AUTO MOTO',
     'bg-red-100 text-red-800',
     { limit: 9 },
     now

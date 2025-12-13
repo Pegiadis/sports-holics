@@ -8,20 +8,20 @@ export const dynamic = 'force-dynamic';
 
 // Metadata for SEO
 export const metadata: Metadata = {
-  title: 'Formula 1 - Όλα τα νέα και οι ειδήσεις | Sports Holics',
-  description: 'Ενημερωθείτε για όλα τα νέα της Formula 1. Grand Prix, οδηγοί, ομάδες, αναλύσεις και αποτελέσματα από το παγκόσμιο πρωτάθλημα.',
-  keywords: 'Formula 1, F1, Grand Prix, Φερστάπεν, Χάμιλτον, Μερσεντές, Red Bull, Ferrari',
+  title: 'Auto Moto - Όλα τα νέα και οι ειδήσεις | Sports Holics',
+  description: 'Ενημερωθείτε για όλα τα νέα του μηχανοκίνητου αθλητισμού. Formula 1, MotoGP, Rally, αγώνες, οδηγοί, ομάδες και αναλύσεις.',
+  keywords: 'Auto Moto, μηχανοκίνητος αθλητισμός, Formula 1, F1, MotoGP, Rally, αγώνες αυτοκινήτων, μοτοσυκλέτες',
   openGraph: {
-    title: 'Formula 1 - Sports Holics',
-    description: 'Ενημερωθείτε για όλα τα νέα της Formula 1',
+    title: 'Auto Moto - Sports Holics',
+    description: 'Ενημερωθείτε για όλα τα νέα του μηχανοκίνητου αθλητισμού',
     type: 'website',
     locale: 'el_GR',
     siteName: 'Sports Holics',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Formula 1 - Sports Holics',
-    description: 'Ενημερωθείτε για όλα τα νέα της Formula 1',
+    title: 'Auto Moto - Sports Holics',
+    description: 'Ενημερωθείτε για όλα τα νέα του μηχανοκίνητου αθλητισμού',
     creator: '@sportsholics',
   },
 };
@@ -42,8 +42,8 @@ export default async function Formula1Page({
   return (
     <SportPageTemplate
       emoji="🏎️"
-      title="Formula 1"
-      description="Όλα τα νέα και οι ειδήσεις για τη Formula 1"
+      title="Auto Moto"
+      description="Όλα τα νέα και οι ειδήσεις για τον μηχανοκίνητο αθλητισμό"
       articles={articles}
       pagination={pagination}
       latestNews={latestNews}

@@ -4,7 +4,7 @@ import { SocialIcon } from "@/types";
 export const sportsLinks = [
   { key: 'football', label: 'Ποδόσφαιρο', href: '/football' },
   { key: 'basketball', label: 'Μπάσκετ', href: '/basketball' },
-  { key: 'formula1', label: 'Formula 1', href: '/formula1' },
+  { key: 'formula1', label: 'Auto Moto', href: '/formula1' },
 ];
 
 export const companyLinks = [

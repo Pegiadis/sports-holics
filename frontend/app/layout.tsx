@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sports Holics - Τελευταία Αθλητικά Νέα",
   description: "Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις",
-  keywords: "αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Formula 1, Ελλάδα",
+  keywords: "αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Auto Moto, μηχανοκίνητος αθλητισμός, Ελλάδα",
   icons: {
     icon: '/no_back.svg', // Sports icon - perfect for a sports site!
   },

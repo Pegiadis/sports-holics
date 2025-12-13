@@ -12,7 +12,7 @@ function getCategoryColors(category: string): { badge: string; hover: string } {
   const colorMap: Record<string, { badge: string; hover: string }> = {
     'ΠΟΔΟΣΦΑΙΡΟ': { badge: 'bg-green-500', hover: 'hover:text-green-600' },
     'ΜΠΑΣΚΕΤ': { badge: 'bg-orange-500', hover: 'hover:text-orange-600' },
-    'FORMULA 1': { badge: 'bg-red-500', hover: 'hover:text-red-600' },
+    'AUTO MOTO': { badge: 'bg-red-500', hover: 'hover:text-red-600' },
     'NEWS': { badge: 'bg-purple-500', hover: 'hover:text-purple-600' },
   };
 
