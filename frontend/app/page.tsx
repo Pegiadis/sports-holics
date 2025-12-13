@@ -96,7 +96,7 @@ export default async function Home() {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   {mainNewsArticles.slice(0, 2).map((news, index) => (
-                    <NewsCard key={index} {...news} />
+                    <NewsCard key={index} {...news} priority={index === 0} />
                   ))}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

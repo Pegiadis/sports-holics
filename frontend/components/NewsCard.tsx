@@ -5,6 +5,7 @@ import { CATEGORY_COLORS } from "@/lib/constants";
 
 interface NewsCardProps extends NewsArticle {
   size?: NewsCardSize;
+  priority?: boolean;
 }
 
 export default function NewsCard({
@@ -18,6 +19,7 @@ export default function NewsCard({
   image,
   slug,
   size = "medium",
+  priority = false,
 }: NewsCardProps) {
   // Support both image and imageUrl properties
   const imageSrc = image || imageUrl || '/default-news.jpg';
@@ -65,6 +67,8 @@ export default function NewsCard({
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-transform duration-300 hover:scale-105"
+          priority={priority}
+          {...(priority && { fetchPriority: "high" as const })}
         />
       </div>
       

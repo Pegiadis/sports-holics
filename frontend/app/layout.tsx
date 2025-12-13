@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import CookieConsent from "@/components/CookieConsent";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import RemixIconLoader from "@/components/RemixIconLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   description: "Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις",
   keywords: "αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Auto Moto, μηχανοκίνητος αθλητισμός, Ελλάδα",
   icons: {
-    icon: '/no_back.svg', // Sports icon - perfect for a sports site!
+    icon: '/no_back.svg',
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {
@@ -58,15 +59,19 @@ export default function RootLayout({
   return (
     <html lang="el">
       <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-        />
+        {/* Preconnect to external origins for faster resource loading */}
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+        <link rel="preconnect" href="https://clever-garden-138bbdfa99.media.strapiapp.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://clever-garden-138bbdfa99.media.strapiapp.com" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        
+        {/* Load RemixIcon CSS asynchronously - prevents render blocking */}
+        <RemixIconLoader />
         
         {/* Cookie Consent Banner - GDPR Compliance */}
         <CookieConsent />
