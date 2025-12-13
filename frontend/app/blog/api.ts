@@ -252,7 +252,7 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
       { url: 'blog-articles', category: 'Blog', color: 'bg-blue-100 text-blue-800', isBlog: true },
       { url: 'football-articles', category: 'ΠΟΔΟΣΦΑΙΡΟ', color: 'bg-green-100 text-green-800', isBlog: false },
       { url: 'basketball-articles', category: 'ΜΠΑΣΚΕΤ', color: 'bg-orange-100 text-orange-800', isBlog: false },
-      { url: 'formula1-articles', category: 'AUTO MOTO', color: 'bg-red-100 text-red-800', isBlog: false },
+      { url: 'formula1-articles', category: 'AUTO MOTO', color: 'bg-blue-100 text-blue-800', isBlog: false },
       { url: 'news-articles', category: 'NEWS', color: 'bg-purple-100 text-purple-800', isBlog: false },
     ];
 

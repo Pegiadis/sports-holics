@@ -319,7 +319,7 @@ export const ALL_SPORT_CONFIGS: SportConfig[] = [
   {
     endpoint: 'formula1-articles',
     category: 'AUTO MOTO',
-    categoryColor: 'bg-red-100 text-red-800',
+    categoryColor: 'bg-blue-100 text-blue-800',
     fallbackImage: '/f1.png',
   },
   {
