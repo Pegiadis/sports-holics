@@ -3,7 +3,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
   HOT: "bg-red-100 text-red-800",
   FOOTBALL: "bg-green-100 text-green-800",
   BASKETBALL: "bg-orange-100 text-orange-800",
-  "FORMULA 1": "bg-blue-100 text-blue-800",
+  "AUTO MOTO": "bg-blue-100 text-blue-800",
   "PREMIER LEAGUE": "bg-green-100 text-green-800",
   "CHAMPIONS LEAGUE": "bg-blue-100 text-blue-800",
   "WORLD CUP": "bg-purple-100 text-purple-800",
@@ -23,7 +23,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
 export const BREAKING_NEWS = [
   "Manchester United defeats Liverpool 3-1 in Premier League clash",
   "NBA Finals: Lakers lead series 3-2 after dominant Game 5 performance",
-  "Formula 1: Max Verstappen wins Monaco Grand Prix in thrilling race",
+  "Auto Moto: Max Verstappen wins Monaco Grand Prix in thrilling race",
 ] as const;
 
 // Carousel settings

@@ -91,7 +91,7 @@ export default function Header() {
                         className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors group"
                       >
                         <span className="text-2xl mr-3">🏎️</span>
-                        <span className="font-medium">Formula 1</span>
+                        <span className="font-medium">Auto Moto</span>
                         <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
@@ -225,7 +225,7 @@ export default function Header() {
                 className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
               >
                 <span className="text-2xl mr-3">🏎️</span>
-                <span className="font-medium">Formula 1</span>
+                <span className="font-medium">Auto Moto</span>
               </Link>
 
               {/* Other Pages */}

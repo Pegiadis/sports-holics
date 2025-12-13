@@ -87,6 +87,8 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
                       src={news.image || news.imageUrl || '/default-news.jpg'}
                       alt={news.title}
                       fill
+                      sizes="80px"
+                      loading="lazy"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>

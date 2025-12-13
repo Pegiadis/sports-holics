@@ -1,9 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import type { Metadata } from "next";
-
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-K17RKWGK4M';
+import CookieConsent from "@/components/CookieConsent";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import RemixIconLoader from "@/components/RemixIconLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sports Holics - Τελευταία Αθλητικά Νέα",
   description: "Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις",
-  keywords: "αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Formula 1, Ελλάδα",
+  keywords: "αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Auto Moto, μηχανοκίνητος αθλητισμός, Ελλάδα",
   icons: {
-    icon: '/no_back.svg', // Sports icon - perfect for a sports site!
+    icon: '/no_back.svg',
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   openGraph: {
@@ -59,29 +59,25 @@ export default function RootLayout({
   return (
     <html lang="el">
       <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-        />
+        {/* Preconnect to external origins for faster resource loading */}
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+        <link rel="preconnect" href="https://clever-garden-138bbdfa99.media.strapiapp.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://clever-garden-138bbdfa99.media.strapiapp.com" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         
-        {/* Google Analytics */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
-          `}
-        </Script>
+        {/* Load RemixIcon CSS asynchronously - prevents render blocking */}
+        <RemixIconLoader />
+        
+        {/* Cookie Consent Banner - GDPR Compliance */}
+        <CookieConsent />
+        
+        {/* Google Analytics - Only loads after user consent */}
+        <GoogleAnalytics />
       </body>
     </html>
   );

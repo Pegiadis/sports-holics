@@ -30,8 +30,8 @@ export const fetchCache = 'force-no-store'; // Ensure no caching at all
 // Metadata for SEO
 export const metadata: Metadata = {
   title: 'Sports Holics - Τελευταία Αθλητικά Νέα',
-  description: 'Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις. Ποδόσφαιρο, Μπάσκετ, Formula 1 και πολλά άλλα.',
-  keywords: 'αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Formula 1, Ελλάδα, διεθνή αθλητικά, σκορ, αναλύσεις',
+  description: 'Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις. Ποδόσφαιρο, Μπάσκετ, Auto Moto και πολλά άλλα.',
+  keywords: 'αθλητικά νέα, ποδόσφαιρο, μπάσκετ, Auto Moto, μηχανοκίνητος αθλητισμός, Ελλάδα, διεθνή αθλητικά, σκορ, αναλύσεις',
   openGraph: {
     title: 'Sports Holics - Τελευταία Αθλητικά Νέα',
     description: 'Ο απόλυτος προορισμός σας για αθλητικά νέα, σκορ και αναλύσεις',
@@ -96,7 +96,7 @@ export default async function Home() {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   {mainNewsArticles.slice(0, 2).map((news, index) => (
-                    <NewsCard key={index} {...news} />
+                    <NewsCard key={index} {...news} priority={index === 0} />
                   ))}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -176,7 +176,7 @@ export default async function Home() {
         {/* Formula 1 Section */}
         {formula1Articles.length > 0 && (
           <section className="mb-12">
-            <SectionTitle title="Formula 1" icon="/apex.png" variant="large" />
+            <SectionTitle title="Auto Moto" icon="/apex.png" variant="large" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {formula1Articles.slice(0, 3).map((news, index) => (
                 <NewsCard key={index} {...news} />

@@ -25,12 +25,12 @@ export default function JournalistsSection({
     <section className="mb-12">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
-        {!showAll && journalists.length > 4 && (
+        {!showAll && (
           <Link
             href="/blog"
-            className="text-primary hover:text-red-700 font-medium transition-colors flex items-center gap-2"
+            className="text-red-600 hover:text-red-700 font-medium transition-colors flex items-center gap-2"
           >
-            Δείτε όλους
+            Δείτε τους όλους
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -74,6 +74,7 @@ export default function JournalistsSection({
           </Link>
         ))}
       </div>
+
     </section>
   );
 }

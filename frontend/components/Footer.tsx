@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { sportsLinks, companyLinks, socialIcons } from "@/lib/data";
+import { resetConsent } from "@/lib/cookie-consent";
 
 export default function Footer() {
   return (
@@ -29,7 +30,7 @@ export default function Footer() {
               {sportsLinks.map((link) => (
                 <li key={link.key}>
                   <Link
-                    href="#"
+                    href={link.href}
                     className="text-gray-400 hover:text-primary transition-colors"
                   >
                     {link.label}
@@ -45,12 +46,24 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               {companyLinks.map((link) => (
                 <li key={link.key}>
-                  <Link
-                    href="#"
-                    className="text-gray-400 hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </Link>
+                  {link.action === "manageCookies" ? (
+                    <button
+                      onClick={() => {
+                        resetConsent();
+                        window.location.reload();
+                      }}
+                      className="text-gray-400 hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                    </button>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-gray-400 hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
