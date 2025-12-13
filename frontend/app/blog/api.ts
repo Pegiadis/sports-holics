@@ -107,10 +107,12 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
  */
 export async function fetchBlogArticlesByJournalist(journalistSlug: string): Promise<BlogArticleData[]> {
   try {
-    // Fetch articles and filter by journalist slug (more reliable than id in Strapi v5)
+    // Fetch articles filtered by journalist slug on the server side
     const params = new URLSearchParams();
     params.append('populate', '*');
-    params.append('sort[0]', 'publishedAt:desc');
+    // Filter by journalist slug on the server (much more efficient than client-side filtering)
+    params.append('filters[journalist][slug][$eq]', journalistSlug);
+    params.append('sort[0]', 'createdAt:desc');
     params.append('pagination[limit]', '100');
 
     const response = await fetch(
@@ -135,12 +137,8 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
       return [];
     }
 
-    // Filter articles by journalist slug on client side (more reliable than id in Strapi v5)
-    const journalistArticles = data.data.filter((article: StrapiBlogArticle) =>
-      article.journalist?.slug === journalistSlug
-    );
-
-    return journalistArticles.map((article: StrapiBlogArticle) => ({
+    // Articles are already filtered by journalist slug on the server
+    return data.data.map((article: StrapiBlogArticle) => ({
       id: article.id,
       title: article.title,
       subtitle: article.subtitle || '',
@@ -264,7 +262,10 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
         params.append('populate[0]', endpoint.isBlog ? 'coverImage' : 'image');
         params.append('populate[1]', endpoint.isBlog ? 'journalist' : 'author');
         params.append('populate[2]', endpoint.isBlog ? 'journalist.avatar' : 'author.avatar');
-        params.append('sort[0]', 'publishedAt:desc');
+        // Filter by author/journalist slug on the server side (much more efficient)
+        const authorField = endpoint.isBlog ? 'journalist' : 'author';
+        params.append(`filters[${authorField}][slug][$eq]`, journalistSlug);
+        params.append('sort[0]', 'createdAt:desc');
         params.append('pagination[limit]', '100');
 
         const response = await fetch(
@@ -280,16 +281,9 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
         const data = await response.json();
         if (!data.data || data.data.length === 0) return [];
 
-        // Filter articles by journalist slug (more reliable than id in Strapi v5)
-        const filtered = data.data.filter((article: StrapiBlogArticle | StrapiSportArticle) => {
-          const authorField = endpoint.isBlog
-            ? (article as StrapiBlogArticle).journalist
-            : (article as StrapiSportArticle).author;
-          return authorField?.slug === journalistSlug;
-        });
-
+        // Articles are already filtered by author slug on the server side
         // Transform to unified format
-        return filtered.map((article: StrapiBlogArticle | StrapiSportArticle) => ({
+        return data.data.map((article: StrapiBlogArticle | StrapiSportArticle) => ({
           id: article.id,
           title: article.title,
           subtitle: article.subtitle || '',
