@@ -409,7 +409,7 @@ export const BASKETBALL_CONFIG: SportConfig = {
 
 export const FORMULA1_CONFIG: SportConfig = {
   endpoint: 'formula1-articles',
-  category: 'FORMULA 1',
+  category: 'AUTO MOTO',
   categoryColor: 'bg-red-100 text-red-800',
   fallbackImage: '/formula1.png',
 };
