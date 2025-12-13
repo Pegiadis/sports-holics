@@ -7,16 +7,16 @@ interface ArticleCardProps {
   article: BaseArticle;
 }
 
-// Map categories to card colors
+// Map categories to card colors - matching NewsCard/homepage style
 function getCategoryColors(category: string): { badge: string; hover: string } {
   const colorMap: Record<string, { badge: string; hover: string }> = {
-    'ΠΟΔΟΣΦΑΙΡΟ': { badge: 'bg-green-500', hover: 'hover:text-green-600' },
-    'ΜΠΑΣΚΕΤ': { badge: 'bg-orange-500', hover: 'hover:text-orange-600' },
-    'AUTO MOTO': { badge: 'bg-red-500', hover: 'hover:text-red-600' },
-    'NEWS': { badge: 'bg-purple-500', hover: 'hover:text-purple-600' },
+    'ΠΟΔΟΣΦΑΙΡΟ': { badge: 'bg-green-100 text-green-800', hover: 'hover:text-green-600' },
+    'ΜΠΑΣΚΕΤ': { badge: 'bg-orange-100 text-orange-800', hover: 'hover:text-orange-600' },
+    'AUTO MOTO': { badge: 'bg-blue-100 text-blue-800', hover: 'hover:text-blue-600' },
+    'NEWS': { badge: 'bg-purple-100 text-purple-800', hover: 'hover:text-purple-600' },
   };
 
-  return colorMap[category] || { badge: 'bg-gray-500', hover: 'hover:text-gray-600' };
+  return colorMap[category] || { badge: 'bg-gray-100 text-gray-800', hover: 'hover:text-gray-600' };
 }
 
 export default function ArticleCard({ article }: ArticleCardProps) {
@@ -41,7 +41,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           <div className="flex-1 p-6">
             {/* Category Badge */}
             <div className="mb-3">
-              <span className={`inline-block ${colors.badge} text-white text-xs font-semibold px-3 py-1 rounded uppercase tracking-wide`}>
+              <span className={`inline-block ${colors.badge} text-xs font-semibold px-3 py-1 rounded uppercase tracking-wide`}>
                 {article.category}
               </span>
             </div>
