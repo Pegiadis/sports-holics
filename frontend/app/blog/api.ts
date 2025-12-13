@@ -107,40 +107,12 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
  */
 export async function fetchBlogArticlesByJournalist(journalistSlug: string): Promise<BlogArticleData[]> {
   try {
-    // First get the journalist ID
-    const journalistParams = new URLSearchParams();
-    journalistParams.append('filters[slug][$eq]', journalistSlug);
-    
-    const journalistResponse = await fetch(
-      `${STRAPI_URL}/api/journalists?${journalistParams.toString()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store', // Real-time updates from CMS
-        signal: AbortSignal.timeout(5000),
-      }
-    );
-
-    if (!journalistResponse.ok) {
-      console.warn('Failed to fetch journalist:', journalistResponse.status);
-      return [];
-    }
-
-    const journalistData = await journalistResponse.json();
-    
-    if (!journalistData.data || journalistData.data.length === 0) {
-      return [];
-    }
-
-    const journalistId = journalistData.data[0].id;
-
-    // Now fetch articles by journalist ID
-    // For now, fetch all articles and filter on client side
-    // Strapi v4/v5 relation filters can be complex
+    // Fetch articles filtered by journalist slug on the server side
     const params = new URLSearchParams();
     params.append('populate', '*');
-    params.append('sort[0]', 'publishedAt:desc');
+    // Filter by journalist slug on the server (much more efficient than client-side filtering)
+    params.append('filters[journalist][slug][$eq]', journalistSlug);
+    params.append('sort[0]', 'createdAt:desc');
     params.append('pagination[limit]', '100');
 
     const response = await fetch(
@@ -165,12 +137,8 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
       return [];
     }
 
-    // Filter articles by journalist ID on client side
-    const journalistArticles = data.data.filter((article: StrapiBlogArticle) =>
-      article.journalist?.id === journalistId
-    );
-
-    return journalistArticles.map((article: StrapiBlogArticle) => ({
+    // Articles are already filtered by journalist slug on the server
+    return data.data.map((article: StrapiBlogArticle) => ({
       id: article.id,
       title: article.title,
       subtitle: article.subtitle || '',
@@ -182,7 +150,7 @@ export async function fetchBlogArticlesByJournalist(journalistSlug: string): Pro
       publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
       timeAgo: getTimeAgo(article.createdAt),
       journalist: {
-        id: article.journalist?.id || journalistId,
+        id: article.journalist?.id || 0,
         name: article.journalist?.name || '',
         slug: article.journalist?.slug || journalistSlug,
         avatarUrl: getImageUrl(article.journalist?.avatar?.url, '/default-avatar.jpg'),
@@ -278,25 +246,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
  */
 export async function fetchAllArticlesByJournalist(journalistSlug: string): Promise<any[]> {
   try {
-    // First get the journalist ID
-    const journalistParams = new URLSearchParams();
-    journalistParams.append('filters[slug][$eq]', journalistSlug);
-    
-    const journalistResponse = await fetch(
-      `${STRAPI_URL}/api/journalists?${journalistParams.toString()}`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-        cache: 'no-store',
-        signal: AbortSignal.timeout(5000),
-      }
-    );
-
-    if (!journalistResponse.ok) return [];
-    const journalistData = await journalistResponse.json();
-    if (!journalistData.data || journalistData.data.length === 0) return [];
-    
-    const journalistId = journalistData.data[0].id;
-
+    // Filter articles by journalist slug directly (more reliable than id in Strapi v5)
     // Fetch from all article endpoints in parallel
     const endpoints = [
       { url: 'blog-articles', category: 'Blog', color: 'bg-blue-100 text-blue-800', isBlog: true },
@@ -312,7 +262,10 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
         params.append('populate[0]', endpoint.isBlog ? 'coverImage' : 'image');
         params.append('populate[1]', endpoint.isBlog ? 'journalist' : 'author');
         params.append('populate[2]', endpoint.isBlog ? 'journalist.avatar' : 'author.avatar');
-        params.append('sort[0]', 'publishedAt:desc');
+        // Filter by author/journalist slug on the server side (much more efficient)
+        const authorField = endpoint.isBlog ? 'journalist' : 'author';
+        params.append(`filters[${authorField}][slug][$eq]`, journalistSlug);
+        params.append('sort[0]', 'createdAt:desc');
         params.append('pagination[limit]', '100');
 
         const response = await fetch(
@@ -328,17 +281,9 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
         const data = await response.json();
         if (!data.data || data.data.length === 0) return [];
 
-        // Filter articles by journalist ID
-        const journalistField = endpoint.isBlog ? 'journalist' : 'author';
-        const filtered = data.data.filter((article: StrapiBlogArticle | StrapiSportArticle) => {
-          const authorField = endpoint.isBlog
-            ? (article as StrapiBlogArticle).journalist
-            : (article as StrapiSportArticle).author;
-          return authorField?.id === journalistId;
-        });
-
+        // Articles are already filtered by author slug on the server side
         // Transform to unified format
-        return filtered.map((article: StrapiBlogArticle | StrapiSportArticle) => ({
+        return data.data.map((article: StrapiBlogArticle | StrapiSportArticle) => ({
           id: article.id,
           title: article.title,
           subtitle: article.subtitle || '',
