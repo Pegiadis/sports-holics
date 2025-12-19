@@ -12,12 +12,18 @@ export default function GoogleAdSense() {
   const adsenseId = 'ca-pub-5345946941895235';
 
   return (
-    <Script
-      async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
-      crossOrigin="anonymous"
-      strategy="afterInteractive"
-    />
+    <>
+      {/* AdSense verification meta tag */}
+      <meta name="google-adsense-account" content={adsenseId} />
+      
+      {/* AdSense script */}
+      <Script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
+    </>
   );
 }
 
