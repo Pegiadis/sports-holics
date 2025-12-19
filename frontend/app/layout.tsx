@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import CookieConsent from "@/components/CookieConsent";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import GoogleAdSense from "@/components/GoogleAdSense";
 import RemixIconLoader from "@/components/RemixIconLoader";
 
 const geistSans = Geist({
@@ -64,6 +65,9 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
         <link rel="preconnect" href="https://clever-garden-138bbdfa99.media.strapiapp.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://clever-garden-138bbdfa99.media.strapiapp.com" />
+        
+        {/* Google AdSense - Auto ads */}
+        <GoogleAdSense />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
