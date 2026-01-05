@@ -171,6 +171,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
     params.append('filters[slug][$eq]', slug);
     params.append('populate[coverImage]', 'true');
     params.append('populate[journalist][populate][0]', 'avatar');
+    params.append('populate[team][populate]', 'logo');
     params.append('populate[seo]', 'true');
     params.append('populate[seo][populate][0]', 'metaImage');
     params.append('populate[seo][populate][1]', 'metaSocial');
@@ -215,6 +216,28 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
       console.error('Blog article is missing journalist data:', article);
     }
 
+    // Helper to build sports array from boolean fields
+    const buildSportsArray = (team: {
+      hasFootball?: boolean;
+      hasBasketball?: boolean;
+      hasAutoMoto?: boolean;
+    }): string[] => {
+      const sports: string[] = [];
+      if (team.hasFootball) sports.push('Ποδόσφαιρο');
+      if (team.hasBasketball) sports.push('Μπάσκετ');
+      if (team.hasAutoMoto) sports.push('Auto Moto');
+      return sports;
+    };
+
+    // Transform team data if present
+    const teamInfo = article.team ? {
+      id: article.team.id,
+      name: article.team.name,
+      slug: article.team.slug,
+      sports: buildSportsArray(article.team),
+      logoUrl: article.team.logo?.url ? getImageUrl(article.team.logo.url, '/default-team.png') : undefined,
+    } : null;
+
     return {
       id: article.id,
       title: article.title,
@@ -232,6 +255,7 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
         slug: article.journalist?.slug || 'unknown',
         avatarUrl: getImageUrl(article.journalist?.avatar?.url, '/default-avatar.jpg'),
       },
+      team: teamInfo,
       seo: article.seo || null,
     };
   } catch (error) {

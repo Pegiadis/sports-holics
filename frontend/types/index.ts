@@ -1,3 +1,11 @@
+export interface TeamInfo {
+  id: number;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  sports: string[];  // Array of sports: ["Ποδόσφαιρο", "Μπάσκετ"]
+}
+
 export interface NewsArticle {
   id?: number;
   category: string;
@@ -11,6 +19,7 @@ export interface NewsArticle {
   imageUrl?: string; // For articles from sports API (backward compatibility)
   slug?: string;
   date?: string;
+  team?: TeamInfo;
 }
 
 export interface TrendingNewsItem {

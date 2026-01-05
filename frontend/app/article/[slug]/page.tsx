@@ -138,13 +138,30 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
           {/* Article Content */}
           <div className="p-8">
-            {/* Category Badge */}
-            <div className="mb-4">
+            {/* Category and Team Badges */}
+            <div className="mb-4 flex flex-wrap items-center gap-3">
               <span
                 className={`inline-block ${article.categoryColor} text-sm font-semibold px-4 py-2 rounded-full uppercase tracking-wide`}
               >
                 {article.category}
               </span>
+              {article.team && (
+                <Link 
+                  href={`/team/${article.team.slug}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
+                >
+                  {article.team.logoUrl && (
+                    <Image
+                      src={article.team.logoUrl}
+                      alt={article.team.name}
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  )}
+                  {article.team.name}
+                </Link>
+              )}
             </div>
 
             {/* Title */}

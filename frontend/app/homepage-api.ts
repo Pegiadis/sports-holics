@@ -16,6 +16,27 @@ export { fetchHeroSection } from "@/lib/hero-api";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
+interface StrapiTeam {
+  id: number;
+  name: string;
+  slug: string;
+  hasFootball?: boolean;
+  hasBasketball?: boolean;
+  hasAutoMoto?: boolean;
+  logo?: {
+    url?: string;
+  } | null;
+}
+
+// Helper to build sports array from boolean fields
+function buildSportsArray(team: StrapiTeam): string[] {
+  const sports: string[] = [];
+  if (team.hasFootball) sports.push('Ποδόσφαιρο');
+  if (team.hasBasketball) sports.push('Μπάσκετ');
+  if (team.hasAutoMoto) sports.push('Auto Moto');
+  return sports;
+}
+
 interface StrapiArticle {
   id: number;
   title?: string;
@@ -35,11 +56,21 @@ interface StrapiArticle {
   image?: {
     url?: string;
   } | null;
+  team?: StrapiTeam | null;
 }
 
 // Helper to transform articles to NewsArticle format
 function transformToNewsArticle(article: StrapiArticle, category: string, categoryColor: string, now?: Date): NewsArticle {
   const referenceTime = now || new Date();
+
+  // Transform team data if present
+  const teamInfo = article.team ? {
+    id: article.team.id,
+    name: article.team.name,
+    slug: article.team.slug,
+    sports: buildSportsArray(article.team),
+    logoUrl: article.team.logo?.url ? getImageUrl(article.team.logo.url, '/default-team.png') : undefined,
+  } : undefined;
 
   return {
     category,
@@ -52,6 +83,7 @@ function transformToNewsArticle(article: StrapiArticle, category: string, catego
     imageUrl: getImageUrl(article.image?.url, '/no_back.png'),
     slug: article.slug,
     date: article.publishedAt || article.createdAt,
+    team: teamInfo,
   };
 }
 
@@ -82,6 +114,8 @@ async function fetchArticlesFromEndpoint(
     params.append('populate[0]', 'image');
     params.append('populate[1]', 'author');
     params.append('populate[2]', 'author.avatar');
+    params.append('populate[3]', 'team');
+    params.append('populate[4]', 'team.logo');
     params.append('sort', 'createdAt:desc');
 
     const response = await fetch(
@@ -356,6 +390,13 @@ export interface BlogArticleData {
     slug: string;
     avatarUrl: string;
   };
+  team?: {
+    id: number;
+    name: string;
+    slug: string;
+    sports: string[];
+    logoUrl?: string;
+  } | null;
   seo?: {
     metaTitle?: string;
     metaDescription?: string;

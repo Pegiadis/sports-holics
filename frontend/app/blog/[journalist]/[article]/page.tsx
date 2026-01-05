@@ -141,12 +141,29 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
 
           {/* Article Content */}
           <div className="p-8 md:p-12">
-            {/* Category & Meta */}
+            {/* Category, Team & Meta */}
             <div className="flex flex-wrap items-center gap-3 mb-6">
               {article.category && (
                 <span className="px-4 py-2 bg-red-100 text-red-800 text-sm font-semibold rounded-full uppercase tracking-wide">
                   {article.category}
                 </span>
+              )}
+              {article.team && (
+                <Link 
+                  href={`/team/${article.team.slug}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
+                >
+                  {article.team.logoUrl && (
+                    <Image
+                      src={article.team.logoUrl}
+                      alt={article.team.name}
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  )}
+                  {article.team.name}
+                </Link>
               )}
               <span className="text-gray-500 text-sm flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

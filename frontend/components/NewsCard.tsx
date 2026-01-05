@@ -18,6 +18,7 @@ export default function NewsCard({
   imageUrl,
   image,
   slug,
+  team,
   size = "medium",
   priority = false,
 }: NewsCardProps) {
@@ -74,12 +75,26 @@ export default function NewsCard({
       
       {/* Content section */}
       <div className={`${config.padding} flex flex-col flex-grow`}>
-        <div className="mb-2">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
           <span
             className={`${CATEGORY_COLORS[category] || categoryColor} px-2 py-1 rounded text-xs font-semibold uppercase tracking-wide`}
           >
             {category}
           </span>
+          {team && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
+              {team.logoUrl && (
+                <Image
+                  src={team.logoUrl}
+                  alt={team.name}
+                  width={14}
+                  height={14}
+                  className="object-contain"
+                />
+              )}
+              {team.name}
+            </span>
+          )}
         </div>
         
         <h3 className={`${config.titleSize} font-bold mb-2 leading-tight text-gray-900 line-clamp-3 hover:text-blue-600 transition-colors`}>

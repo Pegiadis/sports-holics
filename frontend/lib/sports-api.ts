@@ -22,6 +22,30 @@ export interface SeoData {
 }
 
 /**
+ * Team data structure from Strapi
+ */
+export interface StrapiTeam {
+  id: number;
+  name: string;
+  slug: string;
+  hasFootball?: boolean;
+  hasBasketball?: boolean;
+  hasAutoMoto?: boolean;
+  logo?: {
+    url: string;
+  } | null;
+}
+
+// Helper to build sports array from boolean fields
+function buildSportsArray(team: StrapiTeam): string[] {
+  const sports: string[] = [];
+  if (team.hasFootball) sports.push('Ποδόσφαιρο');
+  if (team.hasBasketball) sports.push('Μπάσκετ');
+  if (team.hasAutoMoto) sports.push('Auto Moto');
+  return sports;
+}
+
+/**
  * Base Strapi article structure (common fields across all sports)
  */
 export interface BaseStrapiArticle {
@@ -48,6 +72,18 @@ export interface BaseStrapiArticle {
     alternativeText: string | null;
   } | null;
   seo?: SeoData | null;
+  team?: StrapiTeam | null;
+}
+
+/**
+ * Team info for frontend display
+ */
+export interface TeamInfo {
+  id: number;
+  name: string;
+  slug: string;
+  sports: string[];  // Array of sports
+  logoUrl?: string;
 }
 
 /**
@@ -69,6 +105,7 @@ export interface BaseArticle {
   publishedAt: string;  // ISO date string for exact publication time
   slug: string;
   seo?: SeoData | null;
+  team?: TeamInfo | null;
 }
 
 /**
@@ -188,6 +225,15 @@ export function transformArticle<T extends BaseStrapiArticle>(
   article: T,
   config: SportConfig
 ): BaseArticle {
+  // Transform team data if present
+  const teamInfo: TeamInfo | null = article.team ? {
+    id: article.team.id,
+    name: article.team.name,
+    slug: article.team.slug,
+    sports: buildSportsArray(article.team),
+    logoUrl: article.team.logo?.url ? getImageUrl(article.team.logo.url, '/default-team.png') : undefined,
+  } : null;
+
   return {
     id: article.id,
     title: article.title,
@@ -204,6 +250,7 @@ export function transformArticle<T extends BaseStrapiArticle>(
     publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
     slug: article.slug,
     seo: article.seo,
+    team: teamInfo,
   };
 }
 
@@ -247,12 +294,13 @@ export async function fetchSportArticlesWithPagination<T extends BaseStrapiArtic
     params.append('pagination[page]', String(page));
     params.append('pagination[pageSize]', String(pageSize));
     
-    // Always populate image, SEO, author (journalist), dynamic zone content, and sort by date (newest first)
+    // Always populate image, SEO, author (journalist), team, dynamic zone content, and sort by date (newest first)
     params.append('populate[image]', 'true');
     params.append('populate[seo][populate][0]', 'metaImage');
     params.append('populate[seo][populate][1]', 'metaSocial');
     params.append('populate[seo][populate][2]', 'metaSocial.image');
     params.append('populate[author][populate]', 'avatar');
+    params.append('populate[team][populate]', 'logo');
     // Populate dynamic zone - use deep populate to get all nested fields including media
     params.append('populate[content][populate]', '*');
     params.append('sort', 'createdAt:desc');
@@ -346,6 +394,7 @@ export async function fetchArticleBySlug(slug: string): Promise<BaseArticle | nu
       params.append('populate[seo][populate][1]', 'metaSocial');
       params.append('populate[seo][populate][2]', 'metaSocial.image');
       params.append('populate[author][populate]', 'avatar');
+      params.append('populate[team][populate]', 'logo');
       // Populate dynamic zone - use deep populate to get all nested fields including media
       params.append('populate[content][populate]', '*');
       
