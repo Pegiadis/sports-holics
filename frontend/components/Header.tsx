@@ -109,15 +109,6 @@ export default function Header() {
                 Blog
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
-
-              {/* Ειδήσεις - News */}
-              <Link
-                href="/news"
-                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
-              >
-                Ειδήσεις
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-              </Link>
             </nav>
           </div>
 
@@ -235,14 +226,6 @@ export default function Header() {
                 className="px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary font-medium transition-colors"
               >
                 Blog
-              </Link>
-
-              <Link
-                href="/news"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary font-medium transition-colors"
-              >
-                Ειδήσεις
               </Link>
 
               {/* Social Media Links in Mobile Menu */}

@@ -337,20 +337,6 @@ export async function fetchHomepageFormula1(referenceTime?: Date): Promise<NewsA
 }
 
 /**
- * Fetch news articles for the homepage News section
- */
-export async function fetchHomepageNews(referenceTime?: Date): Promise<NewsArticle[]> {
-  const now = referenceTime || new Date();
-  return fetchArticlesFromEndpoint(
-    'news-articles',
-    'NEWS',
-    'bg-purple-100 text-purple-800',
-    { limit: 9 },
-    now
-  );
-}
-
-/**
  * Blog Article Data Interface
  */
 export interface BlogArticleData {
