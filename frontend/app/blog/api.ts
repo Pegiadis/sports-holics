@@ -49,6 +49,96 @@ interface StrapiSportArticle {
   };
 }
 
+// Unified article type for journalist pages
+interface UnifiedArticle {
+  id: number;
+  title: string;
+  subtitle: string;
+  slug: string;
+  excerpt: string;
+  imageUrl: string;
+  category: string;
+  categoryColor: string;
+  publishedAt: string;
+  timeAgo: string;
+  isBlog: boolean;
+  linkHref: string;
+}
+
+// Article count by category
+interface ArticleCount {
+  total: number;
+  byCategory: {
+    blog: number;
+    football: number;
+    basketball: number;
+    formula1: number;
+  };
+}
+
+/**
+ * Count all articles by journalist slug (efficient - only returns count, not data)
+ */
+export async function countArticlesByJournalist(journalistSlug: string): Promise<ArticleCount> {
+  try {
+    const endpoints = [
+      { url: 'blog-articles', key: 'blog' as const, authorField: 'journalist' },
+      { url: 'football-articles', key: 'football' as const, authorField: 'author' },
+      { url: 'basketball-articles', key: 'basketball' as const, authorField: 'author' },
+      { url: 'formula1-articles', key: 'formula1' as const, authorField: 'author' },
+    ];
+
+    const countPromises = endpoints.map(async (endpoint) => {
+      try {
+        const params = new URLSearchParams();
+        params.append(`filters[${endpoint.authorField}][slug][$eq]`, journalistSlug);
+        params.append('pagination[pageSize]', '1'); // We only need the count, not the data
+        
+        const response = await fetch(
+          `${STRAPI_URL}/api/${endpoint.url}?${params.toString()}`,
+          {
+            headers: { 'Content-Type': 'application/json' },
+            cache: 'no-store',
+            signal: AbortSignal.timeout(5000),
+          }
+        );
+
+        if (!response.ok) return { key: endpoint.key, count: 0 };
+        const data = await response.json();
+        
+        // Strapi returns total count in meta.pagination.total
+        return { key: endpoint.key, count: data.meta?.pagination?.total || 0 };
+      } catch (error) {
+        console.warn(`Failed to count ${endpoint.url}:`, error);
+        return { key: endpoint.key, count: 0 };
+      }
+    });
+
+    const results = await Promise.all(countPromises);
+    
+    const byCategory = {
+      blog: 0,
+      football: 0,
+      basketball: 0,
+      formula1: 0,
+    };
+
+    results.forEach(result => {
+      byCategory[result.key] = result.count;
+    });
+
+    const total = Object.values(byCategory).reduce((sum, count) => sum + count, 0);
+
+    return { total, byCategory };
+  } catch (error) {
+    console.warn('Error counting articles by journalist:', error);
+    return {
+      total: 0,
+      byCategory: { blog: 0, football: 0, basketball: 0, formula1: 0 },
+    };
+  }
+}
+
 /**
  * Fetch journalist by slug with their articles
  */
@@ -103,59 +193,78 @@ export async function fetchJournalistBySlug(slug: string): Promise<JournalistDat
 }
 
 /**
- * Fetch blog articles by journalist slug
+ * Fetch blog articles by journalist slug with pagination support
  */
 export async function fetchBlogArticlesByJournalist(journalistSlug: string): Promise<BlogArticleData[]> {
   try {
-    // Fetch articles filtered by journalist slug on the server side
-    const params = new URLSearchParams();
-    params.append('populate', '*');
-    // Filter by journalist slug on the server (much more efficient than client-side filtering)
-    params.append('filters[journalist][slug][$eq]', journalistSlug);
-    params.append('sort[0]', 'createdAt:desc');
-    params.append('pagination[limit]', '100');
+    const allArticles: BlogArticleData[] = [];
+    let page = 1;
+    const pageSize = 100;
+    let hasMore = true;
 
-    const response = await fetch(
-      `${STRAPI_URL}/api/blog-articles?${params.toString()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store', // Real-time updates from CMS
-        signal: AbortSignal.timeout(5000),
+    // Fetch all pages until no more results
+    while (hasMore) {
+      const params = new URLSearchParams();
+      params.append('populate', '*');
+      params.append('filters[journalist][slug][$eq]', journalistSlug);
+      params.append('sort[0]', 'createdAt:desc');
+      params.append('pagination[page]', String(page));
+      params.append('pagination[pageSize]', String(pageSize));
+
+      const response = await fetch(
+        `${STRAPI_URL}/api/blog-articles?${params.toString()}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+          signal: AbortSignal.timeout(5000),
+        }
+      );
+
+      if (!response.ok) {
+        console.warn('Failed to fetch blog articles:', response.status);
+        break;
       }
-    );
 
-    if (!response.ok) {
-      console.warn('Failed to fetch blog articles:', response.status);
-      return [];
+      const data = await response.json();
+
+      if (!data.data || data.data.length === 0) {
+        break;
+      }
+
+      // Transform and add articles from this page
+      const articles = data.data.map((article: StrapiBlogArticle) => ({
+        id: article.id,
+        title: article.title,
+        subtitle: article.subtitle || '',
+        slug: article.slug,
+        content: article.content || '',
+        coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
+        category: article.category || '',
+        readTime: article.readTime || 5,
+        publishedAt: article.createdAt,
+        timeAgo: getTimeAgo(article.createdAt),
+        journalist: {
+          id: article.journalist?.id || 0,
+          name: article.journalist?.name || '',
+          slug: article.journalist?.slug || journalistSlug,
+          avatarUrl: getImageUrl(article.journalist?.avatar?.url, '/default-avatar.jpg'),
+        },
+      }));
+
+      allArticles.push(...articles);
+
+      // Check if there are more pages
+      const pagination = data.meta?.pagination;
+      if (pagination && page < pagination.pageCount) {
+        page++;
+      } else {
+        hasMore = false;
+      }
     }
 
-    const data = await response.json();
-
-    if (!data.data || data.data.length === 0) {
-      return [];
-    }
-
-    // Articles are already filtered by journalist slug on the server
-    return data.data.map((article: StrapiBlogArticle) => ({
-      id: article.id,
-      title: article.title,
-      subtitle: article.subtitle || '',
-      slug: article.slug,
-      content: article.content || '',
-      coverImageUrl: getImageUrl(article.coverImage?.url, '/default-blog.jpg'),
-      category: article.category || '',
-      readTime: article.readTime || 5,
-      publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
-      timeAgo: getTimeAgo(article.createdAt),
-      journalist: {
-        id: article.journalist?.id || 0,
-        name: article.journalist?.name || '',
-        slug: article.journalist?.slug || journalistSlug,
-        avatarUrl: getImageUrl(article.journalist?.avatar?.url, '/default-avatar.jpg'),
-      },
-    }));
+    return allArticles;
   } catch (error) {
     console.warn('Error fetching blog articles:', error);
     return [];
@@ -265,13 +374,19 @@ export async function fetchBlogArticleBySlug(slug: string): Promise<BlogArticleD
 }
 
 /**
- * Fetch ALL articles (blog + sports) by journalist slug
- * Returns a unified list of all article types
+ * Fetch articles by journalist slug with pagination
+ * Note: This fetches from all endpoints and sorts by date across all categories
+ * @param journalistSlug - The journalist's slug
+ * @param page - Page number (1-indexed)
+ * @param pageSize - Number of articles per page
+ * @returns Paginated list of unified articles
  */
-export async function fetchAllArticlesByJournalist(journalistSlug: string): Promise<any[]> {
+export async function fetchAllArticlesByJournalist(
+  journalistSlug: string,
+  page: number = 1,
+  pageSize: number = 30
+): Promise<UnifiedArticle[]> {
   try {
-    // Filter articles by journalist slug directly (more reliable than id in Strapi v5)
-    // Fetch from all article endpoints in parallel
     const endpoints = [
       { url: 'blog-articles', category: 'Blog', color: 'bg-blue-100 text-blue-800', isBlog: true },
       { url: 'football-articles', category: 'ΠΟΔΟΣΦΑΙΡΟ', color: 'bg-green-100 text-green-800', isBlog: false },
@@ -279,17 +394,20 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
       { url: 'formula1-articles', category: 'AUTO MOTO', color: 'bg-blue-100 text-blue-800', isBlog: false },
     ];
 
+    // When fetching all articles (large pageSize), fetch max from each endpoint
+    // Backend maxLimit is 500, so we fetch 500 from each endpoint
+    const articlesToFetch = Math.min(pageSize, 500);
+
     const fetchPromises = endpoints.map(async (endpoint) => {
       try {
         const params = new URLSearchParams();
         params.append('populate[0]', endpoint.isBlog ? 'coverImage' : 'image');
         params.append('populate[1]', endpoint.isBlog ? 'journalist' : 'author');
         params.append('populate[2]', endpoint.isBlog ? 'journalist.avatar' : 'author.avatar');
-        // Filter by author/journalist slug on the server side (much more efficient)
         const authorField = endpoint.isBlog ? 'journalist' : 'author';
         params.append(`filters[${authorField}][slug][$eq]`, journalistSlug);
         params.append('sort[0]', 'createdAt:desc');
-        params.append('pagination[limit]', '100');
+        params.append('pagination[pageSize]', String(articlesToFetch));
 
         const response = await fetch(
           `${STRAPI_URL}/api/${endpoint.url}?${params.toString()}`,
@@ -304,8 +422,7 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
         const data = await response.json();
         if (!data.data || data.data.length === 0) return [];
 
-        // Articles are already filtered by author slug on the server side
-        // Transform to unified format
+        // Transform articles
         return data.data.map((article: StrapiBlogArticle | StrapiSportArticle) => ({
           id: article.id,
           title: article.title,
@@ -318,11 +435,9 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
           ),
           category: endpoint.category,
           categoryColor: endpoint.color,
-          publishedAt: article.createdAt,  // Use createdAt as it never changes when editing
+          publishedAt: article.createdAt,
           timeAgo: getTimeAgo(article.createdAt),
           isBlog: endpoint.isBlog,
-          // For blog articles, use journalist slug in URL
-          // For sports articles, use /article/slug
           linkHref: endpoint.isBlog 
             ? `/blog/${journalistSlug}/${article.slug}`
             : `/article/${article.slug}`,
@@ -343,7 +458,16 @@ export async function fetchAllArticlesByJournalist(journalistSlug: string): Prom
       return dateB.getTime() - dateA.getTime();
     });
 
-    return allArticles;
+    // If requesting all articles (pageSize >= total), return everything
+    // Otherwise apply pagination
+    if (page === 1 && pageSize >= allArticles.length) {
+      return allArticles;
+    }
+    
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    
+    return allArticles.slice(startIndex, endIndex);
   } catch (error) {
     console.warn('Error fetching all articles by journalist:', error);
     return [];
