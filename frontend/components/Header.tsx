@@ -101,6 +101,15 @@ export default function Header() {
                 )}
               </div>
 
+              {/* Teams */}
+              <Link
+                href="/teams"
+                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
+              >
+                Ομάδες
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+
               {/* Blog */}
               <Link
                 href="/blog"
@@ -220,6 +229,15 @@ export default function Header() {
               </Link>
 
               {/* Other Pages */}
+              <Link
+                href="/teams"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+              >
+                <span className="text-2xl mr-3">🏆</span>
+                <span className="font-medium">Ομάδες</span>
+              </Link>
+
               <Link
                 href="/blog"
                 onClick={() => setIsMobileMenuOpen(false)}

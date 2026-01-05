@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "teams",
+  "info": {
+    "singularName": "team",
+    "pluralName": "teams",
+    "displayName": "Team",
+    "description": "Sports teams for organizing articles"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "hasFootball": {
+      "type": "boolean",
+      "default": false
+    },
+    "hasBasketball": {
+      "type": "boolean",
+      "default": false
+    },
+    "hasAutoMoto": {
+      "type": "boolean",
+      "default": false
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "priority": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
+

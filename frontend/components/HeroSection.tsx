@@ -27,68 +27,93 @@ export default function HeroSection({
   backgroundImageUrl = "/216-scaled-1.jpg",
 }: HeroSectionProps) {
   return (
-    <section className="relative h-[500px] md:h-[650px] overflow-hidden group shadow-lg">
-      {/* Background Image with subtle zoom effect on hover */}
-      <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
-        <Image
-          src={backgroundImageUrl}
-          alt={title}
-          fill
-          priority
-          fetchPriority="high"
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+    <section className="relative h-[500px] md:h-[650px] overflow-hidden">
+      {/* Decorative Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        {/* Animated geometric pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-red-600 rounded-full filter blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-600 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
       </div>
-      
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/50 to-transparent z-[1]"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-[1]"></div>
-      
-      {/* Content on top of image */}
-      <div className="relative max-w-7xl mx-auto px-4 md:px-6 h-full flex items-center z-10">
-        <div className="text-white max-w-2xl animate-fadeIn">
-          {/* Category badge */}
-          <div className="flex items-center gap-2 mb-3">
-            <span className="bg-red-600 px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide shadow-md hover:bg-red-700 transition-colors cursor-pointer">
-              {categoryEmoji} {categoryLabel}
-            </span>
-            <span className="text-gray-300 text-xs font-medium" suppressHydrationWarning>
-              • {timeAgo}
-            </span>
+
+      {/* Centered Content Container */}
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 h-full flex items-center justify-center z-10">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          
+          {/* Left Side - Text Content */}
+          <div className="text-white animate-fadeIn order-2 lg:order-1">
+            {/* Category badge */}
+            <div className="flex items-center gap-2 mb-4">
+              <span className="bg-red-600 px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide shadow-md hover:bg-red-700 transition-colors cursor-pointer">
+                {categoryEmoji} {categoryLabel}
+              </span>
+              <span className="text-gray-300 text-xs font-medium" suppressHydrationWarning>
+                • {timeAgo}
+              </span>
+            </div>
+
+            {/* Main Headline */}
+            <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+              {title}
+              {titleHighlight && (
+                <>
+                  <br />
+                  <span className="text-red-500">{titleHighlight}</span>
+                </>
+              )}
+            </h1>
+
+            {/* Description */}
+            <p className="text-base md:text-lg mb-6 leading-relaxed text-gray-300">
+              {description}
+            </p>
+
+            {/* CTA Button */}
+            <div className="flex flex-wrap items-center gap-3">
+              {buttonLink && buttonLink !== '#' ? (
+                <Link
+                  href={buttonLink}
+                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-red-600/50"
+                >
+                  {buttonText}
+                </Link>
+              ) : (
+                <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-red-600/50">
+                  {buttonText}
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Main Headline - smaller size */}
-          <h1 className="text-3xl md:text-4xl font-bold mt-2 mb-4 leading-tight drop-shadow-lg">
-            {title}
-            {titleHighlight && (
-              <>
-                <br />
-                <span className="text-red-500">{titleHighlight}</span>
-              </>
-            )}
-          </h1>
+          {/* Right Side - Featured Image */}
+          <div className="relative order-1 lg:order-2 group">
+            <div className="relative h-[300px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-105">
+              {/* Image Container */}
+              <div className="absolute inset-0">
+                <Image
+                  src={backgroundImageUrl}
+                  alt={title}
+                  fill
+                  priority
+                  fetchPriority="high"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-center"
+                />
+              </div>
+              
+              {/* Subtle gradient overlay on image */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+              
+              {/* Decorative border glow */}
+              <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10 group-hover:ring-red-500/50 transition-all duration-500"></div>
+            </div>
 
-          {/* Description */}
-          <p className="text-base md:text-lg mb-6 leading-relaxed text-gray-100 drop-shadow-md">
-            {description}
-          </p>
-
-          {/* CTA section - smaller buttons */}
-          <div className="flex flex-wrap items-center gap-3">
-            {buttonLink && buttonLink !== '#' ? (
-              <Link
-                href={buttonLink}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105"
-              >
-                {buttonText}
-              </Link>
-            ) : (
-              <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105">
-                {buttonText}
-              </button>
-            )}
+            {/* Floating decorative elements */}
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-red-600/20 rounded-full filter blur-2xl animate-pulse"></div>
+            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-600/20 rounded-full filter blur-2xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
           </div>
+
         </div>
       </div>
     </section>

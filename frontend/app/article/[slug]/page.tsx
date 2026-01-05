@@ -138,13 +138,30 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
           {/* Article Content */}
           <div className="p-8">
-            {/* Category Badge */}
-            <div className="mb-4">
+            {/* Category and Team Badges */}
+            <div className="mb-4 flex flex-wrap items-center gap-3">
               <span
                 className={`inline-block ${article.categoryColor} text-sm font-semibold px-4 py-2 rounded-full uppercase tracking-wide`}
               >
                 {article.category}
               </span>
+              {article.team && (
+                <Link 
+                  href={`/team/${article.team.slug}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
+                >
+                  {article.team.logoUrl && (
+                    <Image
+                      src={article.team.logoUrl}
+                      alt={article.team.name}
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  )}
+                  {article.team.name}
+                </Link>
+              )}
             </div>
 
             {/* Title */}
@@ -159,11 +176,24 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </h2>
             )}
 
-            {/* Meta Information */}
-            <div className="flex items-center gap-6 text-gray-600 text-sm mb-8 pb-8 border-b border-gray-200">
-              <div className="flex items-center gap-2">
+            {/* Author Info */}
+            <div className="flex items-center gap-4 pb-8 mb-8 border-b border-gray-200">
+              {article.authorAvatarUrl ? (
+                <Link 
+                  href={article.authorSlug ? `/blog/${article.authorSlug}` : '#'} 
+                  className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-primary/20 hover:ring-primary/50 transition-all"
+                >
+                  <Image
+                    src={article.authorAvatarUrl}
+                    alt={article.author}
+                    fill
+                    className="object-cover"
+                  />
+                </Link>
+              ) : (
+                <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 bg-gray-100 flex items-center justify-center">
                 <svg
-                  className="w-5 h-5"
+                    className="w-8 h-8 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -175,20 +205,25 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
+                </div>
+              )}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
                 {article.authorSlug ? (
                   <Link
                     href={`/blog/${article.authorSlug}`}
-                    className="font-medium text-gray-600 hover:text-blue-600 hover:underline transition-colors duration-200"
+                      className="text-lg font-bold text-gray-900 hover:text-primary transition-colors"
                   >
                     {article.author}
                   </Link>
                 ) : (
-                  <span className="font-medium">{article.author}</span>
+                    <span className="text-lg font-bold text-gray-900">{article.author}</span>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
                 <svg
-                  className="w-5 h-5"
+                      className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -202,8 +237,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 </svg>
                 <span>{formatPublishedDate(article.publishedAt)}</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-400">
-                <span>({article.timeAgo})</span>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-gray-500">({article.timeAgo})</span>
+                </div>
               </div>
             </div>
 

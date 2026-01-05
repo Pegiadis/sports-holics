@@ -508,6 +508,7 @@ export interface ApiBasketballArticleBasketballArticle
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
+    team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -565,6 +566,7 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
+    team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -650,6 +652,7 @@ export interface ApiFootballArticleFootballArticle
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
+    team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -698,6 +701,7 @@ export interface ApiFormula1ArticleFormula1Article
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
+    team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -915,6 +919,40 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTeamTeam extends Struct.CollectionTypeSchema {
+  collectionName: 'teams';
+  info: {
+    description: 'Sports teams for organizing articles';
+    displayName: 'Team';
+    pluralName: 'teams';
+    singularName: 'team';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    hasAutoMoto: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    hasBasketball: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    hasFootball: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::team.team'> &
+      Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images'>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1441,6 +1479,7 @@ declare module '@strapi/strapi' {
       'api::homepage-configuration.homepage-configuration': ApiHomepageConfigurationHomepageConfiguration;
       'api::journalist.journalist': ApiJournalistJournalist;
       'api::news-article.news-article': ApiNewsArticleNewsArticle;
+      'api::team.team': ApiTeamTeam;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

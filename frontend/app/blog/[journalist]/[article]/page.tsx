@@ -4,10 +4,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
 import { fetchBlogArticleBySlug, fetchBlogArticlesByJournalist } from "../../api";
 import { renderDynamicZone } from "@/lib/richtext-utils";
 import { getImageUrl, formatPublishedDate } from "@/lib/sports-api";
+import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 
 interface BlogArticlePageProps {
   params: Promise<{
@@ -77,7 +79,13 @@ export async function generateMetadata({ params }: BlogArticlePageProps): Promis
 export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
   const { journalist: journalistSlug, article: articleSlug } = await params;
   
-  const article = await fetchBlogArticleBySlug(articleSlug);
+  // Fetch article, latest news, and hot news in parallel
+  const [article, moreArticles, latestNews, hotNews] = await Promise.all([
+    fetchBlogArticleBySlug(articleSlug),
+    fetchBlogArticlesByJournalist(journalistSlug),
+    fetchLatestNews(),
+    fetchCarouselNews()
+  ]);
 
   if (!article) {
     notFound();
@@ -88,8 +96,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
     notFound();
   }
 
-  // Fetch more articles from this journalist
-  const moreArticles = await fetchBlogArticlesByJournalist(journalistSlug);
+  // Filter related articles
   const relatedArticles = moreArticles
     .filter(a => a.id !== article.id)
     .slice(0, 3);
@@ -98,7 +105,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="mb-6 flex items-center gap-2 text-sm text-gray-600">
           <Link href="/blog" className="hover:text-primary transition-colors">
@@ -115,7 +122,10 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
           <span className="text-gray-900">{article.title}</span>
         </div>
 
-        {/* Article Container */}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Article Container - Main Column */}
+          <div className="lg:col-span-3">
         <article className="bg-white rounded-xl shadow-lg overflow-hidden mb-12">
           {/* Cover Image */}
           <div className="relative w-full h-[450px] md:h-[550px]">
@@ -131,12 +141,29 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
 
           {/* Article Content */}
           <div className="p-8 md:p-12">
-            {/* Category & Meta */}
+            {/* Category, Team & Meta */}
             <div className="flex flex-wrap items-center gap-3 mb-6">
               {article.category && (
                 <span className="px-4 py-2 bg-red-100 text-red-800 text-sm font-semibold rounded-full uppercase tracking-wide">
                   {article.category}
                 </span>
+              )}
+              {article.team && (
+                <Link 
+                  href={`/team/${article.team.slug}`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
+                >
+                  {article.team.logoUrl && (
+                    <Image
+                      src={article.team.logoUrl}
+                      alt={article.team.name}
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  )}
+                  {article.team.name}
+                </Link>
               )}
               <span className="text-gray-500 text-sm flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,6 +286,11 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             </svg>
             Επιστροφή στα άρθρα του {article.journalist.name}
           </Link>
+        </div>
+          </div>
+
+          {/* Sidebar */}
+          <Sidebar latestNews={latestNews} hotNews={hotNews} />
         </div>
       </main>
 

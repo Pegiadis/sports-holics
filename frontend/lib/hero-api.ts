@@ -2,7 +2,7 @@
  * Hero Section API
  */
 
-import { getImageUrl } from './sports-api';
+import { getImageUrl, getTimeAgo } from './sports-api';
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
@@ -22,8 +22,10 @@ export interface HeroSectionData {
 /**
  * Fetch active hero section content
  */
-export async function fetchHeroSection(): Promise<HeroSectionData | null> {
+export async function fetchHeroSection(referenceTime?: Date): Promise<HeroSectionData | null> {
   try {
+    const now = referenceTime || new Date();
+    
     const params = new URLSearchParams();
     params.append('filters[isActive][$eq]', 'true');
     params.append('populate[0]', 'backgroundImage');
@@ -67,16 +69,29 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
 
     const finalImageUrl = getImageUrl(backgroundImageUrl, '/216-scaled-1.jpg');
 
-    // Generate buttonLink from linked article
+    // Generate buttonLink and timeAgo from linked article
     let buttonLink = '#';
+    let timeAgo = '5 λεπτά πριν'; // fallback
+    let articleDate: string | undefined;
+    
+    // Check each linked article type and get the first one that exists
     if (hero.linkedFootballArticle?.slug) {
       buttonLink = `/article/${hero.linkedFootballArticle.slug}`;
+      articleDate = hero.linkedFootballArticle.publishedAt || hero.linkedFootballArticle.createdAt;
     } else if (hero.linkedBasketballArticle?.slug) {
       buttonLink = `/article/${hero.linkedBasketballArticle.slug}`;
+      articleDate = hero.linkedBasketballArticle.publishedAt || hero.linkedBasketballArticle.createdAt;
     } else if (hero.linkedFormula1Article?.slug) {
       buttonLink = `/article/${hero.linkedFormula1Article.slug}`;
+      articleDate = hero.linkedFormula1Article.publishedAt || hero.linkedFormula1Article.createdAt;
     } else if (hero.linkedNewsArticle?.slug) {
       buttonLink = `/article/${hero.linkedNewsArticle.slug}`;
+      articleDate = hero.linkedNewsArticle.publishedAt || hero.linkedNewsArticle.createdAt;
+    }
+    
+    // Calculate dynamic timeAgo if we have an article date
+    if (articleDate) {
+      timeAgo = getTimeAgo(articleDate, now);
     }
 
     return {
@@ -86,7 +101,7 @@ export async function fetchHeroSection(): Promise<HeroSectionData | null> {
       description: hero.description || 'Δύο γίγαντες του ποδοσφαίρου ετοιμάζονται για την απόλυτη μάχη.',
       categoryLabel: hero.categoryLabel || 'Ποδόσφαιρο',
       categoryEmoji: hero.categoryEmoji || '🔥',
-      timeAgo: hero.timeAgo || '5 λεπτά πριν',
+      timeAgo: timeAgo,
       buttonText: hero.buttonText || 'Διαβάστε περισσότερα →',
       buttonLink: buttonLink,
       backgroundImageUrl: finalImageUrl,

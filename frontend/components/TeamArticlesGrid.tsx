@@ -3,39 +3,29 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { TeamArticle } from "@/app/team/api";
 
-interface Article {
-  id: number;
-  title: string;
-  subtitle: string;
-  slug: string;
-  excerpt: string;
-  imageUrl: string;
-  category: string;
-  categoryColor: string;
-  publishedAt: string;
-  timeAgo: string;
-  isBlog: boolean;
-  linkHref: string;
+interface TeamArticlesGridProps {
+  articles: TeamArticle[];
+  teamName: string;
+  initialSort?: 'desc' | 'asc';
 }
 
-interface JournalistArticlesGridProps {
-  articles: Article[];
-  journalistName: string;
-}
-
-const ARTICLES_PER_PAGE = 12; // 4 rows x 3 columns
+const ARTICLES_PER_PAGE = 12;
 
 // Category configuration with Greek labels
 const CATEGORIES = [
   { key: "all", label: "Όλα", icon: "M4 6h16M4 10h16M4 14h16M4 18h16" },
   { key: "ΠΟΔΟΣΦΑΙΡΟ", label: "Ποδόσφαιρο", icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" },
   { key: "ΜΠΑΣΚΕΤ", label: "Μπάσκετ", icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM5.23 7.75C6.1 8.62 7.36 9 8.5 9c.96 0 1.89-.26 2.73-.75.17-.1.34-.21.5-.33.16.12.33.23.5.33.84.49 1.77.75 2.73.75 1.14 0 2.4-.38 3.27-1.25.87-.87 1.25-2.13 1.25-3.27 0-.96-.26-1.89-.75-2.73-.1-.17-.21-.34-.33-.5.12-.16.23-.33.33-.5.49-.84.75-1.77.75-2.73 0-1.14-.38-2.4-1.25-3.27" },
-  { key: "AUTO MOTO", label: "Auto Moto", icon: "M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" },
   { key: "Blog", label: "Blog", icon: "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" },
 ];
 
-export default function JournalistArticlesGrid({ articles, journalistName }: JournalistArticlesGridProps) {
+export default function TeamArticlesGrid({ 
+  articles, 
+  teamName,
+  initialSort = 'desc'
+}: TeamArticlesGridProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -47,16 +37,33 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
     return articles.filter((article) => article.category === selectedCategory);
   }, [articles, selectedCategory]);
 
+  // Sort articles by date (always newest first)
+  const sortedArticles = useMemo(() => {
+    return [...filteredArticles].sort((a, b) => {
+      const dateA = new Date(a.publishedAt || 0);
+      const dateB = new Date(b.publishedAt || 0);
+      return dateB.getTime() - dateA.getTime(); // Newest first
+    });
+  }, [filteredArticles]);
+
   // Calculate pagination
-  const totalPages = Math.ceil(filteredArticles.length / ARTICLES_PER_PAGE);
+  const totalPages = Math.ceil(sortedArticles.length / ARTICLES_PER_PAGE);
   const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
   const endIndex = startIndex + ARTICLES_PER_PAGE;
-  const currentArticles = filteredArticles.slice(startIndex, endIndex);
+  const currentArticles = sortedArticles.slice(startIndex, endIndex);
 
   // Reset to page 1 when category changes
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setCurrentPage(1);
+  };
+
+  // Get count of articles per category for badges
+  const getCategoryCount = (categoryKey: string) => {
+    if (categoryKey === "all") {
+      return articles.length;
+    }
+    return articles.filter((a) => a.category === categoryKey).length;
   };
 
   // Generate page numbers to display
@@ -65,19 +72,16 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
     const maxVisiblePages = 5;
 
     if (totalPages <= maxVisiblePages) {
-      // Show all pages if total is small
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Always show first page
       pages.push(1);
 
       if (currentPage > 3) {
         pages.push("...");
       }
 
-      // Show pages around current page
       const start = Math.max(2, currentPage - 1);
       const end = Math.min(totalPages - 1, currentPage + 1);
 
@@ -89,21 +93,12 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
         pages.push("...");
       }
 
-      // Always show last page
       if (totalPages > 1) {
         pages.push(totalPages);
       }
     }
 
     return pages;
-  };
-
-  // Get count of articles per category for badges
-  const getCategoryCount = (categoryKey: string) => {
-    if (categoryKey === "all") {
-      return articles.length;
-    }
-    return articles.filter((a) => a.category === categoryKey).length;
   };
 
   if (articles.length === 0) {
@@ -116,7 +111,7 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">Δεν υπάρχουν άρθρα ακόμα</h3>
         <p className="text-gray-600">
-          Ο {journalistName} δεν έχει δημοσιεύσει άρθρα ακόμα. Ελέγξτε ξανά σύντομα!
+          Η ομάδα {teamName} δεν έχει σχετικά άρθρα ακόμα. Ελέγξτε ξανά σύντομα!
         </p>
       </div>
     );
@@ -171,7 +166,7 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
 
       {/* Results count */}
       <div className="text-sm text-gray-500 mb-4">
-        {filteredArticles.length} {filteredArticles.length === 1 ? "άρθρο" : "άρθρα"}
+        {sortedArticles.length} {sortedArticles.length === 1 ? "άρθρο" : "άρθρα"}
         {selectedCategory !== "all" && (
           <span> στην κατηγορία {CATEGORIES.find(c => c.key === selectedCategory)?.label}</span>
         )}
@@ -190,7 +185,7 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
                 {/* Cover Image */}
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src={article.imageUrl}
+                    src={article.imageUrl || '/default-news.jpg'}
                     alt={article.title}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
@@ -213,9 +208,20 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
                     {article.title}
                   </h3>
 
+                  {/* Subtitle */}
+                  {article.subtitle && (
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      {article.subtitle}
+                    </p>
+                  )}
+
                   {/* Footer */}
                   <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-xs text-gray-500">{article.timeAgo}</span>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span>{article.timeAgo}</span>
+                      <span className="text-gray-300">•</span>
+                      <span>{article.author}</span>
+                    </div>
                     <span className="text-primary text-sm font-medium group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
                       Διαβάστε
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,4 +329,3 @@ export default function JournalistArticlesGrid({ articles, journalistName }: Jou
     </div>
   );
 }
-

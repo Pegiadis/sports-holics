@@ -55,6 +55,11 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.seo"
+    },
+    "team": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team"
     }
   }
 }

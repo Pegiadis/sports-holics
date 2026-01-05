@@ -439,6 +439,11 @@ body {
   }
 }
 
+/* Section Title Shimmer Effect */
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
 /* Article Table Styles */
 .table-wrapper {
   margin: 2rem 0;

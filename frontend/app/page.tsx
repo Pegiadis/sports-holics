@@ -64,7 +64,7 @@ export default async function Home() {
     formula1Articles
   ] = await Promise.all([
     fetchBreakingNews(),
-    fetchHeroSection(),
+    fetchHeroSection(now),
     fetchCarouselNews(now),
     fetchMainNews(now),
     fetchLatestNews(now),
