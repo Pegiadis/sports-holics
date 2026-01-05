@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import JournalistArticlesGrid from "@/components/JournalistArticlesGrid";
-import { fetchJournalistBySlug, fetchAllArticlesByJournalist } from "../api";
+import JournalistArticlesClient from "@/components/JournalistArticlesClient";
+import { fetchJournalistBySlug, countArticlesByJournalist } from "../api";
 
 interface JournalistPageProps {
   params: Promise<{
@@ -14,9 +14,10 @@ interface JournalistPageProps {
 export default async function JournalistPage({ params }: JournalistPageProps) {
   const { journalist: journalistSlug } = await params;
   
-  const [journalist, articles] = await Promise.all([
+  // Fetch journalist info and article count (fast!)
+  const [journalist, articleCount] = await Promise.all([
     fetchJournalistBySlug(journalistSlug),
-    fetchAllArticlesByJournalist(journalistSlug)
+    countArticlesByJournalist(journalistSlug),
   ]);
 
   if (!journalist) {
@@ -89,7 +90,7 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
 
             {/* Stats */}
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">{articles.length}</div>
+              <div className="text-4xl font-bold text-primary mb-2">{articleCount.total}</div>
               <div className="text-gray-600 text-sm">Άρθρα</div>
             </div>
           </div>
@@ -98,9 +99,10 @@ export default async function JournalistPage({ params }: JournalistPageProps) {
         {/* Articles Section */}
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Άρθρα</h2>
-          <JournalistArticlesGrid 
-            articles={articles} 
-            journalistName={journalist.name} 
+          <JournalistArticlesClient
+            journalistSlug={journalistSlug}
+            journalistName={journalist.name}
+            totalCount={articleCount.total}
           />
         </div>
       </main>
