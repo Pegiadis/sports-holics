@@ -16,7 +16,6 @@ import {
   fetchHomepageFootball,
   fetchHomepageBasketball,
   fetchHomepageFormula1,
-  fetchHomepageNews,
   fetchHeroSection,
   fetchBreakingNews,
   fetchJournalists
@@ -60,7 +59,6 @@ export default async function Home() {
     mainNewsArticles,
     latestNewsArticles,
     journalists,
-    newsArticles,
     footballArticles,
     basketballArticles,
     formula1Articles
@@ -71,7 +69,6 @@ export default async function Home() {
     fetchMainNews(now),
     fetchLatestNews(now),
     fetchJournalists(['aggelos-ntentas', 'giorgos-koyroy']),
-    fetchHomepageNews(now),
     fetchHomepageFootball(now),
     fetchHomepageBasketball(now),
     fetchHomepageFormula1(now),
@@ -189,21 +186,6 @@ export default async function Home() {
                 ))}
               </div>
             )}
-          </section>
-        )}
-
-        {/* Section Divider */}
-        <SectionDivider variant="sporty" />
-
-        {/* News Section */}
-        {newsArticles.length > 0 && (
-          <section className="mb-12">
-            <SectionTitle title="Ειδήσεις" icon="/news-press.png" variant="large" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {newsArticles.slice(0, 3).map((news, index) => (
-                <NewsCard key={index} {...news} />
-              ))}
-            </div>
           </section>
         )}
 
