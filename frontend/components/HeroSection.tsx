@@ -27,7 +27,7 @@ export default function HeroSection({
   backgroundImageUrl = "/216-scaled-1.jpg",
 }: HeroSectionProps) {
   return (
-    <section className="relative h-[500px] md:h-[650px] overflow-hidden">
+    <section className="relative min-h-[600px] md:h-[650px] overflow-hidden">
       {/* Decorative Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
         {/* Animated geometric pattern */}
@@ -38,13 +38,13 @@ export default function HeroSection({
       </div>
 
       {/* Centered Content Container */}
-      <div className="relative max-w-7xl mx-auto px-4 md:px-6 h-full flex items-center justify-center z-10">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 md:px-6 h-full flex items-center justify-center z-10 py-8 md:py-0">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
           
           {/* Left Side - Text Content */}
-          <div className="text-white animate-fadeIn order-2 lg:order-1">
+          <div className="text-white animate-fadeIn order-2 lg:order-1 pb-4 md:pb-0">
             {/* Category badge */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3 md:mb-4">
               <span className="bg-red-600 px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide shadow-md hover:bg-red-700 transition-colors cursor-pointer">
                 {categoryEmoji} {categoryLabel}
               </span>
@@ -54,7 +54,7 @@ export default function HeroSection({
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
+            <h1 className="text-2xl md:text-5xl font-bold mb-3 md:mb-4 leading-tight">
               {title}
               {titleHighlight && (
                 <>
@@ -65,7 +65,7 @@ export default function HeroSection({
             </h1>
 
             {/* Description */}
-            <p className="text-base md:text-lg mb-6 leading-relaxed text-gray-300">
+            <p className="text-sm md:text-lg mb-4 md:mb-6 leading-relaxed text-gray-300 line-clamp-3 md:line-clamp-none">
               {description}
             </p>
 
@@ -74,12 +74,12 @@ export default function HeroSection({
               {buttonLink && buttonLink !== '#' ? (
                 <Link
                   href={buttonLink}
-                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-red-600/50"
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-red-600/50"
                 >
                   {buttonText}
                 </Link>
               ) : (
-                <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-red-600/50">
+                <button className="bg-red-600 hover:bg-red-700 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-semibold text-sm shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-red-600/50">
                   {buttonText}
                 </button>
               )}
@@ -88,7 +88,7 @@ export default function HeroSection({
 
           {/* Right Side - Featured Image */}
           <div className="relative order-1 lg:order-2 group">
-            <div className="relative h-[300px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-105">
+            <div className="relative h-[250px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-105">
               {/* Image Container */}
               <div className="absolute inset-0">
                 <Image
