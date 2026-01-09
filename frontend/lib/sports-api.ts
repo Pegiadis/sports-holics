@@ -181,7 +181,7 @@ export function getTimeAgo(dateString: string, referenceTime?: Date): string {
 }
 
 /**
- * Format date to Greek locale with exact time
+ * Format date to Greek locale with exact time in Europe/Athens timezone
  * @param dateString - ISO date string
  * @returns Formatted date string like "12 Δεκεμβρίου 2025, 14:30"
  */
@@ -195,11 +195,25 @@ export function formatPublishedDate(dateString: string): string {
     'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'
   ];
   
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
+  // Use Intl.DateTimeFormat to get date/time parts in Europe/Athens timezone
+  const formatter = new Intl.DateTimeFormat('el-GR', {
+    timeZone: 'Europe/Athens',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+  
+  const parts = formatter.formatToParts(date);
+  const day = parts.find(p => p.type === 'day')?.value || '';
+  const monthIndex = parseInt(parts.find(p => p.type === 'month')?.value || '1') - 1;
+  const year = parts.find(p => p.type === 'year')?.value || '';
+  const hours = parts.find(p => p.type === 'hour')?.value || '00';
+  const minutes = parts.find(p => p.type === 'minute')?.value || '00';
+  
+  const month = months[monthIndex];
   
   return `${day} ${month} ${year}, ${hours}:${minutes}`;
 }
