@@ -42,6 +42,7 @@ export default async function Formula1Page({
   return (
     <SportPageTemplate
       emoji="🏎️"
+      icon="/apex.png"
       title="Auto Moto"
       description="Όλα τα νέα και οι ειδήσεις για τον μηχανοκίνητο αθλητισμό"
       articles={articles}

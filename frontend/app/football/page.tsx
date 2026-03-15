@@ -42,6 +42,7 @@ export default async function FootballPage({
   return (
     <SportPageTemplate
       emoji="⚽"
+      icon="/football.png"
       title="Ποδόσφαιρο"
       description="Όλα τα νέα και οι ειδήσεις για το ποδόσφαιρο"
       articles={articles}
