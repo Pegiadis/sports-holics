@@ -41,6 +41,15 @@ export default function Header() {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
 
+              {/* Βαθμολογίες - Scores */}
+              <Link
+                href="/scores"
+                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
+              >
+                Βαθμολογίες
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+
               {/* Δημοφιλείς Κατηγορίες - Dropdown */}
               <div 
                 className="relative"
@@ -194,6 +203,15 @@ export default function Header() {
                 className="px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary font-medium transition-colors"
               >
                 Αρχική
+              </Link>
+
+              {/* Scores */}
+              <Link
+                href="/scores"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary font-medium transition-colors"
+              >
+                Βαθμολογίες
               </Link>
 
               {/* Sports Categories */}
