@@ -95,15 +95,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Breadcrumb / Back Navigation */}
+      <main className="max-w-[90rem] mx-auto px-4 md:px-6 py-8">
+        {/* Back Navigation */}
         <div className="mb-6">
           <Link
             href="/"
-            className="text-blue-600 hover:text-blue-800 flex items-center gap-2 transition-colors"
+            className="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 hover:text-primary rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 text-sm font-medium group"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -120,9 +120,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 grid-layout-2col gap-5">
           {/* Article Container - Main Column */}
-          <div className="lg:col-span-3">
+          <div>
             <article className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Hero Image */}
           <div className="relative w-full h-[450px] md:h-[550px]">
