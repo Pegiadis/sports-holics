@@ -35,7 +35,7 @@ export default function Leaderboards() {
   const activeWidget = TABS.find((t) => t.id === activeTab)!;
 
   return (
-    <aside className="lg:col-span-3 lg:sticky lg:top-24 self-start">
+    <aside className="lg:sticky lg:top-24 self-start">
       <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 border-l-[3px] border-l-primary">
         {/* Header — collapsible on mobile */}
         <button

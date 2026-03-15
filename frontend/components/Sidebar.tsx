@@ -21,7 +21,7 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
   const showTabs = hotNews.length > 0;
 
   return (
-    <aside className="lg:col-span-3 lg:sticky lg:top-24 self-start">
+    <aside className="lg:sticky lg:top-24 self-start">
       <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6 border border-gray-100 border-l-[3px] border-l-primary">
         {/* Tab Navigation */}
         {showTabs ? (

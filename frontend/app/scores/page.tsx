@@ -33,9 +33,9 @@ export default async function ScoresPage() {
       <Header />
       <main>
         <div className="max-w-[90rem] mx-auto px-4 md:px-6 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 grid-layout-2col gap-5">
             {/* Scores — Main content */}
-            <div className="lg:col-span-9">
+            <div>
               <ScoresContent />
             </div>
 
