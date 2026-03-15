@@ -92,9 +92,10 @@ export default function NewsCarousel({ articles }: NewsCarouselProps) {
 
               // Calculate styles based on position
               const translateX = position * (isCenter ? 0 : isAdjacent ? 320 : 500);
-              const scale = isCenter ? 1 : isAdjacent ? 0.85 : 0.7;
+              const scale = isCenter ? 1.0 : isAdjacent ? 0.78 : 0.6;
               const zIndex = isCenter ? 20 : isAdjacent ? 10 : 5;
               const opacity = isCenter ? 1 : isAdjacent ? 0.6 : 0.3;
+              const blurAmount = isCenter ? 0 : isAdjacent ? 1 : 2;
 
               return (
                 <div
@@ -104,10 +105,11 @@ export default function NewsCarousel({ articles }: NewsCarouselProps) {
                     transform: `translateX(${translateX}px) scale(${scale})`,
                     zIndex,
                     opacity,
+                    filter: blurAmount > 0 ? `blur(${blurAmount}px)` : undefined,
                   }}
                 >
-                  <CarouselCard 
-                    article={article} 
+                  <CarouselCard
+                    article={article}
                     isCenter={isCenter}
                     onClick={() => !isCenter && goToSlide(index)}
                   />
@@ -140,8 +142,8 @@ export default function NewsCarousel({ articles }: NewsCarouselProps) {
               key={index}
               className={`transition-all duration-300 rounded-full ${
                 index === currentIndex 
-                  ? "w-8 h-2.5 bg-red-600" 
-                  : "w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400"
+                  ? "w-10 h-3 bg-red-600"
+                  : "w-3 h-3 bg-gray-300 hover:bg-gray-400"
               }`}
               onClick={() => goToSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
@@ -164,21 +166,25 @@ function CarouselCard({ article, isCenter, onClick }: CarouselCardProps) {
   const imageSrc = article.image || article.imageUrl || '/default-news.jpg';
 
   const cardContent = (
-    <div 
-      className={`relative w-[300px] md:w-[480px] bg-white rounded-xl overflow-hidden transition-all duration-500 ${
-        isCenter 
-          ? 'shadow-2xl ring-1 ring-gray-200' 
+    <div
+      className={`relative w-[340px] md:w-[540px] bg-white rounded-xl overflow-hidden transition-all duration-500 ${
+        isCenter
+          ? 'shadow-2xl shadow-red-600/20 ring-1 ring-gray-200'
           : 'shadow-lg cursor-pointer hover:shadow-xl'
       }`}
       onClick={!isCenter ? onClick : undefined}
     >
+      {/* Dark overlay for non-center cards */}
+      {!isCenter && (
+        <div className="absolute inset-0 bg-black/25 z-10 pointer-events-none rounded-xl" />
+      )}
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={imageSrc}
           alt={article.title}
           fill
-          sizes="(max-width: 768px) 300px, 480px"
+          sizes="(max-width: 768px) 340px, 540px"
           className={`object-cover transition-transform duration-500 ${isCenter ? 'hover:scale-105' : ''}`}
           priority={isCenter}
         />
