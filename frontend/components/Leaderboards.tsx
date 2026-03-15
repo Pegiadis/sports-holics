@@ -14,20 +14,20 @@ const TABS = [
   {
     id: 'champions-league',
     label: 'Champions League',
-    src: 'https://widgets.sofascore.com/embed/tournament/7/season/77897/standings/Champions%20League%2025%2F26?widgetTitle=Champions%20League%2025%2F26&showCompetitionLogo=true',
-    height: 883,
+    src: 'https://widgets.sofascore.com/embed/tournament/138314/season/76953/standings/UEFA%20Champions%20League%2025%2F26?widgetTitle=UEFA%20Champions%20League%2025%2F26&showCompetitionLogo=true',
+    height: 1763,
   },
   {
     id: 'euroleague',
     label: 'Euroleague',
-    src: 'https://widgets.sofascore.com/embed/tournament/138/season/77041/standings/Euroleague%2025%2F26?widgetTitle=Euroleague%2025%2F26&showCompetitionLogo=true',
-    height: 883,
+    src: 'https://widgets.sofascore.com/embed/tournament/42527/season/78545/standings/Euroleague%2025%2F26?widgetTitle=Euroleague%2025%2F26&showCompetitionLogo=true',
+    height: 1123,
   },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
 
-export default function LiveScores() {
+export default function Leaderboards() {
   const [activeTab, setActiveTab] = useState<TabId>('super-league');
   const [collapsed, setCollapsed] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ export default function LiveScores() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
             </span>
-            Live Scores
+            Βαθμολογίες
           </h3>
           {/* Chevron — mobile only */}
           <svg
@@ -107,7 +107,7 @@ export default function LiveScores() {
               frameBorder="0"
               scrolling="no"
               onLoad={() => setLoading(false)}
-              title={`${activeWidget.label} Live Scores`}
+              title={`${activeWidget.label} Βαθμολογίες`}
             />
           </div>
 

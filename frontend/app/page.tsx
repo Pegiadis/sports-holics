@@ -10,7 +10,7 @@ import JournalistsSection from "@/components/JournalistsSection";
 import Footer from "@/components/Footer";
 import SectionTitle from "@/components/SectionTitle";
 import ScrollReveal from "@/components/ScrollReveal";
-import LiveScores from "@/components/LiveScores";
+import Leaderboards from "@/components/Leaderboards";
 import {
   fetchCarouselNews,
   fetchLatestNews,
@@ -87,8 +87,8 @@ export default async function Home() {
         <div className="max-w-[90rem] mx-auto px-4 md:px-6 pt-4 pb-10">
           <SectionTitle title="Τρέχουσες Ειδήσεις" icon="/trending.png" />
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6">
-            {/* Live Scores — Left sidebar */}
-            <LiveScores />
+            {/* Leaderboards — Left sidebar */}
+            <Leaderboards />
 
             {/* Main News — Bento grid */}
             <div className="lg:col-span-6">
