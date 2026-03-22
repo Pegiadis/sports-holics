@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // SofaScore official widget embed URLs
 // To update: go to sofascore.com > tournament page > widget/embed button > copy iframe src
@@ -33,6 +33,12 @@ export default function Leaderboards() {
   const [loading, setLoading] = useState(true);
 
   const activeWidget = TABS.find((t) => t.id === activeTab)!;
+
+  // Fallback: hide skeleton after 3s in case onLoad missed during hydration
+  useEffect(() => {
+    const timeout = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timeout);
+  }, [activeTab]);
 
   return (
     <aside className="lg:sticky lg:top-24 self-start">

@@ -174,7 +174,7 @@ export default async function Home() {
                   </div>
                   {footballArticles.length > 3 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                      {footballArticles.slice(3, 6).map((news, index) => (
+                      {footballArticles.slice(3, 9).map((news, index) => (
                         <ScrollReveal key={index} delay={index * 80}>
                           <NewsCard {...news} size="xs" />
                         </ScrollReveal>
@@ -212,7 +212,7 @@ export default async function Home() {
                   </div>
                   {basketballArticles.length > 3 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                      {basketballArticles.slice(3, 6).map((news, index) => (
+                      {basketballArticles.slice(3, 9).map((news, index) => (
                         <ScrollReveal key={index} delay={index * 80}>
                           <NewsCard {...news} size="xs" />
                         </ScrollReveal>
@@ -250,7 +250,7 @@ export default async function Home() {
                   </div>
                   {formula1Articles.length > 3 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                      {formula1Articles.slice(3, 6).map((news, index) => (
+                      {formula1Articles.slice(3, 9).map((news, index) => (
                         <ScrollReveal key={index} delay={index * 80}>
                           <NewsCard {...news} size="xs" />
                         </ScrollReveal>

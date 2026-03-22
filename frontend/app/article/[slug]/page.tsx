@@ -8,6 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import ShareButtons from "@/components/ShareButtons";
 import SocialMediaScripts from "@/components/SocialMediaScripts";
 import ArticleContent from "@/components/ArticleContent";
+import Leaderboards from "@/components/Leaderboards";
 import { fetchArticleBySlug, getImageUrl, formatPublishedDate } from "@/lib/sports-api";
 import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
 import { renderDynamicZone } from "@/lib/richtext-utils";
@@ -22,7 +23,7 @@ interface ArticlePageProps {
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = await fetchArticleBySlug(slug);
-  
+
   if (!article) {
     return {
       title: 'Article Not Found',
@@ -32,10 +33,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   // Use SEO data if available, otherwise fall back to article data
   const title = article.seo?.metaTitle || article.title;
   const description = article.seo?.metaDescription || article.subtitle || article.title;
-  const imageUrl = article.seo?.metaImage?.url 
+  const imageUrl = article.seo?.metaImage?.url
     ? getImageUrl(article.seo.metaImage.url, '/no_back.png')
     : article.imageUrl;
-  
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const articleUrl = `${siteUrl}/article/${slug}`;
   const canonicalUrl = article.seo?.canonicalURL || articleUrl;
@@ -78,7 +79,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  
+
   // Fetch article, latest news, and hot news in parallel
   const [article, latestNews, hotNews] = await Promise.all([
     fetchArticleBySlug(slug),
@@ -95,168 +96,144 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-[90rem] mx-auto px-4 md:px-6 py-8">
-        {/* Back Navigation */}
-        <div className="mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 hover:text-primary rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 text-sm font-medium group"
+      {/* Back button */}
+      <div className="max-w-[90rem] mx-auto px-4 md:px-6 pt-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium group"
+        >
+          <svg
+            className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Επιστροφή στην αρχική
-          </Link>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 grid-layout-2col gap-5">
-          {/* Article Container - Main Column */}
-          <div>
-            <article className="bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Hero Image */}
-          <div className="relative w-full h-[450px] md:h-[550px]">
-            <Image
-              src={article.imageUrl}
-              alt={article.title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover object-center"
-              priority
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
             />
-          </div>
+          </svg>
+          Επιστροφή στην αρχική
+        </Link>
+      </div>
+
+      {/* Article Body + Sidebar */}
+      <main className="max-w-[90rem] mx-auto px-4 md:px-6 py-6">
+        <div className="grid grid-cols-1 grid-layout-3col gap-5">
+          {/* Leaderboards — Left sidebar */}
+          <Leaderboards />
 
           {/* Article Content */}
-          <div className="p-8">
-            {/* Category and Team Badges */}
-            <div className="mb-4 flex flex-wrap items-center gap-3">
-              <span
-                className={`inline-block ${article.categoryColor} text-sm font-semibold px-4 py-2 rounded-full uppercase tracking-wide`}
-              >
-                {article.category}
-              </span>
-              {article.team && (
-                <Link 
-                  href={`/team/${article.team.slug}`}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
-                >
-                  {article.team.logoUrl && (
-                    <Image
-                      src={article.team.logoUrl}
-                      alt={article.team.name}
-                      width={20}
-                      height={20}
-                      className="object-contain"
-                    />
-                  )}
-                  {article.team.name}
-                </Link>
-              )}
-            </div>
+          <div>
+            <article className="bg-white rounded-xl shadow-lg overflow-hidden">
+              {/* Article Image — full width, natural aspect ratio */}
+              <div className="relative w-full">
+                <Image
+                  src={article.imageUrl}
+                  alt={article.title}
+                  width={1200}
+                  height={675}
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="w-full h-auto"
+                  priority
+                />
+              </div>
 
-            {/* Title */}
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
-              {article.title}
-            </h1>
-
-            {/* Subtitle */}
-            {article.subtitle && (
-              <h2 className="text-xl text-gray-600 mb-6 leading-relaxed">
-                {article.subtitle}
-              </h2>
-            )}
-
-            {/* Author Info */}
-            <div className="flex items-center gap-4 pb-8 mb-8 border-b border-gray-200">
-              {article.authorAvatarUrl ? (
-                <Link 
-                  href={article.authorSlug ? `/blog/${article.authorSlug}` : '#'} 
-                  className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-primary/20 hover:ring-primary/50 transition-all"
-                >
-                  <Image
-                    src={article.authorAvatarUrl}
-                    alt={article.author}
-                    fill
-                    className="object-cover"
-                  />
-                </Link>
-              ) : (
-                <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 bg-gray-100 flex items-center justify-center">
-                <svg
-                    className="w-8 h-8 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                </div>
-              )}
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                {article.authorSlug ? (
-                  <Link
-                    href={`/blog/${article.authorSlug}`}
-                      className="text-lg font-bold text-gray-900 hover:text-primary transition-colors"
+              <div className="p-6 md:p-10">
+                {/* Category + Team badges */}
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <span
+                    className={`${article.categoryColor} text-sm font-semibold px-3.5 py-1.5 rounded-md uppercase tracking-wide`}
                   >
-                    {article.author}
-                  </Link>
-                ) : (
-                    <span className="text-lg font-bold text-gray-900">{article.author}</span>
-                )}
-              </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                <svg
-                      className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>{formatPublishedDate(article.publishedAt)}</span>
-              </div>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-500">({article.timeAgo})</span>
+                    {article.category}
+                  </span>
+                  {article.team && (
+                    <Link
+                      href={`/team/${article.team.slug}`}
+                      className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-sm font-medium transition-colors"
+                    >
+                      {article.team.logoUrl && (
+                        <Image
+                          src={article.team.logoUrl}
+                          alt={article.team.name}
+                          width={18}
+                          height={18}
+                          className="object-contain"
+                        />
+                      )}
+                      {article.team.name}
+                    </Link>
+                  )}
                 </div>
+
+                {/* Title */}
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-gray-900 leading-tight mb-4">
+                  {article.title}
+                </h1>
+
+                {/* Subtitle */}
+                {article.subtitle && (
+                  <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-5">
+                    {article.subtitle}
+                  </p>
+                )}
+
+                {/* Author + Date */}
+                <div className="flex items-center gap-4 mb-6">
+                  {article.authorAvatarUrl ? (
+                    <Link
+                      href={article.authorSlug ? `/blog/${article.authorSlug}` : '#'}
+                      className="relative w-11 h-11 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-200 hover:ring-primary/40 transition-all"
+                    >
+                      <Image
+                        src={article.authorAvatarUrl}
+                        alt={article.author}
+                        fill
+                        className="object-cover"
+                      />
+                    </Link>
+                  ) : (
+                    <div className="w-11 h-11 rounded-full flex-shrink-0 ring-2 ring-gray-200 bg-gray-100 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
+                  <div>
+                    {article.authorSlug ? (
+                      <Link
+                        href={`/blog/${article.authorSlug}`}
+                        className="text-gray-900 font-bold hover:text-primary transition-colors text-sm"
+                      >
+                        {article.author}
+                      </Link>
+                    ) : (
+                      <span className="text-gray-900 font-bold text-sm">{article.author}</span>
+                    )}
+                    <div className="flex items-center gap-2 text-gray-500 text-xs mt-0.5">
+                      <span>{formatPublishedDate(article.publishedAt)}</span>
+                      <span>•</span>
+                      <span suppressHydrationWarning>{article.timeAgo}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <hr className="border-gray-200 mb-6" />
+              <ArticleContent
+                html={renderDynamicZone(article.content)}
+                className="prose prose-lg max-w-none"
+              />
+
+              {/* Share Section */}
+              <ShareButtons
+                url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/article/${article.slug}`}
+                title={article.title}
+                description={article.subtitle}
+              />
               </div>
-            </div>
-
-            {/* Article Body */}
-            <ArticleContent 
-              html={renderDynamicZone(article.content)}
-              className="prose prose-lg max-w-none"
-            />
-
-            {/* Share Section */}
-            <ShareButtons 
-              url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/article/${article.slug}`}
-              title={article.title}
-              description={article.subtitle}
-            />
-          </div>
-        </article>
+            </article>
           </div>
 
           {/* Sidebar */}
@@ -269,4 +246,3 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     </div>
   );
 }
-
