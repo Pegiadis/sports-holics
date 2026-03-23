@@ -21,7 +21,7 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
   const showTabs = hotNews.length > 0;
 
   return (
-    <aside className="lg:sticky lg:top-24 self-start">
+    <aside>
       <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6 border border-gray-100 border-l-[3px] border-l-primary">
         {/* Tab Navigation */}
         {showTabs ? (
@@ -88,16 +88,6 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
                 className="block group"
               >
                 <div className="flex items-start space-x-3 hover:bg-gray-50 rounded-lg p-2 transition-all duration-300 hover:translate-x-1 hover:shadow-sm">
-                  {/* Ranking Number */}
-                  <div className="flex-shrink-0 pt-1">
-                    <span className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
-                      index < 3
-                        ? 'bg-primary text-white'
-                        : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {index + 1}
-                    </span>
-                  </div>
                   <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden">
                     <Image
                       src={news.image || news.imageUrl || '/default-news.jpg'}

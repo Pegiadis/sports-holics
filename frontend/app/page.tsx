@@ -11,6 +11,8 @@ import Footer from "@/components/Footer";
 import SectionTitle from "@/components/SectionTitle";
 import ScrollReveal from "@/components/ScrollReveal";
 import Leaderboards from "@/components/Leaderboards";
+import ReadAlsoStrip from "@/components/ReadAlsoStrip";
+import SidebarWidget from "@/components/SidebarWidget";
 import {
   fetchCarouselNews,
   fetchLatestNews,
@@ -20,7 +22,8 @@ import {
   fetchHomepageFormula1,
   fetchHeroSection,
   fetchBreakingNews,
-  fetchJournalists
+  fetchJournalists,
+  fetchTrendingArticles
 } from "./homepage-api";
 
 // Force dynamic rendering for real-time CMS updates
@@ -63,7 +66,8 @@ export default async function Home() {
     journalists,
     footballArticles,
     basketballArticles,
-    formula1Articles
+    formula1Articles,
+    trendingArticles
   ] = await Promise.all([
     fetchBreakingNews(),
     fetchHeroSection(now),
@@ -74,78 +78,107 @@ export default async function Home() {
     fetchHomepageFootball(now),
     fetchHomepageBasketball(now),
     fetchHomepageFormula1(now),
+    fetchTrendingArticles(now),
   ]);
-  
+
+  // Split trending articles into non-overlapping slices
+  const trendingPopular = trendingArticles.slice(0, 5);       // Left sidebar "Δημοφιλή"
+  const trendingForStrip3 = trendingArticles.slice(5, 9);     // ReadAlso after Main News
+  const trendingForStrip1 = trendingArticles.slice(9, 13);    // ReadAlso between Football & Basketball
+  const trendingForStrip2 = trendingArticles.slice(13, 17);   // ReadAlso between Basketball & Auto Moto
+  const trendingDontMiss = trendingArticles.slice(17, 20);    // Right sidebar "Μην τα χάσετε"
+  const trendingFootball = trendingArticles.filter((a) => a.category === 'ΠΟΔΟΣΦΑΙΡΟ').slice(0, 5);
+  const trendingBasketball = trendingArticles.filter((a) => a.category === 'ΜΠΑΣΚΕΤ').slice(0, 5);
+  const trendingAutoMoto = trendingArticles.filter((a) => a.category === 'AUTO MOTO').slice(0, 5);
+
   return (
     <div className="bg-gray-50">
       <Header />
       <BreakingNews items={breakingNews} />
       {heroSection && <HeroSection {...heroSection} />}
 
-      {/* Main News — tight to hero */}
       <main>
+        {/* Single 3-column layout for entire homepage */}
         <div className="max-w-[90rem] mx-auto px-4 md:px-6 pt-4 pb-10">
-          <SectionTitle title="Τρέχουσες Ειδήσεις" icon="/trending.png" />
           <div className="grid grid-cols-1 grid-layout-3col gap-5">
-            {/* Leaderboards — Left sidebar */}
-            <Leaderboards />
 
-            {/* Main News — Bento grid */}
-            <div>
-              {mainNewsArticles.length > 0 ? (
-                <>
-                  {/* Bento: 1 large feature + 2 smaller beside it */}
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-5 mb-5">
-                    <div className="md:col-span-3 h-full">
-                      <NewsCard key={0} {...mainNewsArticles[0]} size="large" priority />
+            {/* Left sidebar — sticky scrollable */}
+            <div className="lg:sticky lg:top-24 self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:scrollbar-hide space-y-5">
+              <SidebarWidget
+                title="Δημοφιλή"
+                icon="/trending.png"
+                articles={trendingPopular}
+                variant="numbered"
+              />
+              <SidebarWidget
+                title="Ποδόσφαιρο"
+                icon="/football.png"
+                articles={trendingFootball}
+                accentColor="border-l-green-500"
+                variant="image"
+              />
+              <SidebarWidget
+                title="Μπάσκετ"
+                icon="/basketball.png"
+                articles={trendingBasketball}
+                accentColor="border-l-orange-500"
+                variant="compact"
+              />
+              <SidebarWidget
+                title="Auto Moto"
+                icon="/apex.png"
+                articles={trendingAutoMoto}
+                accentColor="border-l-blue-500"
+                variant="image"
+              />
+              <Leaderboards />
+            </div>
+
+            {/* Center content */}
+            <div className="space-y-10">
+              {/* Main News */}
+              <section>
+                <SectionTitle title="Τρέχουσες Ειδήσεις" icon="/trending.png" />
+                {mainNewsArticles.length > 0 ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-5 mb-5">
+                      <div className="md:col-span-3 h-full">
+                        <NewsCard key={0} {...mainNewsArticles[0]} size="large" priority />
+                      </div>
+                      <div className="md:col-span-2 flex flex-col gap-5">
+                        {mainNewsArticles.slice(1, 3).map((news, index) => (
+                          <NewsCard key={index + 1} {...news} size="small" />
+                        ))}
+                      </div>
                     </div>
-                    <div className="md:col-span-2 flex flex-col gap-5">
-                      {mainNewsArticles.slice(1, 3).map((news, index) => (
-                        <NewsCard key={index + 1} {...news} size="small" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                      {mainNewsArticles.slice(3, 9).map((news, index) => (
+                        <ScrollReveal key={index} delay={index * 80}>
+                          <NewsCard {...news} size="xs" />
+                        </ScrollReveal>
                       ))}
                     </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500 text-lg">
+                      Δεν υπάρχουν διαθέσιμα άρθρα αυτή τη στιγμή. Παρακαλώ προσθέστε άρθρα με το flag &quot;Main News&quot; στο CMS.
+                    </p>
                   </div>
-                  {/* Remaining cards in row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                    {mainNewsArticles.slice(3, 9).map((news, index) => (
-                      <ScrollReveal key={index} delay={index * 80}>
-                        <NewsCard {...news} size="xs" />
-                      </ScrollReveal>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 text-lg">
-                    Δεν υπάρχουν διαθέσιμα άρθρα αυτή τη στιγμή. Παρακαλώ προσθέστε άρθρα με το flag &quot;Main News&quot; στο CMS.
-                  </p>
-                </div>
+                )}
+              </section>
+
+              {/* Read Also — after Main News */}
+              <ReadAlsoStrip articles={trendingForStrip3} />
+
+              {/* Carousel */}
+              {carouselArticles.length > 0 && (
+                <section>
+                  <SectionTitle title="Σημαντικά Νέα" icon="/news-2.png" />
+                  <NewsCarousel articles={carouselArticles} />
+                </section>
               )}
-            </div>
 
-            {/* Sidebar */}
-            <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
-          </div>
-        </div>
-
-        {/* Carousel — dark band */}
-        {carouselArticles.length > 0 && (
-          <div className="sport-section-dark py-12">
-            <div className="max-w-[90rem] mx-auto px-4 md:px-6">
-              <SectionTitle title="Σημαντικά Νέα" icon="/news-2.png" />
-              <NewsCarousel articles={carouselArticles} />
-            </div>
-          </div>
-        )}
-
-        {/* Sport Sections with sidebars */}
-        <div className="max-w-[90rem] mx-auto px-4 md:px-6 py-10">
-          <div className="grid grid-cols-1 grid-layout-3col gap-5">
-            {/* Leaderboards — Left sidebar */}
-            <Leaderboards />
-
-            {/* Sport sections — Center content */}
-            <div className="space-y-12">
               {/* Football */}
               {footballArticles.length > 0 && (
                 <section className="sport-section-accent sport-section-football rounded-xl pt-1">
@@ -183,6 +216,9 @@ export default async function Home() {
                   )}
                 </section>
               )}
+
+              {/* Read Also — between Football & Basketball */}
+              <ReadAlsoStrip articles={trendingForStrip1} />
 
               {/* Basketball */}
               {basketballArticles.length > 0 && (
@@ -222,6 +258,9 @@ export default async function Home() {
                 </section>
               )}
 
+              {/* Read Also — between Basketball & Auto Moto */}
+              <ReadAlsoStrip articles={trendingForStrip2} />
+
               {/* Auto Moto */}
               {formula1Articles.length > 0 && (
                 <section className="sport-section-accent sport-section-automoto rounded-xl pt-1">
@@ -259,23 +298,29 @@ export default async function Home() {
                   )}
                 </section>
               )}
+
+              {/* Journalists */}
+              {journalists.length > 0 && (
+                <ScrollReveal>
+                  <JournalistsSection journalists={journalists} />
+                </ScrollReveal>
+              )}
             </div>
 
-            {/* Sidebar — Right */}
-            <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
+            {/* Right sidebar — sticky scrollable */}
+            <div className="lg:sticky lg:top-24 self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:scrollbar-hide space-y-5">
+              <Sidebar latestNews={latestNewsArticles} hotNews={carouselArticles} />
+              <SidebarWidget
+                title="Μην τα χάσετε"
+                icon="/news-2.png"
+                articles={trendingDontMiss}
+                accentColor="border-l-yellow-500"
+                variant="image"
+              />
+            </div>
+
           </div>
         </div>
-
-        {/* Journalists — dark band */}
-        {journalists.length > 0 && (
-          <section className="sport-section-dark py-12">
-            <div className="max-w-[90rem] mx-auto px-4 md:px-6">
-              <ScrollReveal>
-                <JournalistsSection journalists={journalists} />
-              </ScrollReveal>
-            </div>
-          </section>
-        )}
       </main>
 
       <Footer />

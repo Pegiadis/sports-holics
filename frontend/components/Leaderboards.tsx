@@ -41,7 +41,7 @@ export default function Leaderboards() {
   }, [activeTab]);
 
   return (
-    <aside className="lg:sticky lg:top-24 self-start">
+    <aside>
       <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 border-l-[3px] border-l-primary">
         {/* Header — collapsible on mobile */}
         <button

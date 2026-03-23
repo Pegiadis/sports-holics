@@ -9,8 +9,9 @@ import ShareButtons from "@/components/ShareButtons";
 import SocialMediaScripts from "@/components/SocialMediaScripts";
 import ArticleContent from "@/components/ArticleContent";
 import Leaderboards from "@/components/Leaderboards";
+import SidebarWidget from "@/components/SidebarWidget";
 import { fetchArticleBySlug, getImageUrl, formatPublishedDate } from "@/lib/sports-api";
-import { fetchLatestNews, fetchCarouselNews } from "@/app/homepage-api";
+import { fetchLatestNews, fetchCarouselNews, fetchTrendingArticles } from "@/app/homepage-api";
 import { renderDynamicZone } from "@/lib/richtext-utils";
 
 interface ArticlePageProps {
@@ -80,17 +81,22 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
 
-  // Fetch article, latest news, and hot news in parallel
-  const [article, latestNews, hotNews] = await Promise.all([
+  // Fetch article, latest news, hot news, and trending in parallel
+  const [article, latestNews, hotNews, trendingArticles] = await Promise.all([
     fetchArticleBySlug(slug),
     fetchLatestNews(),
-    fetchCarouselNews()
+    fetchCarouselNews(),
+    fetchTrendingArticles(undefined, [slug])
   ]);
 
   // If article not found in any sport, show 404
   if (!article) {
     notFound();
   }
+
+  const trendingFootball = trendingArticles.filter((a) => a.category === 'ΠΟΔΟΣΦΑΙΡΟ').slice(0, 5);
+  const trendingBasketball = trendingArticles.filter((a) => a.category === 'ΜΠΑΣΚΕΤ').slice(0, 5);
+  const trendingAutoMoto = trendingArticles.filter((a) => a.category === 'AUTO MOTO').slice(0, 5);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -122,8 +128,37 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {/* Article Body + Sidebar */}
       <main className="max-w-[90rem] mx-auto px-4 md:px-6 py-6">
         <div className="grid grid-cols-1 grid-layout-3col gap-5">
-          {/* Leaderboards — Left sidebar */}
-          <Leaderboards />
+          {/* Left sidebar */}
+          <div className="lg:sticky lg:top-24 self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:scrollbar-hide space-y-5">
+            <SidebarWidget
+              title="Δημοφιλή"
+              icon="/trending.png"
+              articles={trendingArticles.slice(0, 5)}
+              variant="numbered"
+            />
+            <SidebarWidget
+              title="Ποδόσφαιρο"
+              icon="/football.png"
+              articles={trendingFootball}
+              accentColor="border-l-green-500"
+              variant="image"
+            />
+            <SidebarWidget
+              title="Μπάσκετ"
+              icon="/basketball.png"
+              articles={trendingBasketball}
+              accentColor="border-l-orange-500"
+              variant="compact"
+            />
+            <SidebarWidget
+              title="Auto Moto"
+              icon="/apex.png"
+              articles={trendingAutoMoto}
+              accentColor="border-l-blue-500"
+              variant="image"
+            />
+            <Leaderboards />
+          </div>
 
           {/* Article Content */}
           <div>
@@ -236,8 +271,17 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </article>
           </div>
 
-          {/* Sidebar */}
-          <Sidebar latestNews={latestNews} hotNews={hotNews} />
+          {/* Right sidebar */}
+          <div className="lg:sticky lg:top-24 self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:scrollbar-hide space-y-5">
+            <Sidebar latestNews={latestNews} hotNews={hotNews} />
+            <SidebarWidget
+              title="Μην τα χάσετε"
+              icon="/news-2.png"
+              articles={trendingArticles.slice(15, 20)}
+              accentColor="border-l-yellow-500"
+              variant="image"
+            />
+          </div>
         </div>
       </main>
 
