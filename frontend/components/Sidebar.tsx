@@ -21,16 +21,16 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
   const showTabs = hotNews.length > 0;
 
   return (
-    <aside className="lg:col-span-1">
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6 border border-gray-100">
+    <aside>
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6 border border-gray-100 border-l-[3px] border-l-primary">
         {/* Tab Navigation */}
         {showTabs ? (
-          <div className="flex bg-gray-50/50 p-1.5 m-4 rounded-lg">
+          <div className="flex border-b border-gray-200">
             <button
               onClick={() => setActiveTab('latest')}
-              className={`flex-1 px-4 py-2.5 text-sm font-semibold rounded-md transition-all duration-300 ${
+              className={`flex-1 px-4 py-3 text-sm font-semibold transition-all duration-300 relative ${
                 activeTab === 'latest'
-                  ? 'bg-white text-primary shadow-sm'
+                  ? 'text-primary'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -40,12 +40,15 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
                 </svg>
                 Τελευταία
               </span>
+              {activeTab === 'latest' && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[3px] bg-primary rounded-t-full" />
+              )}
             </button>
             <button
               onClick={() => setActiveTab('hot')}
-              className={`flex-1 px-4 py-2.5 text-sm font-semibold rounded-md transition-all duration-300 ${
+              className={`flex-1 px-4 py-3 text-sm font-semibold transition-all duration-300 relative ${
                 activeTab === 'hot'
-                  ? 'bg-white text-primary shadow-sm'
+                  ? 'text-primary'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -56,6 +59,9 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
                 </svg>
                 Hot News
               </span>
+              {activeTab === 'hot' && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[3px] bg-primary rounded-t-full" />
+              )}
             </button>
           </div>
         ) : (
@@ -76,12 +82,12 @@ export default function Sidebar({ latestNews, hotNews = [] }: SidebarProps) {
         <div className="p-6 space-y-4">
           {currentNews.length > 0 ? (
             currentNews.map((news, index) => (
-              <Link 
-                key={index} 
+              <Link
+                key={index}
                 href={`/article/${news.slug}`}
                 className="block group"
               >
-                <div className="flex space-x-3 hover:bg-gray-50 rounded-lg p-2 transition-colors">
+                <div className="flex items-start space-x-3 hover:bg-gray-50 rounded-lg p-2 transition-all duration-300 hover:translate-x-1 hover:shadow-sm">
                   <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden">
                     <Image
                       src={news.image || news.imageUrl || '/default-news.jpg'}

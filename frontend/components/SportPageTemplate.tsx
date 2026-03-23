@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
+import SectionTitle from "@/components/SectionTitle";
 import Pagination from "@/components/Pagination";
 import ArticleCard from "@/components/ArticleCard";
 import { BaseArticle, PaginationMeta } from "@/lib/sports-api";
@@ -8,6 +9,7 @@ import { NewsArticle } from "@/types";
 
 interface SportPageTemplateProps {
   emoji: string;
+  icon?: string;
   title: string;
   description: string;
   articles: BaseArticle[];
@@ -18,6 +20,7 @@ interface SportPageTemplateProps {
 
 export default function SportPageTemplate({
   emoji,
+  icon,
   title,
   description,
   articles,
@@ -29,20 +32,17 @@ export default function SportPageTemplate({
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-[90rem] mx-auto px-4 md:px-6 py-8">
         {/* Page Title */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-4xl">{emoji}</span>
-            <h1 className="text-4xl font-bold text-gray-900">{title}</h1>
-          </div>
-          <p className="text-gray-600">{description}</p>
+          <SectionTitle title={title} icon={icon || emoji} variant="large" className="mb-2" />
+          <p className="text-gray-500 ml-14">{description}</p>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 grid-layout-2col gap-5">
           {/* Articles List - Main Column */}
-          <div className="lg:col-span-3">
+          <div>
             <div className="space-y-6 mb-10">
               {articles.map((article) => (
                 <ArticleCard key={article.id} article={article} />

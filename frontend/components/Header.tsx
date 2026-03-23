@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function Header() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -32,88 +31,60 @@ export default function Header() {
             
             {/* Navigation with enhanced hover effects */}
             <nav className="hidden md:flex items-center space-x-1">
-              {/* ΑΡΧΙΚΗ - Home */}
               <Link
                 href="/"
-                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
+                className="relative px-3 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
               >
                 Αρχική
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
 
-              {/* Δημοφιλείς Κατηγορίες - Dropdown */}
-              <div 
-                className="relative"
-                onMouseEnter={() => setIsDropdownOpen(true)}
-                onMouseLeave={() => setIsDropdownOpen(false)}
+              <Link
+                href="/football"
+                className="relative px-3 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group flex items-center gap-1.5"
               >
-                <button
-                  className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group flex items-center space-x-1"
-                >
-                  <span>Δημοφιλείς Κατηγορίες</span>
-                  <svg 
-                    className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-                </button>
+                <Image src="/football.png" alt="" width={18} height={18} className="object-contain" />
+                Ποδόσφαιρο
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+              </Link>
 
-                {/* Dropdown Menu */}
-                {isDropdownOpen && (
-                  <div className="absolute top-full left-0 pt-2 w-56">
-                    <div className="bg-white rounded-lg shadow-xl border border-gray-100 py-2 animate-dropdownFadeIn">
-                      <Link
-                        href="/football"
-                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors group"
-                      >
-                        <span className="text-2xl mr-3">⚽</span>
-                        <span className="font-medium">Ποδόσφαιρο</span>
-                        <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
-                      <Link
-                        href="/basketball"
-                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors group"
-                      >
-                        <span className="text-2xl mr-3">🏀</span>
-                        <span className="font-medium">Μπάσκετ</span>
-                        <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
-                      <Link
-                        href="/formula1"
-                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors group"
-                      >
-                        <span className="text-2xl mr-3">🏎️</span>
-                        <span className="font-medium">Auto Moto</span>
-                        <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Link
+                href="/basketball"
+                className="relative px-3 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group flex items-center gap-1.5"
+              >
+                <Image src="/basketball.png" alt="" width={18} height={18} className="object-contain" />
+                Μπάσκετ
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+              </Link>
 
-              {/* Teams */}
+              <Link
+                href="/formula1"
+                className="relative px-3 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group flex items-center gap-1.5"
+              >
+                <Image src="/apex.png" alt="" width={18} height={18} className="object-contain" />
+                Auto Moto
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+
+              <Link
+                href="/scores"
+                className="relative px-3 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
+              >
+                Βαθμολογίες
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+
               <Link
                 href="/teams"
-                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
+                className="relative px-3 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
               >
                 Ομάδες
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </Link>
 
-              {/* Blog */}
               <Link
                 href="/blog"
-                className="relative px-4 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
+                className="relative px-3 py-2 text-gray-700 hover:text-primary font-medium transition-all duration-300 group"
               >
                 Blog
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
@@ -187,7 +158,6 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-100 py-4 animate-slideDown">
             <nav className="flex flex-col space-y-1">
-              {/* Home */}
               <Link
                 href="/"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -196,46 +166,47 @@ export default function Header() {
                 Αρχική
               </Link>
 
-              {/* Sports Categories */}
-              <div className="px-4 py-2 text-sm text-gray-500 font-semibold uppercase tracking-wide">
-                Δημοφιλείς Κατηγορίες
-              </div>
-              
               <Link
                 href="/football"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
               >
-                <span className="text-2xl mr-3">⚽</span>
+                <Image src="/football.png" alt="" width={22} height={22} className="object-contain" />
                 <span className="font-medium">Ποδόσφαιρο</span>
               </Link>
 
               <Link
                 href="/basketball"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
               >
-                <span className="text-2xl mr-3">🏀</span>
+                <Image src="/basketball.png" alt="" width={22} height={22} className="object-contain" />
                 <span className="font-medium">Μπάσκετ</span>
               </Link>
 
               <Link
                 href="/formula1"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
               >
-                <span className="text-2xl mr-3">🏎️</span>
+                <Image src="/apex.png" alt="" width={22} height={22} className="object-contain" />
                 <span className="font-medium">Auto Moto</span>
               </Link>
 
-              {/* Other Pages */}
+              <Link
+                href="/scores"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary font-medium transition-colors"
+              >
+                Βαθμολογίες
+              </Link>
+
               <Link
                 href="/teams"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                className="px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary font-medium transition-colors"
               >
-                <span className="text-2xl mr-3">🏆</span>
-                <span className="font-medium">Ομάδες</span>
+                Ομάδες
               </Link>
 
               <Link

@@ -42,6 +42,7 @@ export default async function BasketballPage({
   return (
     <SportPageTemplate
       emoji="🏀"
+      icon="/basketball.png"
       title="Μπάσκετ"
       description="Όλα τα νέα και οι ειδήσεις για το μπάσκετ"
       articles={articles}

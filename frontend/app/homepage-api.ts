@@ -371,6 +371,40 @@ export async function fetchHomepageFormula1(referenceTime?: Date): Promise<NewsA
 }
 
 /**
+ * Fetch trending articles — recent articles from all sports, interleaved
+ * Takes 3 from each sport, ordered by date, for a diverse mix
+ */
+export async function fetchTrendingArticles(
+  referenceTime?: Date,
+  excludeSlugs: string[] = []
+): Promise<NewsArticle[]> {
+  const now = referenceTime || new Date();
+  const [football, basketball, formula1] = await Promise.all([
+    fetchArticlesFromEndpoint('football-articles', 'ΠΟΔΟΣΦΑΙΡΟ', 'bg-green-100 text-green-800', { limit: 8 }, now),
+    fetchArticlesFromEndpoint('basketball-articles', 'ΜΠΑΣΚΕΤ', 'bg-orange-100 text-orange-800', { limit: 8 }, now),
+    fetchArticlesFromEndpoint('formula1-articles', 'AUTO MOTO', 'bg-blue-100 text-blue-800', { limit: 8 }, now),
+  ]);
+
+  // Interleave: pick from each sport in round-robin to ensure variety
+  const sources = [football, basketball, formula1];
+  const interleaved: NewsArticle[] = [];
+  const maxLen = Math.max(...sources.map((s) => s.length));
+
+  for (let i = 0; i < maxLen; i++) {
+    for (const source of sources) {
+      if (source[i]) interleaved.push(source[i]);
+    }
+  }
+
+  // Exclude articles already visible on the page
+  const filtered = excludeSlugs.length > 0
+    ? interleaved.filter((a) => !excludeSlugs.includes(a.slug || ''))
+    : interleaved;
+
+  return filtered.slice(0, 20);
+}
+
+/**
  * Blog Article Data Interface
  */
 export interface BlogArticleData {

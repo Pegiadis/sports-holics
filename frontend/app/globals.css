@@ -14,6 +14,31 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* 3-column layout: fixed sidebars, fluid center */
+@media (min-width: 1024px) {
+  .grid-layout-3col {
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 1.5rem;
+  }
+
+  /* 2-column layout: fluid content + fixed sidebar */
+  .grid-layout-2col {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+  }
+}
+
+/* Hide scrollbar but keep scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Breaking news ticker animation */
 @keyframes scroll {
   0% { transform: translateX(100%); }
@@ -24,20 +49,57 @@ body {
   animation: scroll 30s linear infinite;
 }
 
-/* Hero section fade-in animation */
-@keyframes fadeIn {
-  0% { 
+/* Hero section animations */
+@keyframes heroSlideUp {
+  0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(40px);
   }
-  100% { 
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-heroSlideUp {
+  animation: heroSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out;
+}
+
+/* Hero highlight text — warm gradient */
+.hero-highlight-text {
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #ef4444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero image — diagonal clip on desktop */
+@media (min-width: 1024px) {
+  .hero-image-clip {
+    clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+}
+
+/* Alternating dark section bands */
+.sport-section-dark {
+  background: linear-gradient(180deg, #f1f5f9 0%, #e8ecf1 50%, #f1f5f9 100%);
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 /* Dropdown animation - quicker for better UX */
@@ -76,12 +138,69 @@ body {
 
 /* Card hover effects */
 .card-hover {
-  transition: all 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 32px -6px rgba(239, 68, 68, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* Red hover overlay on card images */
+.card-image-hover {
+  position: relative;
+}
+
+.card-image-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(239, 68, 68, 0.12);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.card-hover:hover .card-image-hover::after {
+  opacity: 1;
+}
+
+/* Scroll reveal animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sport section accent top borders */
+.sport-section-accent {
+  position: relative;
+}
+
+.sport-section-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.sport-section-football::before {
+  background: linear-gradient(90deg, transparent, #16a34a, #22c55e, transparent);
+}
+
+.sport-section-basketball::before {
+  background: linear-gradient(90deg, transparent, #ea580c, #f97316, transparent);
+}
+
+.sport-section-automoto::before {
+  background: linear-gradient(90deg, transparent, #2563eb, #3b82f6, transparent);
 }
 
 /* Logo text styling */
