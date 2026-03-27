@@ -4,8 +4,7 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
-  // Trust proxy for production deployments (HTTPS)
-  proxy: true,
-  // Enable trust for X-Forwarded-* headers from reverse proxies
-  trustProxy: true,
+  // Trust proxy for production deployments behind reverse proxy
+  proxy: env.bool('STRAPI_PROXY', false),
+  trustProxy: env.bool('STRAPI_PROXY', false),
 });

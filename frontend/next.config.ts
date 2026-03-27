@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'standalone',
   eslint: {
     // Disable ESLint during build to allow deployment
     ignoreDuringBuilds: true,
@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '1337',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sportsholics.duckdns.org',
         pathname: '/uploads/**',
       },
       {

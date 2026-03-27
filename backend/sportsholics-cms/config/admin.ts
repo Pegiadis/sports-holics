@@ -1,13 +1,10 @@
 export default ({ env }) => ({
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
-    // Configure sessions for HTTPS proxy deployments
-    sessions: {
-      cookie: {
-        secure: false, // Set to true if not using a reverse proxy
-        sameSite: 'lax',
-        httpOnly: true,
-      },
+    // Cookie config for admin refresh token
+    cookie: {
+      secure: env.bool('ADMIN_COOKIE_SECURE', false),
+      sameSite: 'lax',
     },
   },
   apiToken: {

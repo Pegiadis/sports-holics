@@ -1,0 +1,62 @@
+services:
+  strapi:
+    build: ./backend/sportsholics-cms
+    container_name: sportsholics-strapi
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: sportsholics_cms
+      DATABASE_USERNAME: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_SSL: "false"
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      JWT_SECRET: ${JWT_SECRET}
+      STRAPI_PROXY: ${STRAPI_PROXY:-false}
+      ADMIN_COOKIE_SECURE: ${ADMIN_COOKIE_SECURE:-false}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      TZ: Europe/Athens
+    ports:
+      - "127.0.0.1:1337:1337"
+    volumes:
+      - /opt/apps/sportsholics/uploads:/app/public/uploads
+    depends_on:
+      - frontend
+    networks:
+      - vetly_default
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:1337/_health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_STRAPI_API_URL: ${NEXT_PUBLIC_STRAPI_API_URL}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+    container_name: sportsholics-frontend
+    restart: unless-stopped
+    environment:
+      API_SPORTS_KEY: ${API_SPORTS_KEY:-}
+    ports:
+      - "127.0.0.1:3002:3000"
+    networks:
+      - vetly_default
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
+
+networks:
+  vetly_default:
+    external: true

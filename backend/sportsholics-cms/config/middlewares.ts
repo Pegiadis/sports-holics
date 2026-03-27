@@ -34,6 +34,7 @@ export default ({ env }) => [
         'http://localhost:3000',     // Local development
         'http://localhost:1337',     // Local Strapi admin
         'https://*.vercel.app',       // Vercel deployments
+        'https://sportsholics.duckdns.org', // VPS deployment
       ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
