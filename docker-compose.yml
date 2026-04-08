@@ -25,12 +25,10 @@ services:
       - "127.0.0.1:1337:1337"
     volumes:
       - /opt/apps/sportsholics/uploads:/app/public/uploads
-    depends_on:
-      - frontend
     networks:
       - vetly_default
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:1337/_health"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:1337/admin"]
       interval: 30s
       timeout: 10s
       start_period: 30s
@@ -48,6 +46,10 @@ services:
       API_SPORTS_KEY: ${API_SPORTS_KEY:-}
     ports:
       - "127.0.0.1:3002:3000"
+    volumes:
+      - /opt/apps/sportsholics/next-image-cache:/app/.next/cache/images
+    depends_on:
+      - strapi
     networks:
       - vetly_default
     healthcheck:
