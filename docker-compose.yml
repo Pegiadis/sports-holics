@@ -28,7 +28,7 @@ services:
     networks:
       - vetly_default
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:1337/admin"]
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:1337/admin"]
       interval: 30s
       timeout: 10s
       start_period: 30s
@@ -43,6 +43,7 @@ services:
     container_name: sportsholics-frontend
     restart: unless-stopped
     environment:
+      HOSTNAME: 0.0.0.0
       API_SPORTS_KEY: ${API_SPORTS_KEY:-}
     ports:
       - "127.0.0.1:3002:3000"
@@ -53,7 +54,7 @@ services:
     networks:
       - vetly_default
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3000"]
       interval: 30s
       timeout: 10s
       start_period: 15s
