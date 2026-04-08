@@ -18,10 +18,18 @@ RUN sed -i 's/secure: isProduction/secure: process.env.ADMIN_COOKIE_SECURE === "
 # Ensure public dir is writable (needed for strapi transfer backup)
 RUN chmod -R 777 /app/public
 
-# Fix strapi transfer: replace move with copy+emptyDir (move fails on Docker bind mounts)
-RUN sed -i 's/await fse__namespace.move(assetsDirectory, backupDirectory)/await fse__namespace.copy(assetsDirectory, backupDirectory); await fse__namespace.emptyDir(assetsDirectory)/' \
+# Patch @strapi/data-transfer for Docker bind mounts:
+#   1. Replace fse.move(assets, backup) with copy + emptyDir, because fse.move
+#      fails with EBUSY/EXDEV when assets is the root of a bind mount.
+#   2. Replace the subsequent fse.mkdir(assets) with fse.ensureDir(assets) so
+#      it doesn't throw EEXIST. The original move() removed the source dir;
+#      our copy + emptyDir leaves it in place, so a plain mkdir would fail.
+#      Without this second patch, every transfer aborts at the
+#      "creating assets backup directory" step with the misleading error
+#      "The backup folder for the assets could not be created".
+RUN sed -i 's|await fse__namespace.move(assetsDirectory, backupDirectory)|await fse__namespace.copy(assetsDirectory, backupDirectory); await fse__namespace.emptyDir(assetsDirectory)|; s|await fse__namespace.mkdir(assetsDirectory);|await fse__namespace.ensureDir(assetsDirectory);|' \
     node_modules/@strapi/data-transfer/dist/strapi/providers/local-destination/index.js && \
-    sed -i 's/await fse.move(assetsDirectory, backupDirectory)/await fse.copy(assetsDirectory, backupDirectory); await fse.emptyDir(assetsDirectory)/' \
+    sed -i 's|await fse.move(assetsDirectory, backupDirectory)|await fse.copy(assetsDirectory, backupDirectory); await fse.emptyDir(assetsDirectory)|; s|await fse.mkdir(assetsDirectory);|await fse.ensureDir(assetsDirectory);|' \
     node_modules/@strapi/data-transfer/dist/strapi/providers/local-destination/index.mjs
 
 ENV NODE_ENV=production
