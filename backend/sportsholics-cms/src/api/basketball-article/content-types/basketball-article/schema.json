@@ -49,6 +49,10 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::team.team"
+    },
+    "scheduledPublishAt": {
+      "type": "datetime",
+      "required": false
     }
   }
 }

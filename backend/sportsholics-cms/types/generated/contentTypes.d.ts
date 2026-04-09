@@ -505,6 +505,7 @@ export interface ApiBasketballArticleBasketballArticle
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    scheduledPublishAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
@@ -563,6 +564,7 @@ export interface ApiBlogArticleBlogArticle extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     readTime: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<5>;
+    scheduledPublishAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
@@ -649,6 +651,7 @@ export interface ApiFootballArticleFootballArticle
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    scheduledPublishAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
@@ -698,6 +701,7 @@ export interface ApiFormula1ArticleFormula1Article
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    scheduledPublishAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;
@@ -915,6 +919,7 @@ export interface ApiNewsArticleNewsArticle extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    scheduledPublishAt: Schema.Attribute.DateTime;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;
     subtitle: Schema.Attribute.String;

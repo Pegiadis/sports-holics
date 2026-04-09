@@ -35,8 +35,8 @@ export interface ArticleSocialMediaEmbed extends Struct.ComponentSchema {
 export interface ArticleTable extends Struct.ComponentSchema {
   collectionName: 'components_article_tables';
   info: {
-    description: 'Import table data from CSV/Excel file';
-    displayName: 'Table';
+    description: 'LEGACY \u2014 use only for bulk CSV/Excel imports. For normal tables, use the Insert Table button inside a Text Block (CKEditor).';
+    displayName: 'Table (CSV/Excel import \u2014 legacy)';
     icon: 'table';
   };
   attributes: {
@@ -49,12 +49,19 @@ export interface ArticleTable extends Struct.ComponentSchema {
 export interface ArticleTextBlock extends Struct.ComponentSchema {
   collectionName: 'components_article_text_blocks';
   info: {
-    description: 'Rich text content block with Blocks editor';
+    description: 'Rich text content block with CKEditor 5 (HTML output)';
     displayName: 'Text Block';
     icon: 'align-left';
   };
   attributes: {
-    content: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    content: Schema.Attribute.RichText &
+      Schema.Attribute.Required &
+      Schema.Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'defaultHtml';
+        }
+      >;
   };
 }
 

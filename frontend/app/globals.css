@@ -348,6 +348,75 @@ body {
   border-radius: 0.375rem;
 }
 
+/* Tables — applies to CKEditor table output and inline HTML tables */
+.prose figure.table {
+  margin: 2em 0;
+  overflow-x: auto;       /* horizontal scroll on narrow screens */
+  max-width: 100%;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+  line-height: 1.5;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+/* Standalone tables (not wrapped in figure) also get top/bottom spacing */
+.prose > table {
+  margin: 2em 0;
+}
+
+.prose thead {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.prose th {
+  padding: 0.75em 1em;
+  text-align: left;
+  font-weight: 600;
+  color: #111827;
+  border-right: 1px solid #e5e7eb;
+}
+
+.prose th:last-child {
+  border-right: none;
+}
+
+.prose td {
+  padding: 0.75em 1em;
+  color: #374151;
+  border-top: 1px solid #f3f4f6;
+  border-right: 1px solid #f3f4f6;
+  vertical-align: top;
+}
+
+.prose td:last-child {
+  border-right: none;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+.prose tbody tr:hover {
+  background: #f3f4f6;
+}
+
+/* Table caption (CKEditor uses <figcaption> inside <figure class="table">) */
+.prose figure.table figcaption {
+  font-size: 0.875em;
+  color: #6b7280;
+  text-align: center;
+  margin-top: 0.5em;
+  font-style: italic;
+}
+
 /* Video embed responsive container */
 .video-embed-wrapper {
   margin: 2rem 0;

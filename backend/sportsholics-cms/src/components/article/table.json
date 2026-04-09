@@ -1,9 +1,9 @@
 {
   "collectionName": "components_article_tables",
   "info": {
-    "displayName": "Table",
+    "displayName": "Table (CSV/Excel import — legacy)",
     "icon": "table",
-    "description": "Import table data from CSV/Excel file"
+    "description": "LEGACY — use only for bulk CSV/Excel imports. For normal tables, use the Insert Table button inside a Text Block (CKEditor)."
   },
   "options": {},
   "attributes": {

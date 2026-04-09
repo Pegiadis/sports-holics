@@ -44,6 +44,10 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.seo"
+    },
+    "scheduledPublishAt": {
+      "type": "datetime",
+      "required": false
     }
   }
 }

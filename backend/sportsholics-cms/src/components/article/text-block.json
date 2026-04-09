@@ -3,12 +3,16 @@
   "info": {
     "displayName": "Text Block",
     "icon": "align-left",
-    "description": "Rich text content block with Blocks editor"
+    "description": "Rich text content block with CKEditor 5 (HTML output)"
   },
   "options": {},
   "attributes": {
     "content": {
-      "type": "blocks",
+      "type": "customField",
+      "customField": "plugin::ckeditor5.CKEditor",
+      "options": {
+        "preset": "defaultHtml"
+      },
       "required": true
     }
   }

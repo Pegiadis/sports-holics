@@ -1,3 +1,5 @@
+import cronTasks from './cron-tasks';
+
 export default ({ env }) => ({
   host: env('HOST', '0.0.0.0'),
   port: env.int('PORT', 1337),
@@ -7,4 +9,9 @@ export default ({ env }) => ({
   // Trust proxy for production deployments behind reverse proxy
   proxy: env.bool('STRAPI_PROXY', false),
   trustProxy: env.bool('STRAPI_PROXY', false),
+  // Cron scheduler — publishes scheduledPublishAt drafts every minute
+  cron: {
+    enabled: true,
+    tasks: cronTasks,
+  },
 });

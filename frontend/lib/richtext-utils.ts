@@ -308,10 +308,13 @@ export function richtextToHtml(content: unknown): string {
 
 /**
  * Extract plain text from richtext (for previews, meta descriptions, etc.)
+ * Accepts HTML strings (CKEditor output), blocks arrays (legacy), or null.
  */
 export function richtextToPlainText(content: unknown): string {
+  if (typeof content === 'string') {
+    return content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
   const html = richtextToHtml(content);
-  // Simple HTML tag removal (for more robust solution, consider using a library)
   return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
@@ -321,7 +324,9 @@ export function richtextToPlainText(content: unknown): string {
 export interface TextBlockComponent {
   __component: 'article.text-block';
   id: number;
-  content: unknown; // Blocks format
+  // Post-CKEditor migration: `content` is an HTML string.
+  // Legacy (pre-migration): Strapi blocks JSON array.
+  content: string | unknown;
 }
 
 export interface VideoEmbedComponent {
@@ -383,8 +388,11 @@ export function renderDynamicZone(components: unknown): string {
 
     switch (comp.__component) {
       case 'article.text-block':
-        // Render the text block using the existing richtextToHtml function
-        return richtextToHtml(comp.content);
+        // CKEditor (post-migration): content is an HTML string — return as-is.
+        // Legacy blocks format: run through the blocks-to-HTML converter.
+        return typeof comp.content === 'string'
+          ? comp.content
+          : richtextToHtml(comp.content);
 
       case 'article.video-embed':
         // Extract video ID from URL

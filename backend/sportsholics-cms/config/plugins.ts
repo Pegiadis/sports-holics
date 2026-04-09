@@ -2,6 +2,9 @@ export default ({ env }: { env: (key: string, defaultValue?: string) => string }
   seo: {
     enabled: true,
   },
+  ckeditor5: {
+    enabled: true,
+  },
   sentry: {
     enabled: true,
     config: {

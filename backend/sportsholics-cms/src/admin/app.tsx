@@ -1,5 +1,6 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
 import * as XLSX from 'xlsx';
+import { setPluginConfig, defaultHtmlPreset } from '@_sh/strapi-plugin-ckeditor';
 
 // This is the admin panel for the Sports Holics CMS
 export default {
@@ -142,6 +143,32 @@ export default {
     },
   },
   
+  register(_app: StrapiApp) {
+    // Customize CKEditor 5: remove the SourceEditing and htmlEmbed buttons
+    // from the default toolbar. Both allow editors to insert arbitrary HTML,
+    // which is an XSS vector if an admin account is ever compromised — the
+    // HTML flows through dangerouslySetInnerHTML on the frontend. Every
+    // other formatting feature (bold, italic, headings, links, lists,
+    // tables, images, media embed, etc.) remains available.
+    const cleanToolbar = (defaultHtmlPreset.editorConfig?.toolbar as unknown[])?.filter(
+      (item) => typeof item !== 'string' || (item !== 'SourceEditing' && item !== 'htmlEmbed')
+    );
+
+    setPluginConfig({
+      presets: [
+        {
+          ...defaultHtmlPreset,
+          name: 'defaultHtml',
+          description: 'Default HTML editor (source view disabled)',
+          editorConfig: {
+            ...defaultHtmlPreset.editorConfig,
+            toolbar: cleanToolbar as never,
+          },
+        },
+      ],
+    });
+  },
+
   bootstrap(app: StrapiApp) {
     // Custom styling injected on bootstrap
     const style = document.createElement('style');
