@@ -78,12 +78,20 @@ TOTAL_SIZE=$(du -sh "$BACKUP_DIR" 2>/dev/null | awk '{print $1}')
 log "backup dir total: $TOTAL_SIZE"
 
 # 5. Off-site rsync hook (only runs if STORAGE_BOX_TARGET is set)
+# Hetzner Storage Box specifics:
+#   - SSH port is 23 (not 22) — configurable via STORAGE_BOX_PORT
+#   - SSH key path — configurable via STORAGE_BOX_SSH_KEY
+#   - Restricted shell on the Storage Box rejects arbitrary commands, but
+#     rsync works fine because it uses its own protocol over SSH.
 if [[ -n "${STORAGE_BOX_TARGET:-}" ]]; then
-  log "rsync -> $STORAGE_BOX_TARGET"
+  SB_PORT="${STORAGE_BOX_PORT:-23}"
+  SB_KEY="${STORAGE_BOX_SSH_KEY:-$HOME/.ssh/sportsholics-backup}"
+  log "rsync -> $STORAGE_BOX_TARGET (port $SB_PORT, key $SB_KEY)"
   rsync -a --delete \
     --include='db-*.sql.gz' \
     --include='uploads-*.tar.gz' \
     --exclude='*' \
+    -e "ssh -i $SB_KEY -p $SB_PORT -oStrictHostKeyChecking=accept-new -oPasswordAuthentication=no" \
     "$BACKUP_DIR/" "$STORAGE_BOX_TARGET" \
     && log "rsync ok" \
     || log "rsync FAILED (continuing)"
