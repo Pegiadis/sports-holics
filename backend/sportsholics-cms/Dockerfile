@@ -2,7 +2,11 @@ FROM node:22-alpine AS build
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+# --legacy-peer-deps is required because @_sh/strapi-plugin-ckeditor's peer
+# dependency on @strapi/design-system conflicts with npm 10+'s strict
+# resolution. The packages are compatible at runtime; we just bypass the
+# strict check during install.
+RUN npm ci --legacy-peer-deps
 COPY . .
 RUN npm run build
 
