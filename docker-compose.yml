@@ -1,4 +1,20 @@
 services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: sportsholics-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sportsholics_cms
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d sportsholics_cms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   strapi:
     build: ./backend/sportsholics-cms
     container_name: sportsholics-strapi
@@ -25,8 +41,9 @@ services:
       - "127.0.0.1:1337:1337"
     volumes:
       - /opt/apps/sportsholics/uploads:/app/public/uploads
-    networks:
-      - vetly_default
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:1337/admin"]
       interval: 30s
@@ -51,8 +68,6 @@ services:
       - /opt/apps/sportsholics/next-image-cache:/app/.next/cache/images
     depends_on:
       - strapi
-    networks:
-      - vetly_default
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:3000"]
       interval: 30s
@@ -60,6 +75,5 @@ services:
       start_period: 15s
       retries: 3
 
-networks:
-  vetly_default:
-    external: true
+volumes:
+  postgres_data:

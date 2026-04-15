@@ -155,3 +155,10 @@ railway-env-keys.txt
 
 
 CLAUDE.md
+
+############################
+# Claude Code state
+############################
+
+.claude/
+.superpowers/

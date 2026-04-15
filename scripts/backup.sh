@@ -45,8 +45,8 @@ set -euo pipefail
 
 BACKUP_DIR="${BACKUP_DIR:-/opt/apps/sportsholics/backups}"
 UPLOADS_DIR="${UPLOADS_DIR:-/opt/apps/sportsholics/uploads}"
-POSTGRES_CONTAINER="${POSTGRES_CONTAINER:-vetly-postgres}"
-POSTGRES_USER="${POSTGRES_USER:-vetly}"
+POSTGRES_CONTAINER="${POSTGRES_CONTAINER:-sportsholics-postgres}"
+POSTGRES_USER="${POSTGRES_USER:-sportsholics}"
 POSTGRES_DB="${POSTGRES_DB:-sportsholics_cms}"
 DB_RETENTION_DAYS="${DB_RETENTION_DAYS:-30}"
 WEEKLY_SNAPSHOT_DAY="${WEEKLY_SNAPSHOT_DAY:-0}"

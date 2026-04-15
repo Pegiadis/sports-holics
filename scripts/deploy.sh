@@ -33,8 +33,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 BACKUP_DIR="/opt/apps/sportsholics/backups"
-POSTGRES_CONTAINER="vetly-postgres"
-POSTGRES_USER="vetly"
+POSTGRES_CONTAINER="sportsholics-postgres"
+POSTGRES_USER="sportsholics"
 POSTGRES_DB="sportsholics_cms"
 PUBLIC_URL="https://sportsholics.duckdns.org"
 STAMP=$(date -u +%Y%m%d-%H%M%S)
