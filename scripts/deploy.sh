@@ -133,20 +133,29 @@ for i in $(seq 1 18); do
   fi
 done
 
-# 7. Smoke test
+# 7. Smoke test — delegate to scripts/smoke-test.sh which has comprehensive
+#    checks (API liveness, content integrity, frontend, DB, containers, logs).
+#    Use FAST=1 to keep the deploy fast — full smoke test can be run anytime
+#    via `./scripts/smoke-test.sh` directly.
 say "Smoke test"
-STRAPI_CODE=$(curl -s -o /dev/null -w '%{http_code}' "$PUBLIC_URL/api/football-articles?pagination%5Blimit%5D=1" || echo "000")
-[[ "$STRAPI_CODE" = "200" ]] && ok "strapi API returns 200" || fail "strapi API returns $STRAPI_CODE"
-
-FRONTEND_CODE=$(curl -s -o /dev/null -w '%{http_code}' "$PUBLIC_URL/" || echo "000")
-[[ "$FRONTEND_CODE" = "200" ]] && ok "frontend returns 200" || fail "frontend returns $FRONTEND_CODE"
-
-# Sample image — pick one random file URL from DB and hit it
-SAMPLE_URL=$(docker exec "$POSTGRES_CONTAINER" psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -tAq \
-  -c "SELECT url FROM files WHERE url LIKE '/uploads/%' ORDER BY random() LIMIT 1;" 2>/dev/null || true)
-if [[ -n "$SAMPLE_URL" ]]; then
-  IMG_CODE=$(curl -s -o /dev/null -w '%{http_code}' "$PUBLIC_URL$SAMPLE_URL" || echo "000")
-  [[ "$IMG_CODE" = "200" ]] && ok "sample image $SAMPLE_URL returns 200" || fail "sample image $SAMPLE_URL returns $IMG_CODE"
+SMOKE_TEST_SCRIPT="$(dirname "$0")/smoke-test.sh"
+if [[ -x "$SMOKE_TEST_SCRIPT" ]]; then
+  if BASE_URL="$PUBLIC_URL" \
+     POSTGRES_CONTAINER="$POSTGRES_CONTAINER" \
+     POSTGRES_USER="$POSTGRES_USER" \
+     POSTGRES_DB="$POSTGRES_DB" \
+     FAST=1 \
+     "$SMOKE_TEST_SCRIPT"; then
+    ok "smoke-test.sh passed"
+  else
+    fail "smoke-test.sh reported failures (see output above)"
+  fi
+else
+  # Fallback: run the minimal inline smoke test if the script is missing.
+  STRAPI_CODE=$(curl -s -o /dev/null -w '%{http_code}' "$PUBLIC_URL/api/football-articles?pagination%5Blimit%5D=1" || echo "000")
+  [[ "$STRAPI_CODE" = "200" ]] && ok "strapi API returns 200" || fail "strapi API returns $STRAPI_CODE"
+  FRONTEND_CODE=$(curl -s -o /dev/null -w '%{http_code}' "$PUBLIC_URL/" || echo "000")
+  [[ "$FRONTEND_CODE" = "200" ]] && ok "frontend returns 200" || fail "frontend returns $FRONTEND_CODE"
 fi
 
 say "Deploy successful"
