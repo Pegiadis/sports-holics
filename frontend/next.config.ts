@@ -25,6 +25,16 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'sportsholics.gr',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.sportsholics.gr',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
         hostname: '*.strapiapp.com',
         pathname: '/**',
       },
