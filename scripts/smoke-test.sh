@@ -201,9 +201,13 @@ if [[ -n "$RANDOM_SLUG" ]]; then
   CODE=$(http_code "$BASE_URL/article/$RANDOM_SLUG")
   [[ "$CODE" = "200" ]] && pass "/article/$RANDOM_SLUG returns 200" || fail "/article/$RANDOM_SLUG returns $CODE"
 
-  # Check the page actually contains rendered content
+  # Check the page actually contains rendered content.
+  # Use heredoc form (<<<) instead of `echo "$HTML" | grep` because the
+  # response is large (~160KB) and `grep -q` early-exits, sending SIGPIPE
+  # to echo, which combined with pipefail returns non-zero even when the
+  # match succeeded.
   HTML=$(http_body "$BASE_URL/article/$RANDOM_SLUG")
-  if echo "$HTML" | grep -qE '<(p|h[1-6]|strong|em)[^>]*>'; then
+  if grep -qE '<(p|h[1-6]|strong|em)[^>]*>' <<< "$HTML"; then
     pass "/article/$RANDOM_SLUG renders inline HTML tags"
   else
     fail "/article/$RANDOM_SLUG does not contain inline HTML tags (renderer broken?)"
